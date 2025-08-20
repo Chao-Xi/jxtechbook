@@ -517,8 +517,6 @@ Kube-router 是一个轻量级的 CNI 插件，旨在简化 Kubernetes 网络功
 * 相比于 Calico 和 Cilium，功能可能略显简化，不支持 L7 网络策略。
 * 不如 Calico 那样被广泛使用，社区支持较少。
 
-![Alt Image Text](./images/adv/adv164_1_1.png "Body image")
-
 ### **选择CNI插件时的考虑因素**
 
 * **集群规模**：对于小规模集群，Flannel 或 Weave Net 可能已经足够；对于大规模和高性能需求的集群，Calico 或 Cilium 更合适。
