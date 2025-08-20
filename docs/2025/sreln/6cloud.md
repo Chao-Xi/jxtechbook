@@ -2,7 +2,7 @@
 
 **1. Which of the following is a recommended practice for defining interfaces in API development? **
 
-- 1 Defining interfaces after development is complete 
+- 1 Defining interfaces after development is complete. 
 - 2 Defining interfaces only for current use cases 
 - 3 Defining interfaces to support current, planned, and foreseeable uses 
 - 4 Defining interfaces without considering reuse
