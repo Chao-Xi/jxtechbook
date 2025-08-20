@@ -5,7 +5,7 @@
 - 1 Defining interfaces after development is complete. 
 - 2 Defining interfaces only for current use cases 
 - 3 Defining interfaces to support current, planned, and foreseeable uses 
-- 4 Defining interfaces without considering reuse
+- 4 Defining interfaces without considering reuse.
 
 The correct answer is:
 
