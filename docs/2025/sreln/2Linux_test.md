@@ -1,7 +1,7 @@
 
 
 
-## 1 Linux Fundamentals
+## 1 Linux Fundamentals.
 
 
 **1. What file contains a list of all network-accessible services and their related ports?**
