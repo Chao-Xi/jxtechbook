@@ -1,5 +1,7 @@
 # 1 Ansible Interview Question
 
+![Alt Image Text](../images/2025_2_1.jpeg "Body image")
+
 ### 1. What is Ansible and how does it work?
 
 Ansible is an open-source configuration management, application deployment, and task automation tool. 
@@ -53,10 +55,10 @@ Set up the required AWS credentials and use filters to dynamically target specif
 
 **Example in `ansible.cfg`**
 
-···
+```
 [inventory]
 enable_plugins = aws_ec2
-···
+```
 
 Then configure the plugin in `aws_ec2.yaml`.
 
@@ -82,7 +84,7 @@ You can disable them using `gather_facts: no`.
 
 Use a conditional with the `stat` module to check file existence:
 
-···
+```
 - name: Check if config file exists
   stat:
     path: /etc/myapp/config.ini
@@ -91,7 +93,7 @@ Use a conditional with the `stat` module to check file existence:
 - name: Run task if file exists
   command: /usr/local/bin/apply_config
   when: config_file.stat.exists
-···
+```
 
 
 #### 10. What are callback plugins in Ansible?
@@ -149,7 +151,7 @@ and allow variables, loops, and conditionals. Example:
 
 Use conditionals based on `ansible_os_family`:
 
-···
+```
 - name: Install package
 yum:
 name: httpd
@@ -161,15 +163,15 @@ apt:
 name: apache2
 state: present
 when: ansible_os_family == 'Debian'
-···
+```
 
 #### 16. How does Ansible Tower differ from Ansible Core?
 
 Ansible Tower (now part of Red Hat Automation Platform) is a web UI and REST API
 interface for Ansible Core. 
 
-It adds features like RBAC, job scheduling, logging, credentials
-management, and workflow support
+**It adds features like RBAC, job scheduling, logging, credentials
+management, and workflow support**
 
 #### 18. What is a vault ID and why is it useful?
 
