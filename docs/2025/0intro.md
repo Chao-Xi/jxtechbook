@@ -51,7 +51,7 @@ After I graduated, I took a job in startup company named Wrevel in New York city
 
 And then after one year, I finished my project and made my decision to came back to Shanghai and working as DevOps engineer in Blackboard. The Blackboard is a company which provides online teaching and learning SAAS system for universities and companies
 
-**My projects mainly include migrating the old CI/CD tool jenkins servers and jobs from on-premsie servers lab to AWS cloud** including AWS infrastructure and jenkins servers build with AWS Cloudformation and ansible playbook. Move jenkins master from servers to Docker, convert all old and manually created jenkins jobs to groovy and script code.
+**My projects mainly include migrating the old CI/CD tool jenkins servers and jobs from on-premsie servers lab to AWS cloud** including AWS infrastructure and jenkins servers build with AWS Cloudformation and ansible playbook. Move jenkins master from servers to Docker, convert all old and manually created jenkins jobs to groovy and script code. And I also created and moved part of jenkins servers and jobs from ec2 and dockers to kubernets cluster, try to achieve the dynamic spinning up and removing jenkins agents based on buildout requirement.
 
 **After that I landed my new opportunity in SAP Jam and Workzone team and working as Senior DevOps engineer.**
 
@@ -63,7 +63,9 @@ Use HELM Chart and kustomise, with GitOps way and ArgoCD as CD tool to deploy al
 
 Monitor Cluster with Prometheus Operator, writing or own ServiceMonitor and Metrics / Exporter and AlertManger to help us collect data from a variety of sources and report alert.
 
-Get application logs by EFK. And I also enabled Service Mesh inside the cluster. Install Istio and enable envoy sidecar inject in our main namespace and track the network tracing and enable mutual X509 TLS service call from internal and external.
+And I also enabled Service Mesh inside the cluster. Install Istio and enable envoy sidecar inject in our main namespace and track the network tracing and enable mutual X509 TLS service call from internal and external.
+
+When I was wokring new Product called DWZ(Digital Work ZONE). And also trying to move part of our service components from Self maintenance like objectstore, rabbitmq and Log service to SAP BTP platform.
 
 And then I came to UBS. In UBS Shanghai I worked in china AM(Assesst management) team firstly, I mainly work as Cloud archiect, work with Wind infra team and Microsoft team. Design and setup the hybrid cloud infra for the WIND market data service which helps onboard the service on Azure public cloud as upstram data resource and send the data to on-premise downstream AM trading system.  
 
@@ -88,13 +90,13 @@ I also create multiple tutorial books for my colleague this year mainly about Az
 
 #### Pursue New career path 
 
-First I already work as devops eng over 8 years. I always want improve my career into a new level. I’m pursuing SRE because I’m quite interesting about reliability engineering. I deeply value my DevOps experience. It especially focus on automation, CI/CD, cloud migration, and new service collaboration. But SRE balances speed with reliability targets (SLIs/SLOs). I’d like to working on designing resilient systems to reducing error budgets, improve service performance, site reability and treating operations as a software problem. 
+*  In the financial company, I dont see my future here. Cause, comparing to new techs, codes or new solutions, they are more concern about procedures. Every day, I spend more times on writing documents, go-through steps, meeting with compliance team than working on my codes and my operations jobs. And I dont' even have any chance to learn new techs here. Thus I feel like I gonna be wasted in this team for longer time. 
 
 
-Second Still is I can say our research application is quite heavy service and old setup and the core service is using vendor service. Thus the service is still setting on on-premise data centers. So most of tech stacks are using traditional setup not container. Exp, in next couple years, our most critical project is migrating services from redhat 7 to redhat 8 for all regions. So I hope I can find any opportunity to work on some projects with trendy tech stacks like containerlization, cloud, service mesh etc
+Second Still is I can say our application is quite heavy service and old setup and the core service is using vendor service. Thus the service is still setting on on-premise data centers. So most of tech stacks are using traditional setup not container. Exp, in next couple years, our most critical project is migrating services from redhat 7 to redhat 8 for all regions. So I hope I can find any opportunity to work on some projects with trendy tech stacks like containerlization, cloud, service mesh etc
 
 
-Thrid I working in a global team, this team actually based in LDN.. And since I'm only one here in Shanghai. Although I enjoy my work alone with the my current team, while I'd like to work in more collaborative environments. from what I have more chance to learn from each other here
+Thrid I working in a global team, this team actually based in LDN.. And since I'm only one here in Shanghai. all my teammats are based in Pune India and LDN. Although I enjoy my work alone with the my current team, while I'd like to work in more collaborative environments. from what I have more chance to learn from each other here
 
 > So I have to work with them like meetings, discussion, troubleshootings every day late night
 
@@ -105,10 +107,10 @@ Thrid I working in a global team, this team actually based in LDN.. And since I'
 
 
 
+First I already work as devops eng over 8 years. I always want improve my career into a new level. I’m pursuing SRE because I’m quite interesting about reliability engineering. I deeply value my DevOps experience. It especially focus on automation, CI/CD, cloud migration, and new service collaboration. But SRE balances speed with reliability targets (SLIs/SLOs). I’d like to working on designing resilient systems to reducing error budgets, improve service performance, site reability and treating operations as a software problem. 
 
 
 
-*  In the financial company, I dont see my future here. Cause, comparing to new techs, codes or new solutions, they are more concern about procedures. Every day, I spend more times on writing documents, go-through steps, meeting with compliance team than working on my codes and my operations jobs. And I dont' even have any chance to learn new techs here. Thus I feel like I gonna be wasted in this team for longer time. 
 
 
 * I really enjoyed our  initial conversation learning from company, although I wasn't actively looking for new change at the time,it really felt like this new role entails exciting challenges that I would like to be a part of. i'm truly intrigued by this career development at your firm and believe that my skill set largely align with what you are looking for 
