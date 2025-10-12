@@ -152,6 +152,7 @@ nav:
   - '2025 - 面试准备':
     - '0 2025-Intro': '2025/0intro.md'
     - '1 CI/CD 之路-GitOps 面试题合集': '2025/1cicd.md'
+    - '1 典型Linux面试题 (Greg, wget, curl，Vim)': '2025/1Linux.md'
     - '2 Docker面试10大必考题': '2025/2docker.md'
     - '3 Kubernetes 面试题精解：从入门到进阶(2025)': '2025/3kubernetes.md'
     - '4 Linux 系统故障时': '2025/4Linux_tb.md'
