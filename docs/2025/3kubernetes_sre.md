@@ -330,7 +330,7 @@ kubectl describe node <node-name>
 
 #### 11. What is a Kubernetes Job and how does it differ from a Deployment?
 
-A Job in Kubernetes is used to run one-time or batch tasks that terminate once completed successfully. It ensures that a pod runs to completion (success or failure) and can be retried if it fails.
+A Job in Kubernetes **is used to run one-time or batch tasks that terminate once completed successfully**. It ensures that a pod runs to completion (success or failure) and can be retried if it fails.
 
 
 A Deployment, by contrast, is used for long-running, stateless applications that must be kept running continuously.
