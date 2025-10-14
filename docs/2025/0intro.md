@@ -99,7 +99,7 @@ Second Still is I can say our application is quite heavy service and old setup a
 Thrid I working in a global team, this team actually based in LDN.. And since I'm only one here in Shanghai. all my teammats are based in Pune India and LDN. Although I enjoy my work alone with the my current team, while I'd like to work in more collaborative environments. from what I have more chance to learn from each other here
 
 
-Fourth I saw, this role is quite attractive to me. I can get in touch with multiple projects and provide my cloud expetise. Actucally I do have lots of experience on Azure, Aws, Alicloud even CC cloud. I think I'm perfect for this role 
+Fourth I saw the JD, this role is quite attractive to me. I can get in touch with multiple projects and provide my cloud expetise. Actucally I do have lots of experience on Azure, Aws, Alicloud even CC cloud. I think I'm perfect for this role 
 
 -------
 
