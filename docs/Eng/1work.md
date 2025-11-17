@@ -693,3 +693,51 @@ If you **just do the bare minimum,** don't expect to get promoted
 **The intern did the bare minimum on the report,** so I had to rewrite most of it
 
 实习生在报告上只是敷衍了事，所以我不得不重写大部分内容
+
+
+###  20251117 On what basis? 凭什么？
+
+On what basis did you reject the proposal? 你凭什么否决这个提案？
+
+On what basis are we prioritizing this project over others?
+
+我们凭什么把这个项目排在其他项目之前？
+
+#### By what means？凭什么？
+
+强调“手段/方法”
+
+By what means are we planning to achieve these targets?
+
+我们凭什么方式实现这些目标？
+
+By what means are we going to verify these numbers?
+
+我们凭什么方式验证这些数据？
+
+#### What justifies..？凭什么..？1.是什么理由？
+
+带有“这有什么正当理由”的含义
+
+What justifies changing the plan at the last minute?
+
+凭什么在最后一刻改计划？
+
+
+What justifies giving them special treatment?
+
+凭什么给他们特殊待遇？
+
+
+#### What entitles..？凭什么.？/是什么使得.？
+
+强调“有什么资格/凭什么有这个权利”
+
+
+What entitles you to make that decision without consulting the team?
+
+你凭什么不经过团队就做这个决定？
+
+What entitles him to make demands outside the contract?
+
+他凭什么提出合同之外的要求？
