@@ -741,3 +741,37 @@ What entitles you to make that decision without consulting the team?
 What entitles him to make demands outside the contract?
 
 他凭什么提出合同之外的要求？
+
+###  20251118 "有默契" by in sync / have a good chemistry / be on the same page
+
+#### by in sync 步调一致；配合默契
+
+The project went so well, because the whole team was perfectly in sync.
+
+项目进行得非常顺利, 因为整个团队配合得非常默契
+
+They're so in sync that they don't even need to explain things to each other.
+
+他们之间韭常有默契，甚至不需要彼此多解释
+
+#### have a good chemistry 配合自然；有默契
+
+
+The two leads have a good chemistry, which makes collaboration effortless.
+
+两个负责人之间很有默契，让合作变得毫不费力
+
+I really enjoy working with her,  we have such a good chemistry.
+
+
+我真的很喜欢和她一起工作,我们特别有默
+
+#### be on the same page 理解一致；有默契
+
+Let's make sure we're all on the same page before moving forward
+
+在发送最终报告煎，确保我们所有人理解一致
+
+We've been working together for years, so we're always on the same page.
+
+我们合作多年了，所以总是很有默契
