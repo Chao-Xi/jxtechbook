@@ -838,3 +838,36 @@ It's been a productive day, I'm off now. See you all tomorrow!
 Alright team, I'm out of here. Let's pick this up next week
 
 好了团队，我先走了，我们下周再继续这个项目
+
+
+###  20251121 调休
+
+#### take a compensatory day off 
+
+I'll be taking a compensatory day off tomorrow due to the overtime last weekend
+
+因为上周末加班，我明天要调休
+
+You may take a compensatory day off once the project launch is completed
+
+项目上线完成后，你可以安排调休
+
+#### take a day off in lieu 调休
+
+I worked on the public holiday, so l'll be taking a day off in lieu on Friday
+
+我法定假日上班了，所以我周五要调休
+
+Employees who supported yesterday's event can take a day off in lieu this month
+
+昨天参与活动支持的员工，本月可以安排调体
+
+#### take a make-up day
+
+I'll take a make-up day next week to recharge, it's been a long week
+
+找下周调休一天，恢复一下精力，这周太忙的
+
+You deserve a make-up day after all that overtime!
+
+你加班那么多，应该调休一天了
