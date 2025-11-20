@@ -775,3 +775,66 @@ Let's make sure we're all on the same page before moving forward
 We've been working together for years, so we're always on the same page.
 
 我们合作多年了，所以总是很有默契
+
+
+###  20251119 成正比/成反比 （proportional 成比例的）
+
+#### Be directly proportional to...
+
+Revenue growth is directly proportional to the number of active users
+
+收入增长与活跃用户数量成正比
+
+#### increase in proportion to...  
+
+
+in proportion to (与...成比例)
+
+Operational costs increase in proportion to the scale of production
+
+运营成本会随着生产规模的扩大而增加
+
+#### be inversely proportional to... 与...成反比
+
+The cost per unit is inversely proportional to the production volume  单位成本与生产量成反比
+
+#### decrease in proportion to... 与...成反比
+
+Our total expenses decrease in proportion to automation levels
+
+总开销会随着自动化水平的提高而下降
+
+
+###  20251120 “我先走了”英语不要说成Igo first
+
+I go first 我先来；我先发言
+
+#### I'm heading out now 我先走了
+
+I'm heading out now, but feel free to message me if anything urgent comes up
+
+我现在要走了，但如果有紧急的事情可以随时联系栽
+
+I'm heading out now, the report's been submitted and everything's on track
+
+我先走了，报告已经提交，一切进展顺利
+
+#### I have to leave now / I have to go now 我先走了
+
+I have to leave now for my appointment, but feel free to reach out if anything comes up
+
+我现在得去赶个约会，如果有事随时联系我
+
+I have to go now, let me know it you need any additional information
+
+我先走了，但如果需要额外信息请告诉我。
+
+#### I'm off / I'm out of here 我先走了
+
+It's been a productive day, I'm off now. See you all tomorrow!
+
+今天真是高效的一天，我先走了，明天见！。
+
+Alright team, I'm out of here. Let's pick this up next week
+
+好了团队，我先走了，我们下周再继续这个项目
