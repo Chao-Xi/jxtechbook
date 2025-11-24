@@ -871,3 +871,33 @@ I'll take a make-up day next week to recharge, it's been a long week
 You deserve a make-up day after all that overtime!
 
 你加班那么多，应该调休一天了
+
+
+###  20251124 你方便吗
+
+Are you convenient? ❌
+
+convenient 方便的；便利的
+
+#### Do you find this time convenient? 你方便吗？
+
+
+Do you find this time convenient, or would you prefer a later time?
+
+这个时间您方便吗？还是您更倾向于稍晚一点的时间？
+
+Do you find this time convenient for a short meeting tomorrow morning?
+
+您觉得明天早上的这个时间方便开个简短会议吗？
+
+#### Are you available? 你方便吗
+
+Are you available for a quick call this afternoon?  你今天下午方便接个简短电话吗
+
+#### Do you have a moment? 你有空吗？方便吗
+
+Do you have a moment? I just need a quick clarification
+
+你现在方便吗？我想快速确认一下
+
+Do you have a moment to discuss the client's feedback? 你现在方便聊一下客户反馈吗？
