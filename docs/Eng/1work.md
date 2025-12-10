@@ -901,3 +901,86 @@ Do you have a moment? I just need a quick clarification
 你现在方便吗？我想快速确认一下
 
 Do you have a moment to discuss the client's feedback? 你现在方便聊一下客户反馈吗？
+
+
+###  20251208 allocate / indicate /   facilitate
+
+#### allocate 分配；拨出
+
+The budget has been **allocated** to different departments
+
+预算已分配到不同部门
+
+We need to allocate more resources to product development
+
+我们需要为产品开发分配更多资源
+
+
+#### facilitate 促进；使更容易
+
+The new software will facilitate collaboration between remote teams
+
+这款新软件将促进远程团队之间的协作
+
+
+The manager's role is to facilitate communication across departments
+
+经理的职责是促进跨部门的沟通
+
+
+#### indicate 表明；显示
+
+The survey results indicate a growing demand for online training
+
+调查结果表明，对线上培训的需求正在增长
+
+The survey results indicate a growing demand for online training
+
+调查结果表明，对线上培训的需求正在增长
+
+
+The data clearly indicates that customer satisfaction has improved
+
+数据清楚地显示客户满意度有所提升
+
+#### substitute 替代；代替
+
+We had to substitute the original material with a more cost-effective option
+
+我们不得不把原材料替换成更具成本效益的选项
+
+If the manager is absent, I can **substitute for** her in the meeting
+
+如果经理缺席，我可以在会议上代替她
+
+### 20251210 我下班了
+
+#### I'm wrapping up for the day 我下班了
+
+**wrap up for the day 收工，下班**
+
+I'm wrapping up for the day.lf anything comes up later, l'll address it tomorrow
+
+我今天准备下班了，若之后有事情，我会在明天处理
+
+#### I'm calling it a day 我下班了
+
+I'm calling it a day. Feel free to leave me a message and I'll respond tomorrow
+
+我今天先下班了，有事给我留言，我明天回复
+
+#### I'm heading out for the day
+
+我要走了；要下班了 head out走；离开
+
+I'm heading out for the day, and l'll review the files first thing tomorrow morning
+
+我今天要下班了，这些文件我明早第一时间看
+
+#### I'm clocking out 我下班了
+
+clock out打卡下班
+
+I'm clocking out now, have a good evening, everyone
+
+我现在打卡下班了，大家晚上愉快
