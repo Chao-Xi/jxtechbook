@@ -984,3 +984,82 @@ clock out打卡下班
 I'm clocking out now, have a good evening, everyone
 
 我现在打卡下班了，大家晚上愉快
+
+### 20251211 我赶时间
+
+#### I'm on a tight schedule 我赶时间；我时间很紧
+
+I'm on a tight schedule, so let's keep the meeting focused
+
+我时间很紧，所以会议尽量聚焦重点
+
+I'm on a tight schedule today, so let's go straight to the key points
+
+我今天时间很紧，所以我们直接讲重点吧
+
+#### I'm running out of time 我赶时间；我快没时间了
+
+I'm running out of time, so let's finalize the decision now
+
+我赶时间，所以我们现在就敲定决定吧
+
+I'm running out of time, so let's prioritize the urgent issues first
+
+我时间快不够了，所以我们先处理紧急问题
+
+#### I'm in rush/ I'm in a hurry 我赶时间
+
+I'm in a rush right now, but l'll review the document tonight
+
+我现在赶时间，但我今晚会审阅文件
+
+#### I'm on a deadline 我赶时间； 我在赶截止日期
+
+I'm on a deadline and can't afford to spend too much time on this
+
+我赶时间，不能再这上面花太多时间
+
+I'm on a deadline, so please keep the update brief
+
+我在赶截上旦期，所以请把更新讲得简短一些
+
+
+### 20251212 不至于 （It won't get to the point where / It's not as if...
+
+
+#### It won't get to the point where
+
+**It won't get to the point** where we have to cancel the project
+
+事情不至于严重到要取消这个项目
+
+Don't worry, **it won't let to the where the client loses trust**
+
+别担心，事情不至于发展到客户失去信任的地步
+
+#### It's not as if… 不至于….
+
+It's not as if the entire project failed, we just need a few adjustment
+
+也不至于整个计划都失败了，我们只是需要稍作调整
+
+**It's not as if we're starting from zero**, we already have most of the data we need
+
+不至于从零开始,我们已经有大部分需要的数据了
+
+#### There's no need to… 没必要..；不至于.
+
+There's no need to escalate this-it's under control
+
+没必要上报或升级处理，这件事还在掌控中
+
+**There's no need to rush the decision**,  we still have time to review all the options
+
+不至于急着做決定，我们还有时间审查所有选项
+
+
+
+
+
+
+
