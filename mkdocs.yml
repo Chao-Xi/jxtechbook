@@ -169,6 +169,7 @@ nav:
   - 'SRE':
     - '0 2025 Apple SRE PRP': '2025/15Apple_SRE_prp.md'
     - '1 SRE Interview Questions and Answers': '2025/1SRE.md'
+    - '2 SRE Interview Questions and Answers - Chinese': '2025/1SRE-cn.md'
     - '2 2025 最新字节跳动运维云原生面经分享': '2025/13tiktok.md'
     - '3 Ansible Interview Question': '2025/2Ansible.md'
     - '4 250 Linux Scenario Based Interview': '2025/3linux.md'
