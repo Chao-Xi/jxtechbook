@@ -8,7 +8,7 @@ It manages replica sets and ensures that the desired number of pod replicas are 
 
 A StatefulSet, on the other hand, is used for stateful applications where each pod needs to be uniquely identified and must retain its state even after rescheduling.
 
-**It assigns a stable identity (DNS name and persistent volume) to each pod**
+**<mark>It assigns a stable identity (DNS name and persistent volume) to each pod</mark>**
 
 **Key differences:**
 
@@ -24,7 +24,7 @@ A StatefulSet, on the other hand, is used for stateful applications where each p
 **Deployment**
 
 * Pods are anonymous
-* Pods don't have stable storage
+* **Pods don't have stable storage**
 * Easy scaling (add/remove pods)
 * Stateless applications
 
@@ -136,16 +136,16 @@ ETCDCTL_API=3 etcdctl get "" --prefix --keys-only
 
 **Core Networking Rules:**
 
-1. Every pod gets its own IP address.
-2. All pods can reach each other directly via IP.
-3. Containers within a pod share the same network namespace (localhost).
-4. **Communication between pods across nodes is handled by CNI plugins (e.g., Calico,Flannel, Cilium).**
+1. <mark>**Every pod gets its own IP address**.<mark>
+2. <mark>**All pods can reach each other directly via IP**.<mark>
+3. <mark>Containers within a pod share the same network namespace (localhost).<mark>
+4. <mark>**Communication between pods across nodes is handled by CNI plugins (e.g., Calico,Flannel, Cilium).**<mark>
 
 **Pod-to-Pod Communication Steps:**
 
 - Pod A wants to reach Pod B using Pod B’s IP.
-- If both pods are on the same node: traffic stays local.
-- If on different nodes: the packet is routed via virtual network interfaces provided by the CNI plugin.
+- If both pods are on the same node: **traffic stays local**.
+- <mark>If on different nodes: the packet is routed via virtual network interfaces provided by the CNI plugin<mark>.
 
 ```
 kubectl exec -it pod-a -- curl <pod-b-ip>:<port>
@@ -161,7 +161,7 @@ Default Behavior:
 
 Features:
 
-* *Allow/deny ingress (incoming) or egress (outgoing) traffic.
+* <mark>Allow/deny ingress (incoming) or egress (outgoing) traffic.</mark>
 * Based on labels, namespaces, and IP blocks.
 * **Require a CNI plugin that supports NetworkPolicy (e.g., Calico, Cilium)**
 
@@ -228,7 +228,7 @@ Workflow Example:
 - You apply a deployment YAML.
 - kube-apiserver receives it.
 - etcd stores the desired state.
-- kube-controller-manager ensures replicas match.
+- **kube-controller-manager ensures replicas match**.
 - kube-scheduler assigns pods to nodes.
 
 This architecture allows scalability, self-healing, and declarative infrastructure.
@@ -242,12 +242,16 @@ An Ingress is a Kubernetes resource that manages external access to services, ty
 
 **Service**
 
-L4 (TCP/UDP) / Expose internal or external service / Yes / TLS Support Manually via Service/LoadBalance
+- L4 (TCP/UDP) 
+- Expose internal or external service / Yes / 
+- **TLS Support Manually via Service/LoadBalancer**
 
 
 **Ingress**
 
-L7 (HTTP/HTTPS) / Expose multiple services under a single IP / No (path/host-based rules) / Built-in SSL termination
+- L7 (HTTP/HTTPS) 
+-  **Expose multiple services under a single IP** / No (path/host-based rules) / 
+-  Built-in SSL termination
 
 
 ```
@@ -378,7 +382,7 @@ Benefits:
 - Improved modularity and debugging.
 - Retry logic before main workload runs.
 
-#### 13. What are taints and tolerations in Kubernetes?
+#### 💩💩💩 <mark>13. What are taints and tolerations in Kubernetes?<mark>
 
 Taints are applied to nodes to prevent pods from being scheduled on them unless the pod has a matching toleration
 
@@ -399,14 +403,14 @@ Use Cases:
 
 #### 15. What are sidecar containers and how are they used in Kubernetes?
 
-**A sidecar container is a helper container that runs in the same pod as the main application and provides supporting functionality.**
+**A sidecar container is a helper container that runs in the <mark>same pod<mark> as the main application and provides supporting functionality.**
 
 Common Use Cases:
 
-- Logging agents (e.g., Filebeat)
-- Proxies (e.g., Envoy in Istio)
-- Data synchronization tools
-- Service mesh communication
+- **Logging agents (e.g., Filebeat)**
+- **Proxies (e.g., Envoy in Istio)**
+- **Data synchronization tools**
+- **Service mesh communication**
 
 ```
 containers:
@@ -417,9 +421,9 @@ containers:
 command: ["tail", "-f", "/dev/null"]
 ```
 
-- • Shares the same network namespace and volumes.
-- • Can start and stop independently of the main container.
-- • Promotes modularity and separation of concerns.
+- Shares the same network namespace and volumes.
+- Can start and stop independently of the main container.
+- Promotes modularity and separation of concerns.
 
 #### 16. What are Kubernetes Volumes and how do they differ from Docker volumes?
 
@@ -448,31 +452,31 @@ volumes:
 
 #### 17. Explain Kubernetes PersistentVolumes (PV) and PersistentVolumeClaims (PVC).
 
-1. Admin creates a PV or defines a StorageClass.
+1. **Admin creates a PV or defines a StorageClass**.
 2. User creates a PVC.
 3. Kubernetes binds a matching PV to the PVC.
 4. Pod mounts the PVC.
 
 Access Modes:
 
-- • ReadWriteOnce — one node read/write.
-- • ReadOnlyMany — multiple nodes read-only.
-- • ReadWriteMany — multiple nodes read/write.
+- <mark>**ReadWriteOnce — one node read/write**.<mark>
+- <mark>**ReadOnlyMany — multiple nodes read-only**.<mark>
+- <mark>**ReadWriteMany — multiple nodes read/write**.<mark>*
 
 #### 18. What is a Kubernetes ServiceAccount and when do you use it?
 
-A ServiceAccount provides an identity for pods to access the Kubernetes API or external
+**A ServiceAccount provides an identity for pods to access the Kubernetes API or external**
 
 
 Default Behavior:
 
-- • Every pod is associated with a default service account in its namespace.
-- • Tokens are automatically mounted into pods via /var/run/secrets/....
+- Every pod is associated with a default service account in its namespace.
+- Tokens are automatically mounted into pods via /var/run/secrets/....
 
 
 Use Cases:
 
-- • Granting fine-grained API permissions via RBAC.
+- Granting fine-grained API permissions via RBAC.
 - • Interacting with cloud provider APIs (e.g., via Workload Identity).
 
 ```
@@ -480,16 +484,19 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
 name: read-only
+```
 
+<mark>**Mounting in Pod:**<mark>
 
-Mounting in Pod:
-
+```
 spec:
 serviceAccountName: read-only
+```
 
 
-RBAC Binding Example:
+<mark>**RBAC Binding Example:**<mark>
 
+```
 kind: RoleBinding
 roleRef:
  kind: Role
@@ -502,13 +509,13 @@ subjects:
 
 #### 20. What is a Kubernetes Horizontal Pod Autoscaler (HPA) and how does it work?
 
-The Horizontal Pod Autoscaler (HPA) automatically scales the number of pods in a deployment, replication controller, or statefulset based on CPU/memory usage or custom metrics.
+The Horizontal Pod Autoscaler (HPA) automatically scales the number of pods in a deployment, **replication controller, or statefulset based on CPU/memory usage or custom metrics**.
 
 How it Works:
 
-- • Monitors pod metrics via the Metrics Server.
-- • If usage exceeds target thresholds, it increases replicas.
-- • If usage drops, it scales down.
+- **Monitors pod metrics via the Metrics Server**.
+- If usage exceeds target thresholds, it increases replicas.
+- If usage drops, it scales down.
 
 ```
 kubectl autoscale deployment myapp --cpu-percent=50 --min=2 --max=10
@@ -537,21 +544,21 @@ Dependencies:
 #### 24. What are Kubernetes Admission Controllers?
 
 
-Admission Controllers are plugins that intercept requests to the Kubernetes API after authentication and authorization but before persistence.
+**Admission Controllers are plugins that intercept requests to the Kubernetes API after authentication and authorization but before persistence.**
 
 Two Types:
 
-- • Validating Admission Controllers: Validate the request (e.g., resource quota).
-- • Mutating Admission Controllers: Modify the request (e.g., inject sidecar).
+- Validating Admission Controllers: Validate the request (e.g., resource quota).
+- Mutating Admission Controllers: Modify the request (e.g., inject sidecar).
 
 
 Examples:
 
-- • NamespaceLifecycle: Prevents deletion of system namespaces.
-- • LimitRanger: Enforces resource limits.
+- **NamespaceLifecycle**: Prevents deletion of system namespaces.
+- L**imitRanger**: Enforces resource limits.
 
-- • MutatingAdmissionWebhook: Used by Istio, Linkerd to inject proxies.
-- • ValidatingAdmissionWebhook: Used for custom validations.
+- **MutatingAdmissionWebhook**: Used by Istio, Linkerd to inject proxies.
+- **ValidatingAdmissionWebhook**: Used for custom validations.
 
 Use Case:
 
@@ -559,9 +566,9 @@ Use Case:
 
 #### 30. What is Kubernetes Pod Disruption Budget (PDB)?
 
-A **PodDisruptionBudget** ensures that a minimum number or percentage of pods in a deployment/statefulset remain available **during voluntary** disruptions, such as:
+<mark>A **PodDisruptionBudget** ensures that a minimum number or percentage of pods in a deployment/statefulset remain available **during voluntary** disruptions<mark>, such as:
 
-- Node drain
+- **Node drain**
 - Rolling updates
 - Maintenance tasks
 
@@ -582,10 +589,10 @@ selector:
 
 **Key Parameters:**
 
-- minAvailable: Minimum pods that must be running.
-- maxUnavailable: Maximum pods that can be down.
+- **minAvailable**: Minimum pods that must be running.
+- **maxUnavailable:** Maximum pods that can be down.
 
-**PDB does not apply to involuntary disruptions (e.g., hardware failure).**
+<mark>**PDB does not apply to involuntary disruptions (e.g., hardware failure).**</mark>
 
 
 ### 33. What is a Kubernetes ReplicaSet and how does it differ from a Deployment?
@@ -594,11 +601,11 @@ A ReplicaSet ensures that a specified number of pod replicas are running at all 
 
 Differences with Deployment:
 
-- **A Deployment is a higher-level controller that manages ReplicaSets and provides rolling updates, rollbacks, and more.**
+- <mark>**A Deployment is a higher-level controller that manages ReplicaSets and provides rolling updates, rollbacks, and more.**</mark>
 - A ReplicaSet is responsible for maintaining the desired pod count but does not manage deployments, upgrades, or rollbacks.
 
 
-#### 34. How does Kubernetes handle pod scheduling?
+#### 34. 💩💩💩 How does Kubernetes handle pod scheduling?
 
 Kubernetes uses the **Scheduler** to assign pods to nodes in the cluster based on resource availability, constraints, and other scheduling policies
 
@@ -648,7 +655,7 @@ Differences from Service:
 
 **Service** provides a stable endpoint for accessing a set of pods, generally used for internal communication.
 
-**Ingress** manages external access, typically for HTTP/S traffic, by defining routing rules based on URL paths, hostnames, etc.
+**Ingress** manages external access, **typically for HTTP/S traffic, by defining routing rules based on URL paths, hostnames**, etc.
 
 ```
 apiVersion: networking.k8s.io/v1
@@ -671,9 +678,9 @@ spec:
 
 Benefits:
 
-- URL path-based routing.
+- <mark>**URL path-based routing.**<mark>
 - SSL termination.
-- Load balancing and reverse proxy features.
+- **Load balancing and reverse proxy features**.
 
 #### 37. How does Kubernetes handle cluster upgrades?
 
@@ -748,13 +755,13 @@ To achieve high availability for the Kubernetes control plane:
 
 #### 44. What is the purpose of kubelet in Kubernetes?
 
-The kubelet is an agent that runs on each node in the cluster and ensures the containers in the pods are running as expected.
+**The kubelet is an agent that runs on each node in the cluster and ensures the containers in the pods are running as expected**.
 
 Responsibilities:
 
-- • Watches the API server for pod specifications and ensures the desired state is met on the node.
-- • Monitors containers and restarts them if necessary (e.g., if they crash).
-- • Reports node health to the API server.
+- **Watches the API server for pod specifications and ensures the desired state is met on the node**.
+- Monitors containers and restarts them if necessary (e.g., if they crash).
+- **Reports node health to the API server.**
 
 #### 49. What are Kubernetes Endpoints and how are they related to Services?
 
@@ -764,8 +771,8 @@ When a Service is created, Kubernetes automatically creates Endpoints objects th
 
 How They Work:
 
-- • **The Service proxy forwards requests to the endpoints associated with the service.**
-- • When a pod is added or removed, the list of endpoints is updated.
+- **The Service proxy forwards requests to the endpoints associated with the service.**
+- When a pod is added or removed, the list of endpoints is updated.
 
 #### 50. What is the purpose of kubectl drain and kubectl cordon?
 
@@ -780,5 +787,5 @@ kubectl cordon node1
 kubectl drain node1 --ignore-daemonsets
 ```
 
-- Draining a node before maintenance (e.g., upgrading hardware or OS).
-- Temporarily isolating a node from the cluster.
+- **Draining a node before maintenance (e.g., upgrading hardware or OS).**
+- **Temporarily isolating a node from the cluster.**

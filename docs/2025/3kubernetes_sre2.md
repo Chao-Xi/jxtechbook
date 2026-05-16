@@ -1,20 +1,20 @@
 
-## Part 1
+## Kubernetes SRE Part2
 
 ### 1. StatefulSet Pods Restart with Different Hostnames
 
-Issue: StatefulSet guarantees stable network identities. 
+**Issue: StatefulSet guarantees stable network identities.** 
 
 If pods restart with different hostnames, **it indicates the StatefulSet configuration might have been deleted and recreated, losing persistent identity**.
 
 Root Cause
 
-- PVCs or StatefulSet might have been deleted without volumeClaimTemplates.
+- PVCs or StatefulSet might have been deleted **without volumeClaimTemplates**.
 - Misconfigured storage class or persistent volume reclaim policy.
 
 Fix:
 
-- **Ensure StatefulSet uses volumeClaimTemplates**.
+- **<mark>Ensure StatefulSet uses volumeClaimTemplates</mark>**.
 - Avoid deleting the StatefulSet; **use kubectl apply or kubectl rollout.**
 - **Validate persistentVolumeReclaimPolicy is Retain to keep PVCs**.
 
@@ -22,9 +22,9 @@ Fix:
 
 **Root Cause:**
 
-* Readiness probes failing.
+* **Readiness probes failing**.
 * Inter-service networking issues.
-* Ingress timeout or service selector misconfiguration.
+* **Ingress timeout or service selector misconfiguration.**
 
 
 **Resolution:**
@@ -254,9 +254,9 @@ Look for cert or path issues in annotations.
 
 ## Part 2
 
-#### 1. What is the difference between ClusterIP and ExternalName service types?
+####  💩💩💩 1. What is the difference between ClusterIP and ExternalName service types?
 
-* ***ClusterIP (default): Exposes the service on an internal IP, accessible only within the cluster.**
+* **ClusterIP (default): Exposes the service on an internal IP, accessible only within the cluster.**
 * ExternalName: **Maps a service to an external DNS name via CNAME, no internal proxying**.
 
 ```
@@ -285,7 +285,7 @@ periodSeconds: 5
 failureThreshold: 3
 ```
 
-If the container fails 3 checks (over 15 seconds), it will be restarted automatically.
+<mark>**If the container fails 3 checks (over 15 seconds), it will be restarted automatically.**</mark>
 
 #### 3. How do you set up Pod Anti-Affinity rules?
 
@@ -306,7 +306,7 @@ topologyKey: "kubernetes.io/hostname"
 
 #### 4. Explain how Kubernetes RBAC integrates with third-party identity providers.
 
-Use OIDC (OpenID Connect) integration with identity providers like Google, Azure AD, or Okta.
+<mark>**Use OIDC (OpenID Connect) integration with identity providers like Google, Azure AD, or Okta.**</mark>
 
 **1. Enable OIDC in the API server:**
 
@@ -330,9 +330,9 @@ helm repo add autoscaler https://kubernetes.github.io/autoscaler
 CA monitors unschedulable pods and scales nodes up/down accordingly.
 
 
-#### 10. How do you handle stuck finalizers during resource deletion?
+#### 💩💩💩 10. How do you handle stuck finalizers during resource deletion?
 
-Resources with finalizers won't delete until cleanup logic runs.
+<MARK>**Resources with finalizers won't delete until cleanup logic runs.**</MARK>
 
 **View the finalizers:**
 
@@ -426,12 +426,12 @@ volumes:
       claimName: my-pv
 ```
 
-#### 17. How do you manage dynamic secrets in Kubernetes for applications?
+#### 💩💩 17. How do you manage dynamic secrets in Kubernetes for applications?
 
 
-* HashiCorp Vault with Vault Agent Injector.
+* **HashiCorp Vault with Vault Agent Injector**.
 * AWS Secrets Manager + CSI Driver
-* External Secrets Operator
+* **External Secrets Operator**
 
 
 **Vault injects secrets into pods using sidecar.**
@@ -446,7 +446,7 @@ annotations:
 ```
 
 
-#### 18. How would you perform a rolling update of a ConfigMap without downtime?
+#### 18. <MARK>How would you perform a rolling update of a ConfigMap without downtime?</mark> 💩💩💩💩 <MARK>"annotations:  configmap-checksum"</mark>
 
 **ConfigMaps are not automatically updated in running pods.**
 
