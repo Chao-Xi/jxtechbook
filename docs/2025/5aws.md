@@ -170,7 +170,7 @@ AWS CloudWatch 是一种监控和日志记录服务，可以提供 AWS 资源和
 
 
 * **监控指标**： CloudWatch 可用于监控 EC2、RDS、Lambda、S3、EBS 等 AWS 资源的性能。
-* **日志收集**： 通过 CloudWatch Logs 收集并分析来自应用程序、操作系统和其他资源的日志。
+* **日志收集**： 通过 CloudWatch Logs 收集并**分析来自应用程序、操作系统和其他资源的日志**。
 * **报警设置**： 可以设置阈值报警，当某些指标超过设定值时触发报警。
 * **自动化响应： 基于 CloudWatch 的监控和报警，可以自动触发 AWS Lambda 函数或 Auto Scaling 操作。**
 
