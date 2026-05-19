@@ -1,4 +1,217 @@
-## 1. Configmap reloader
+
+## 1 ConfigMap / Secret 的两种使用方式
+
+### 方式 1：作为环境变量注入（env / envFrom）
+
+容器启动时一次性把配置打进环境变量；**后续 ConfigMap/Secret 更新不会自动生效，必须重建 Pod**。
+
+#### ConfigMap 示例
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  LOG_LEVEL: info
+  DB_HOST: db.example.com
+```
+
+Pod 引用：
+
+```yaml
+spec:
+  containers:
+  - name: app
+    image: myapp:1.0
+    env:
+    - name: LOG_LEVEL
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: LOG_LEVEL
+    envFrom:                # 批量导入所有 key
+    - configMapRef:
+        name: app-config
+```
+
+#### Secret 示例（存敏感数据，默认 base64）
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+type: Opaque
+data:
+  DB_USER: YWRtaW4=          # echo -n "admin" | base64
+  DB_PASS: cGFzc3dvcmQxMjM=
+```
+
+Pod 引用：
+
+```yaml
+env:
+- name: DB_USER
+  valueFrom:
+    secretKeyRef:
+      name: db-secret
+      key: DB_USER
+```
+
+**特点总结**
+
+- ✅ 简单、适合少量配置
+- ❌ **不支持热更新**，改了必须重启 Pod
+- ❌ 不适合大配置文件
+
+
+
+### 方式 2：挂载为 Volume 文件（推荐）
+
+把 ConfigMap/Secret 当作目录或文件挂载到容器内；**kubelet 会定期同步更新（默认约 60 秒），但应用需自己重载**。
+
+#### ConfigMap 挂载示例
+
+```yaml
+spec:
+  containers:
+  - name: app
+    image: myapp:1.0
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+      readOnly: true
+  volumes:
+  - name: config-volume
+    configMap:
+      name: app-config
+```
+容器内路径：
+
+- `/etc/config/LOG_LEVEL`
+- `/etc/config/DB_HOST`
+
+如果 ConfigMap 里存完整 `application.yml`：
+```yaml
+data:
+  application.yml: |
+    spring:
+      log:
+        level: info
+```
+
+挂载后：`/etc/config/application.yml`
+
+#### Secret 挂载示例
+```yaml
+volumes:
+- name: secret-volume
+  secret:
+    secretName: db-secret
+volumeMounts:
+- name: secret-volume
+  mountPath: /etc/secret
+```
+
+**重要：不要用 subPath**
+
+```yaml
+# 不推荐：subPath 会阻止自动更新
+volumeMounts:
+- name: config-volume
+  mountPath: /etc/config/app.yml
+  subPath: app.yml
+```
+→ **subPath 挂载不会自动同步更新**。
+
+**特点总结**
+
+- ✅ 支持**文件级热更新**（kubelet 自动同步）
+- ✅ 适合大配置、完整配置文件
+- ⚠️ **应用必须主动 reload**，否则内存里还是旧配置
+
+### 二、热更新怎么实现（Volume 挂载前提下）
+
+#### 1）应用自身监听文件变化（最干净）
+
+适合能改代码的场景：
+
+- Java：Spring Cloud Config / Spring Boot 自带 refresh
+- Python：watchdog 库
+- Go：fsnotify
+
+伪代码（Python）：
+
+```python
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+class ReloadHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        if event.src_path == "/etc/config/application.yml":
+            reload_config()  # 重新加载配置到内存
+
+observer = Observer()
+observer.schedule(ReloadHandler(), "/etc/config", recursive=False)
+observer.start()
+```
+
+#### 2）Sidecar 容器监听 + 发信号（不改主应用代码）
+
+用 `jimmidyson/configmap-reload` 或自定义脚本，监听 ConfigMap/Secret 变化，给主容器发 `SIGHUP` 或调用 `/reload` 接口。
+
+示例：
+```yaml
+spec:
+  containers:
+  - name: app
+    image: myapp:1.0
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+  - name: reloader
+    image: jimmidyson/configmap-reload:v0.11.0
+    args:
+    - --volume-dir=/etc/config
+    - --webhook-url=http://localhost:8080/reload
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+```
+
+#### 3）用 “checksum 注解” 触发滚动重启（最稳，生产常用）
+
+**把 ConfigMap/Secret 的 hash 写到 Deployment 注解，配置一变 hash 就变 → Deployment 滚动重建 Pod。**
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  template:
+    metadata:
+      annotations:
+        configmap-hash: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+```
+或 kubectl 直接 patch：
+
+```bash
+kubectl patch deployment app -p \
+'{"spec":{"template":{"metadata":{"annotations":{"configHash":"'$(date +%s)'"}}}}}'
+```
+
+#### 4）Stakater Reloader（一键自动滚动更新）
+
+集群部署 Reloader，它会 watch ConfigMap/Secret，变化后自动触发相关 Deployment/StatefulSet 滚动更新。
+
+
+- **环境变量（env）**：一次性注入，**不支持热更新**，改了必须重启 Pod。
+- **Volume 挂载**：kubelet 会**自动同步文件**，但**应用要自己 reload**；不想改代码就用 Sidecar 或 Reloader；追求稳定就用 **hash 注解滚动重启**。
+
+
+## 2. Configmap reloader
 
 Configmap或Secret使用有两种方式，
 
@@ -39,7 +252,7 @@ spec:
 
 指定一个特定的configmap或者secret，只有在我们指定的配置图或秘密被改变时才会触发滚动升级，这样，它不会触发滚动升级所有配置图或秘密在部署，后台登录或状态设置中使用。
 
-一个制定`deployment`资源对象，在引用的`configmap`或者`secret`种，**只有`reloader.stakater.com/match: "true"`为`true`才会出发更新，为`false`或者不进行标记，该资源对象都不会监视配置的变化而重启。**
+<mark>一个制定`deployment`资源对象，在引用的`configmap`或者`secret`种，**只有`reloader.stakater.com/match: "true"`为`true`才会出发更新，为`false`或者不进行标记，该资源对象都不会监视配置的变化而重启。**</mark>
 
 ```
 kind: Deployment
@@ -53,6 +266,8 @@ spec:
 ### **指定cm**
 
 **例如：一个deploy有挂载`nginx-cm1`和`nginx-cm2`两个`configmap`，只想`nginx-cm1`更新的时候deploy才发生滚动更新，此时无需在两个cm中配置注解，只需要在deploy中写入`configmap.reloader.stakater.com/reload:nginx-cm1`，**其中`nginx-cm1`如果发生更新，`deploy`就会触发滚动更新。
+
+**configmap.reloader.stakater.com/reload: "nginx-cm1"**
 
 如果多个cm直接用逗号隔开
 
@@ -110,6 +325,115 @@ metadata:
 spec:
   template: metadata:
 ```
+
+
+## Kubernetes volumeMounts 中 **path / mountPath / subPath** 最全区别
+
+### 1. 三个字段定义
+
+- **mountPath**：**容器内最终挂载目录**（必填）
+- **path**：**宿主机/源卷里的子路径**（从源卷截取目录/文件）
+- **subPath**：**在 mountPath 内单独挂载单个文件/子目录，不覆盖整个目录**
+
+---
+
+### 2. 核心本质区别
+
+#### 1）mountPath
+
+```yaml
+volumeMounts:
+- name: cm-vol
+  mountPath: /etc/app/config
+```
+
+<mark>把**整个卷**全部挂载到容器 `/etc/app/config`  **会清空容器原目录所有文件**</mark>
+
+### 2）path（卷源侧路径）
+
+```yaml
+volumes:
+- name: cm-vol
+  configMap:
+    name: app-cm
+    path: conf/shturl.
+```
+只取 ConfigMap 里 `conf/shturl.` 这个**源文件**
+
+#### 3）subPath（最常用、坑最多）
+
+```yaml
+volumeMounts:
+- name: cm-vol
+  mountPath: /etc/app/config/shturl.
+  subPath: shturl.
+```
+**只挂载单个文件，不覆盖容器原有目录**-
+
+### 3. 最关键两大差异（面试必问）
+
+#### ① 目录覆盖区别
+
+1. **只用 mountPath 无 subPath** 挂载后 **清空容器目标目录原有文件**
+2. **加 subPath** **只覆盖指定单个文件**，容器目录其他文件保留
+
+#### ② 热更新致命区别（重中之重）
+
+- **纯 mountPath 挂载目录**
+  ConfigMap/Secret 更新 → **kubelet 自动同步文件**，支持热更新
+
+- **使用 subPath 挂载文件**
+  **不会自动热更新**！修改配置 Pod 内文件不变
+  原因：subPath 是硬链接挂载，kubelet 不会刷新
+
+### 4. 实用场景
+
+#### 场景1：整目录配置，需要热更新
+
+```yaml
+volumeMounts:
+- name: config-vol
+  mountPath: /etc/config
+# 不用 subPath
+```
+
+✅ 配置更新自动同步
+
+
+#### 场景2：只想替换**单个配置文件**，保留容器其他配置
+
+```yaml
+volumeMounts:
+- name: config-vol
+  mountPath: /etc/nginx/shturl.cc/
+  subPath: shturl.cc/
+```
+
+- ✅ 不删 nginx 其他配置文件
+- ❌ **无法热更新**
+
+#### 场景3：只想取卷内某个子文件夹
+
+```yaml
+volumes:
+  configMap:
+    name: app-cm
+    path: subdir/
+```
+
+
+### 5. 极简总结
+
+1. **mountPath**：容器内挂载位置
+2. **path**：源卷截取路径
+3. **subPath**：单文件挂载、**保留容器原有目录**
+4. **热更新结论**
+   - 挂载**目录** → 支持自动更新
+   - 使用**subPath** → **不支持自动更新**
+5. 生产最佳实践
+   - 需要热更新：**不用 subPath，直接挂目录**
+   - 必须单文件挂载：配合 **Reloader 重启Pod**
+
 
 
 ## 2. Subpath vs Path

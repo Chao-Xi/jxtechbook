@@ -280,7 +280,7 @@ find ./ -name "*.log" | xargs grep "OutOfMemory"
 
 ### 1 区别：定位不同
 
-wget：专注于下载，curl：专注于数据传输
+<mark>**wget：专注于下载，curl：专注于数据传输**</mark>
 
 简单来说，如果你想下载文件，用wget；如果你想调试API、传输复杂数据，用curl。
 
