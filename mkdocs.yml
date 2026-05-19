@@ -172,6 +172,7 @@ nav:
     - '2 SRE Interview Questions and Answers - Chinese': '2025/1SRE-cn.md'
     - '2 2026 DevOps + AWS 面试': '2025/sre/2026sre.md'
     - '2 2026 DevOps Interview - AI version': '2025/sre/2026devops.md'
+    - '2026 DevOps Gitlab': '2025/sre/2026gitlab.md'
     - '2 2025 最新字节跳动运维云原生面经分享': '2025/13tiktok.md'
     - '3 Ansible Interview Question': '2025/2Ansible.md'
     - '4 250 Linux Scenario Based Interview': '2025/3linux.md'

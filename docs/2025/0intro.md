@@ -35,9 +35,11 @@ And after that, I was internal transfered to Global Investmen bank research team
 
 Woked with global team to migrate global research analyst platform to China region mainly like, setup on-premise datacenter for different envionments like servers, LBers, NAS storage, and deployed middlewares and service like postgres, ES, kafka, nginx, tomcat etc with Gilab-CI as CI pipeline and designed new puppet modules as CD pipeline. To automate all buildout step to avoid any manual jobs
 
-And aprart from this project. And now I'm work in gobal team to manage and operate the global systems. Like helped and setup OpenAI service in Azure cloud with terraform code, Azure Devops pipeline to automate the setup process. And Helped setup Azure translate service in HCI AKS cluster for Chinese-Eng translate service specific for China analyst
+And aprart from this project. And now I'm work in gobal team to manage and operate the global systems. Like helped and setup OpenAI service in Azure cloud with terraform code, Azure Devops pipeline to automate the setup process. 
 
-Recently I working on NEW project with Vault, Azure AD and PWM API to help automate password rotaion process to replace any manul jobs to rorate account password in yearly basis
+And right now I'm working with Micsoft azure team to build out Azure congnitive AI translate service in HCI AKS cluster now it’s called Azure local Cluster for Chinese-Eng translate service for China analyst specially 
+
+It’s is hybrid setup， one end is on public cloud to receive token usage,I build out service on public cloud via terraform and gitlabCICD to deploy the service. Anthor end is running on on-premise datacenter AKS cluster. I’building out HELM chart via gitlab CICD pipeline, included AKV to store the service secret, haproxy as ingress since nginx ingress retired these days. And use loki and prometheus to pull metrics and logs from service and view the data on Grafana
 
 Besides these, I passed AWS solutions architect test and azure solution expert test az305 and Certified Istio service mesh and gitlab CICD test, 
 
@@ -75,11 +77,10 @@ Worked with global team to migrate global research analyst platform to China reg
 
 And aprart from this project. And now I'm work in gobal team to manage and operate the global systems. Like helped and setup OpenAI service in Azure cloud with terraform code, Azure Devops pipeline to automate the setup process.
 
-Recently I completed one PWM project with Vault, With Azure AD and PWM API to help automate password rotation process to replace any manual jobs 
 
-> to rotate account password in yearly basis
+And right now I'm working with Micsoft azure team to build out Azure congnitive AI translate service in HCI AKS cluster now it’s called Azure local Cluster for Chinese-Eng translate service for China analyst
 
-And right now I'm working with Micsoft azure team to build out Azure congnitive AI translate service in HCI AKS cluster for Chinese-Eng translate service for China analyst
+It’s is hybrid setup， one end is on public cloud to receive token usage,I build out service on public cloud via terraform and gitlabCICD to deploy the service. Anthor end is running on on-premise datacenter AKS cluster. I’building out HELM chart via gitlab CICD pipeline, included AKV to store the service secret, haproxy as ingress since nginx ingress retired these days. And use loki and prometheus to pull metrics and logs from service and view the data on Grafana
 
 Besides these, I passed AWS solutions architect test and azure solution expert test az305 and Certified Istio service mesh and gitlab CICD test, 
 
