@@ -2,69 +2,8 @@
 
 ## 1 System Software Engineer / Platform Operations 面试题库（Python + Linux Shell + 运维平台）
 
-下面这份偏向“高级系统工程师 / 平台运维工程师（Platform Operations）”方向，重点覆盖：
 
-* Linux 系统
-* Shell Script
-* Python 自动化
-* 系统设计
-* Troubleshooting
-* DevOps / CI/CD
-* 网络
-* 监控
-* 高可用
-* 实际场景题
-
-适合：
-
-* Senior System Engineer
-* SRE
-* Platform Operations
-* Infrastructure Engineer
-* DevOps Engineer
-
----
-
-
-
-我目前主要专注于 Linux 平台运维、自动化和系统稳定性方向，日常工作会使用 Python 和 Shell Script 来做：
-
-* 自动化运维
-* 日志分析
-* 系统巡检
-* CI/CD 流程
-* 服务部署
-* 故障排查
-
-我比较熟悉 Linux 系统管理，包括：
-
-* systemd
-* networking
-* process management
-* performance tuning
-* shell scripting
-
-在自动化方面，我经常使用 Python 编写：
-
-* API integration
-* 自动化脚本
-* deployment tools
-* monitoring scripts
-* data processing tools
-
-另外我也有处理 production issue 的经验，例如：
-
-* CPU spike
-* memory leak
-* disk full
-* service crash
-* network latency
-
-我比较擅长的问题是：
-“如何把重复性的系统操作自动化，并提高平台稳定性”。
-
-
-### Q2：Linux 中查看 CPU 使用率的命令有哪些？
+### Q1：Linux 中查看 CPU 使用率的命令有哪些？
 
 常见命令
 

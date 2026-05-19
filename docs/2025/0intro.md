@@ -39,7 +39,7 @@ And aprart from this project. And now I'm work in gobal team to manage and opera
 
 And right now I'm working with Micsoft azure team to build out Azure congnitive AI translate service in HCI AKS cluster now it’s called Azure local Cluster for Chinese-Eng translate service for China analyst specially 
 
-It’s is hybrid setup， one end is on public cloud to receive token usage,I build out service on public cloud via terraform and gitlabCICD to deploy the service. Anthor end is running on on-premise datacenter AKS cluster. I’building out HELM chart via gitlab CICD pipeline, included AKV to store the service secret, haproxy as ingress since nginx ingress retired these days. And use loki and prometheus to pull metrics and logs from service and view the data on Grafana
+It’s is hybrid setup， one end is on public cloud to receive token usage,I build out service on public cloud via terraform code and gitlabCICD to deploy the service. Anthor end is running on on-premise datacenter AKS cluster. I’m building out container server with HELM chart and deploy via gitlab CICD pipeline, included other service like AKV to store the service secret, haproxy as ingress since nginx ingress retired these days. And use loki and prometheus to pull metrics and logs from service and view the data on Grafana
 
 Besides these, I passed AWS solutions architect test and azure solution expert test az305 and Certified Istio service mesh and gitlab CICD test, 
 
@@ -91,7 +91,7 @@ I also create multiple tutorial books for my colleague this year mainly about Az
 
 #### Pursue New career path 
 
-*  In the financial company, I dont see my future here. Cause, comparing to new techs, codes or new solutions, they are more concern about procedures. Every day, I spend more times on writing documents, go-through steps, meeting with compliance team than working on my codes and my operations jobs. And I dont' even have any chance to learn new techs here. Thus I feel like I gonna be wasted in this team for longer time. 
+*  In the financial company, I dont see my future here. Cause, comparing to new techs, codes or new solutions, they are more concern about procedures and policy. Every day, I spend more times on writing documents, go-through steps, meeting with compliance team than working on my codes and my operations jobs. And I dont' even have any chance to learn new techs here. Thus I feel like I gonna be wasted in this team for longer time. 
 
 
 Second Still is I can say our application is quite heavy service and old setup and the core service is using vendor service. Thus the service is still setting on on-premise data centers. So most of tech stacks are using traditional setup not container. Exp, in next couple years, our most critical project is migrating services from redhat 7 to redhat 8 for all regions. So I hope I can find any opportunity to work on some projects with trendy tech stacks like containerlization, cloud, service mesh etc
@@ -299,3 +299,14 @@ And use cloudwatch and sms to monitor the aws resource and use prometheus and EK
 * Autoscaling
 * decommission resources that you no longer need, stop resources that are temporarily not needed
 * Merge low used resource, like some rds, we used shared rds instead.
+
+
+### 5 operation
+
+
+减少 manual operation。
+
+- Reliability: **retry / timeout / rollback**
+- Observability: **metrics / logs / tracing**
+- Scalability: **concurrency / async processing**
+- Fault Tolerance: **graceful degradation / failure isolation**
