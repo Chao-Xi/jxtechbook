@@ -188,6 +188,8 @@ nav:
     - '3 GIT CE TEST': '2025/sre/3git.md'
     - '5 Jump Trading Interview (code)': '2025/sre/5jump_trade.md'
     - '2025 interview': '2025/1interview2025.md'
+  - 'AI Interview':
+    - '1 Agent 面试': '2026/1agent.md'
   - 'Prualsight':
     - '1 Linux Fundamentals': '2025/sreln/2Linux_test.md'
     - '1 Using Kubernetes as a Developer': '2025/sreln/1k8s_dev.md'
