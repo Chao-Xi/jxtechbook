@@ -53,11 +53,15 @@ After I graduated, I took a job in startup company named Wrevel in New York city
 
 And then after one year, I finished my project and made my decision to came back to Shanghai and working as DevOps engineer in Blackboard. The Blackboard is a company which provides online teaching and learning SAAS system for universities and companies
 
-**My projects mainly include migrating the old CI/CD tool jenkins servers and jobs from on-premsie servers lab to AWS cloud** including AWS infrastructure and jenkins servers build with AWS Cloudformation and ansible playbook. Move jenkins master from servers to Docker, convert all old and manually created jenkins jobs to groovy and script code. And I also created and moved part of jenkins servers and jobs from ec2 and dockers to kubernets cluster, try to achieve the dynamic spinning up and removing jenkins agents based on buildout requirement.
+**My projects mainly include migrating the old CI/CD tool jenkins servers and jobs from on-premsie servers lab to AWS cloud** including AWS infrastructure and jenkins servers build with AWS Cloudformation and ansible playbook. Move jenkins master from servers to Docker, convert all old and manually created jenkins jobs to groovy and script code. 
+
+> And I also created and moved part of jenkins servers and jobs from ec2 and dockers to kubernets cluster, try to achieve the dynamic spinning up and removing jenkins agents based on buildout requirement.
 
 **After that I landed my new opportunity in SAP Jam and Workzone team and working as Senior DevOps engineer.**
 
-Our application is build with ruby on rails in Docker, besides writing code and operate our DCs with Chef-solo. My most important project is build our Jam application with Kubernetes on AWS and Azure from scratch and convert part of monolithic services to micro service.
+Our application is build with ruby on rails in Docker, besides writing code and operate our gloabl DCs with Chef-solo. 
+
+My most important project is build our Jam application with Kubernetes on AWS and Azure from scratch and convert part of monolithic services to micro service.
 
 The whole procedures like, containerize our infrastructure components like Elasticsearch, RabbitMQ and Haproxy etc. Set up Kubernetes Cluster on Azure via AKS and on AWS with EKS with Terraform Code. Build out Cloud Infrastructure like CDN, S3(Storage account), RDS MySQL with Terraform code.
 
@@ -65,11 +69,13 @@ Use HELM Chart and kustomise, with GitOps way and ArgoCD as CD tool to deploy al
 
 Monitor Cluster with Prometheus Operator, writing or own ServiceMonitor and Metrics / Exporter and AlertManger to help us collect data from a variety of sources and report alert.
 
-And I also enabled Service Mesh inside the cluster. Install Istio and enable envoy sidecar inject in our main namespace and track the network tracing and enable mutual X509 TLS service call from internal and external.
+> And I also enabled Service Mesh inside the cluster. Install Istio and enable envoy sidecar inject in our main namespace and track the network tracing and enable mutual X509 TLS service call from internal and external.
 
-When I was wokring new Product called DWZ(Digital Work ZONE). And also trying to move part of our service components from Self maintenance like objectstore, rabbitmq and Log service to SAP BTP platform.
+> When I was wokring new Product called DWZ(Digital Work ZONE). And also trying to move part of our service components from Self maintenance like objectstore, rabbitmq and Log service to SAP BTP platform.
 
 And then I came to UBS. In UBS Shanghai I worked in china AM(Assesst management) team firstly, I mainly work as Cloud archiect, work with Wind infra team and Microsoft team. Design and setup the hybrid cloud infra for the WIND market data service which helps onboard the service on Azure public cloud as upstram data resource and send the data to on-premise downstream AM trading system.  
+
+And also worked as Infra engineer and project manager, corrdinate with different team to finish AM system like DB upgrade, datacenter migration, also include express lines migration working with different orgs and brokere
 
 And after that, I was internal transfered to Global IB research team as Senior Devops Engineer.
 
@@ -78,7 +84,7 @@ Worked with global team to migrate global research analyst platform to China reg
 And aprart from this project. And now I'm work in gobal team to manage and operate the global systems. Like helped and setup OpenAI service in Azure cloud with terraform code, Azure Devops pipeline to automate the setup process.
 
 
-And right now I'm working with Micsoft azure team to build out Azure congnitive AI translate service in HCI AKS cluster now it’s called Azure local Cluster for Chinese-Eng translate service for China analyst
+And right now I'm working with Micsoft azure team to build out Azure congnitive AI translate service in HCI AKS cluster now it’s called Azure local Cluster for Chinese-Eng translate service for China analyst.
 
 It’s is hybrid setup， one end is on public cloud to receive token usage,I build out service on public cloud via terraform and gitlabCICD to deploy the service. Anthor end is running on on-premise datacenter AKS cluster. I’building out HELM chart via gitlab CICD pipeline, included AKV to store the service secret, haproxy as ingress since nginx ingress retired these days. And use loki and prometheus to pull metrics and logs from service and view the data on Grafana
 
@@ -90,6 +96,16 @@ I also create multiple tutorial books for my colleague this year mainly about Az
 
 
 #### Pursue New career path 
+
+1 I already work as devops eng over 8 years. I always want improve my career into a new level. I’m pursuing SRE or system support enginner, because I’m quite interesting about reliability engineering. I deeply value my DevOps experience. It especially focus on automation, CI/CD, cloud migration, and new service collaboration. But I also help I can  balances speed with reliability targets (SLIs/SLOs). I’d like to working on designing resilient systems to reducing error budgets, improve service performance, site reability and treating operations as a software problem.
+
+
+1 I want to pursue a new career path I working in a global team, this team actually based in LDN.. And since I'm only one here in Shanghai. all my teammats are based in Pune India and LDN. Although I enjoy my work alone with the my current team, while I'd like to work in more collaborative environments. from what I have more chance to learn from each other here
+
+
+
+
+
 
 *  In the financial company, I dont see my future here. Cause, comparing to new techs, codes or new solutions, they are more concern about procedures and policy. Every day, I spend more times on writing documents, go-through steps, meeting with compliance team than working on my codes and my operations jobs. And I dont' even have any chance to learn new techs here. Thus I feel like I gonna be wasted in this team for longer time. 
 
