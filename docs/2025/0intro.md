@@ -102,8 +102,7 @@ I also create multiple tutorial books for my colleague this year mainly about Az
 
 1 I want to pursue a new career path I working in a global team, this team actually based in LDN.. And since I'm only one here in Shanghai. all my teammats are based in Pune India and LDN. Although I enjoy my work alone with the my current team, while I'd like to work in more collaborative environments. from what I have more chance to learn from each other here
 
-
-
+3 I saw the JD, this role is quite attractive to me. I can get in touch with multiple projects and provide my cloud expetise. Actucally I do have lots of experience on Azure, convert infra as code, like terraform, DSC, azure devops pipelien, AWS cloudfomration  I think I'm perfect for this role 
 
 
 
