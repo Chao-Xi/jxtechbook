@@ -1,0 +1,8246 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Jacob's 系统性能&Linux调优技术与实战教程">
+      
+      
+        <meta name="author" content="Jacob Xi">
+      
+      
+        <link rel="canonical" href="https://chao-xi.github.io/jxtechbook/2026/1agent/">
+      
+      
+        <link rel="prev" href="../../2025/1interview2025/">
+      
+      
+        <link rel="next" href="../../2025/sreln/2Linux_test/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../images/logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>1 Agent 面试 - Jacob Performance&Linux Book</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="light-green" data-md-color-accent="light-green">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#1-agent" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Jacob Performance&amp;Linux Book" class="md-header__button md-logo" aria-label="Jacob Performance&Linux Book" data-md-component="logo">
+      
+  <img src="../../images/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Jacob Performance&Linux Book
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              1 Agent 面试
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Chao-Xi/jxtechbook.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jxtechbook
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Jacob Performance&amp;Linux Book" class="md-nav__button md-logo" aria-label="Jacob Performance&Linux Book" data-md-component="logo">
+      
+  <img src="../../images/logo.png" alt="logo">
+
+    </a>
+    Jacob Performance&Linux Book
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Chao-Xi/jxtechbook.git" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    jxtechbook
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Welcome
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    系统基础设施优化
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    系统基础设施优化
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap1/1CPU_Cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一节 代码让CPU执行得更快 — CPU缓存
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap1/2Mem_Pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二节 内存池提升内存分配的效率
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap1/3Hash_index/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三节 哈希表利用索引管理亿级对象
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap1/4PageCache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四节 磁盘高效地传输文件零拷贝：PageCache
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap1/5Coroutine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五节 协程快速地实现高并发服务：Coroutine
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap1/6Locks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第六节 据业务场景选择合适的锁
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    系统层网络优化
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    系统层网络优化
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap2/1broadcast_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一节 一对多通讯如何实现
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap2/2C10M/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二节 C10M是如何实现事件驱动
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap2/3tcp3shakehand/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三节 提升TCP三次握手的性能
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap2/4tcpshutdown/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四节 提升TCP四次挥手的性能
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap2/5tcpchachepool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五节 TCP缓冲区兼顾并发数量与传输速度
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap2/6tcpcongestion/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第六节 调整TCP拥塞控制的性能
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    分布式系统优化
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    分布式系统优化
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/1Mon_perf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一节 通过监控找到性能瓶颈
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/2perf_cap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二节 舍弃一致性去换取性能的CAP理论
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/3perf_akf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三节 AKF立方体可扩展性来提高性能
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/4perf_nwr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四节 NWR算法修改读写模型以提升性能
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/5nginx_openresty/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五节 负载均衡：选择Nginx还是OpenResty
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/6hash_consistent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第六节 一致性哈希的均衡负载
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/7cache_expire/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第七节 过期缓存防止缓存被流量打穿
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/8message_queue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第八节 消息队列基于异步消息提升性能
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/9map_reduce/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第九节 MapReduce通过集群实现离线计算
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap3/10DB_choice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第十节 权衡关系数据库与NoSQL数据库
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IT运维面试问题总结
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    IT运维面试问题总结
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/1Linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一节 IT运维面试问题总结- Linux基础
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/2Linux_SVC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二节 IT运维面试问题总结-基础服务、磁盘管理、虚拟平台和系统管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/3Linux_tools/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三节 IT运维面试问题总结-运维工具、开源应用(Ceph、Docker、Apache、Nginx等)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/4Linux_db_dia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四节 IT运维面试问题总结-数据库、监控、网络管理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/5k8s_OpenShift/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五节 IT运维面试问题总结-简述Etcd、Kubernetes、Lvs、HAProxy等
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/6Py_interview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第六节 Python面试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/7Pro_interview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第七节 prometheus：要点总结及面试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/8Data_ana_interview1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L8 Data Analyst Interview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/8Data_ana_interview2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第八节 分析岗笔试/面试知识点
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/9Data_ML_interview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L9 Top 50 Machine Learning Interview Questions & Answers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/10Deep_learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L10 30 Frequently asked Deep Learning Interview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/11Redis_rev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L11 Redis 核心技术考题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/12ES_rev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L12 ES 期末考试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/13istio_rev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L13 Istio面试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/14sre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L14 SRE本质就是一个懂运维的资深开发
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/15prometheus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L15 Top Prometheus Interview Questions and Answers (2022)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/16jenkins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L16 Top Jenkins Interview Questions and Answers (2022)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/17devops_int2023/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L17 DevOps Engineer: 30+ Interview Questions and Answers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap4/18helm2023/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L18 Helm指南：Kubernetes包管理器简介
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python 面试题与总结
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python 面试题与总结
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/1Apple_3sum/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1、Apple Interview(3Sum)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/2Python_interview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2、Python Interview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/3GS_longest_substr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3、Longest substring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/4GS_remove_sort_list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4、Remove duplicate in Sort List
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/5Sort_list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5、Reverse Sort List
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/6RM_dup_dict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6、Remove duplicate from dictionary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/7Find_max/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7、Find Maxmium number count in list and nth number
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/8gs_interview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8、GS Interview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/9Substring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9、Find substring inside String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/10reverse_string/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10、Reverse String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/11zeroinN/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11、Count how many zero in N!
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/12JumpGame/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12、Jump Game
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap5/13Gs_int/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13、GS interview preparation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux 面试题与总结
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux 面试题与总结
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/1Linux_perf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L1 1min 内对 Linux 进行性能诊断
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/2Linux_load_avg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L2 当面试官问你load average时，怎么回答？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/3Linux_inode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L3 文件系统inode
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/4Linux_ops_int/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L4 运维必须掌握的Linux面试题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/5Linux_network_int/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L5 常见网络编程面试题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/6Git_principle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L6 Git 实用技巧记录
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/7LoadBalancer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L7 深入浅出负载均衡
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/8Linux_all/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L8 Linux 面试题 合集CDN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/9Linux_five/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L9 Linux面试最高频的5个基本问题（CPU+COMMMAND)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/10haproxy_learn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L10 HAProxy从零开始到掌握
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/12Linux_vir_file/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L12 从 lsof 开始，深入理解 Linux 虚拟文件系统
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/linux_rew/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux review
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/13Linux_ts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L13 Linux故障排查思路及常用命令
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/14Linux_iptables/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L14 Linux iptables命令详解
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap6/15linux_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    L15 Linux网络基础与性能优化
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Companies Interview
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Companies Interview
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap7/1Ms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 Microsoft Interview2021
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap7/2Ms_al/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 Microsoft Interview Algorithm 2021
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap7/3ubs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 UBS interview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap7/4MorganS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 Morgan Stanly 2021
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap7/5apple/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 Apple 2021
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap7/6aws/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 AWS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap7/7tesla/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 Tesla
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap7/my/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    My Interview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap7/int_anws/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架构师面试合集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux 常用命令
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Linux 常用命令
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/0shell_cmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0 Shell命令行一些快捷键组合
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/0shell_linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0 Linux常用命令
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/16linux_ops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0 Linux 实用运维命令 - Update
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/1shell_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 Shell 分析服务器日志命令
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/1log_man/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 Log: 用 awk + grep + sed搞定日志处理神器组合拳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/2linux_locate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 Linux 系统下查找文件命令总结
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/3devops_shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 Basic Shell Scripting for Devops
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/4Basic_shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 基本 shell 脚本 系统+文件+卷+时间
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/5install_shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 Shell Package 安装+配置脚本
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/6mon_shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 监控 Shell 脚本
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/7net_shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 网络+数据库 Shell 脚本
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/8secret_shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 Secret shell 脚本
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/9script_shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 Linux script 录播
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/10linux_unlink/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 使用 unlink 删除文件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/11linux_ip_port/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 如何在 Linux 下限制端口仅对指定 IP 开放访问
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/12socat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 Linux 命令 socat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/14linux_shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 Linux shell 脚本详解学习 2023
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/15grep_learn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 使用grep分析日志
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/17file_opt/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 Linux File Operation (df/du/rsync/批量删除/定时备份)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/18linux_var/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    17 Shell script中的8个常用的特殊变量
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/19curl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    18 Curl的10个高级用法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/20shell_dir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    19 Shell脚本执行不再受限，不进入所在目录也能成功运行
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/21shell_eva/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    20 Bash脚本多函数使用eval提高脚本编写效率！
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/22find/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21 使用find命令轻松查找文件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/22find/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    21 使用find命令轻松查找文件
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/24xargs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    23 xargs命令的使用技巧
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/25shell_script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    24 快速提升Shell脚本能力
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/26linux_zombie/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    25 如何清理 Linux 僵尸进程？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/27Inode/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    26 Linux inode 介绍与清理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/28vim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    27 Vim 技巧
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/29awk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    28 Linux AWK 文本处理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/30nohup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    29 nohup命令：在Linux中轻松实现后台运行和守护进程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/31ln/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    30 文件系统中的“分身术”ln命令
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/32Linux_logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    31 Linux 系统日志之深入解析
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/33bash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    32 Linux 中 `.bashrc`、`.bash-profile` 和 `.profile` 之间的区别
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/34linux_6logs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    33 6大Linux命令线上日志排查
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/35port_detect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    34 未安装telnet 和 nc 等工具，如何测试端口是否开放
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/36dudf/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    35 df命令显示磁盘空间不足而du命令显示还有很多空闲空间
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap8/37linux_cond/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    36 Shell脚本的流程控制知识点汇总(2024)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bash Programming 技巧
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bash Programming 技巧
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap9/1bash_prom/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 简洁的 Bash Programming 技巧
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap9/2bash_skill/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 简洁的 Bash Programming 技巧续篇
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap9/3bash_skill/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 Bash Pitfalls: 编程易犯的错误（一）
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap9/4bash_python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 在Python中执行Linux Shell脚本
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AutoSys
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AutoSys
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap10/1autosys_intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0 AutoSys: A Beginner’s Guide AutoSys Workload Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap10/1Autosys_tot1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 Autosys Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap10/2Autosys_jil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 Autosys JIL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap10/3Autosys_comp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 Autosys Components, Configuration & Validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap10/4Autosys_cmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 Austosys command
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap10/5Autosys_job_cmd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 Manage Job in the Database
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap10/6autosys_vir_resouce/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 Autotsys virtual resource management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../chap10/7autosys_shell/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 Shell Script to check Autosys agent installed
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2025 - 面试准备
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    2025 - 面试准备
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/0intro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0 2025-Intro
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/1cicd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 CI/CD 之路-GitOps 面试题合集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/1Linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 典型Linux面试题 (Greg, wget, curl，Vim)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/2docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 Docker面试10大必考题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/3kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 Kubernetes 面试题精解：从入门到进阶(2025)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/4Linux_tb/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 Linux 系统故障时
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/5aws/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 AWS 面试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/6monitor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 监控生态面试通关秘籍
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/7cri/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 从容器到调度：准备好这些 CRI 面试题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/8sap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 SAP面试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/9db_interview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 数据库面试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/10prometheus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 Prometheus面试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/11istio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 深度剖析 Istio (2025)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/12python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 Python Interview - Full
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/5jenkins/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 Jekins
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/4python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SRE
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    SRE
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/15Apple_SRE_prp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0 2025 Apple SRE PRP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/1SRE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 SRE Interview Questions and Answers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/1SRE-cn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 SRE Interview Questions and Answers - Chinese
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sre/2026sre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 2026 DevOps + AWS 面试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sre/2026devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 2026 DevOps Interview - AI version
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sre/2026gitlab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2026 DevOps Gitlab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/13tiktok/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 2025 最新字节跳动运维云原生面经分享
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/2Ansible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 Ansible Interview Question
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/3linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 250 Linux Scenario Based Interview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/3kubernetes_sre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 Kubernetes SRE part1
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/3kubernetes_sre2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 Kubernetes SRE part2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/3kubernetes_sre3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 Kubernetes SRE part3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/14git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 Git Scenario-Based Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SRE-Tes-Prep
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    SRE-Tes-Prep
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sre/0interview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 SRE 面试2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sre/1linux/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 SRE Linux All2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sre/2ansible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 Ansible 从入门到放弃
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/15Apple_SRE_prp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0 2025 Apple SRE PRP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sre/3git/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 GIT CE TEST
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sre/5jump_trade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 Jump Trading Interview (code)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/1interview2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2025 interview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_15" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_15" id="__nav_15_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Interview
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_15_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_15">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AI Interview
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 Agent 面试
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 Agent 面试
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#q1agentllm-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q1：请简述Agent的基本架构组成，并解释其与传统LLM Chain的区别
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q1：请简述Agent的基本架构组成，并解释其与传统LLM Chain的区别">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 Agent 的基本架构组成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-llm-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 Agent 与 传统 LLM Chain 的区别
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        形象比喻：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、 总结
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q2react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q2：解释ReAct模式的工作原理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q2：解释ReAct模式的工作原理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ReAct 的核心工作流程
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 一个具体的例子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 为什么 ReAct 如此重要？（解决两大痛点）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 总结：ReAct 的精髓
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q3agentlong-term-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q3：如何实现Agent的长期记忆（Long-term Memory)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q3：如何实现Agent的长期记忆（Long-term Memory)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 基于矢量数据库的语义搜索 (RAG 模式)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-recursive-summarization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 递归总结与记忆压缩 (Recursive Summarization)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-knowledge-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 实体与知识图谱记忆 (Knowledge Graph)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tiered-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 分层存储架构 (Tiered Memory)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-reflectionself-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 进阶方案：反射与自我优化 (Reflection/Self-Optimization)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实现工具推荐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-agent-systems-mas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、多智能体协同（Multi-Agent Systems, MAS）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、多智能体协同（Multi-Agent Systems, MAS）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q4agentmulti-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q4：单Agent遇到瓶颈时，为什么需要Multi-Agent？常见的协作模式有哪些？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q4：单Agent遇到瓶颈时，为什么需要Multi-Agent？常见的协作模式有哪些？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 为什么单 Agent 会遇到瓶颈？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 为什么需要 Multi-Agent？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-agent_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、 常见的 Multi-Agent 协作模式
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、 常见的 Multi-Agent 协作模式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sequential-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 顺序流水线模式 (Sequential / Chain)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-manager-hub-and-spoke" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 主从模式 (Manager / Hub-and-Spoke)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-joint-collaboration-joint-effort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 协作/群智模式 (Joint Collaboration / Joint Effort)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-debate-peer-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 对抗/辩论模式 (Debate / Peer Review)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-hierarchical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 分层模式 (Hierarchical)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、 总结：从“全才”到“团队”
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q5：多智能体系统中如何解决”无限循环”或”通信冗余”问题？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q5：多智能体系统中如何解决”无限循环”或”通信冗余”问题？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#infinite-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 解决“无限循环” (Infinite Loops)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#communication-redundancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 解决“通信冗余” (Communication Redundancy)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、 工业界框架的成熟方案
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agentdesign-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、Agent核心设计模式（Design Patterns）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、Agent核心设计模式（Design Patterns）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q6workflows-autonomousagents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q6：请对比”工作流（Workflows）"与” 自主智能体（AutonomousAgents）”的优劣。
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 概念定义
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 深度对比
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 优势与劣势分析
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 优势与劣势分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工作流 (Workflows)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#autonomous-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自主智能体 (Autonomous Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 总结与建议：如何选择？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 总结与建议：如何选择？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        选择工作流场景：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        选择自主智能体场景：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-hybrid-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        趋势：混合模式 (The Hybrid Pattern)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q7-orchestrator-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q7：详细解释”编排者-执行者（Orchestrator-Workers）”模式。
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q8reflectionself-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q8：什么是”反思/自我纠正（Reflection/Self-Correction）"模式？
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、深度技术实现与状态管理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、深度技术实现与状态管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#09agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        09：在多轮对话Agent中，如何处理”状态爆炸”和” 上下文溢出”？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q10agentfunction-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q10：如何保证Agent调用工具（Function Calling）的可靠性？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q11langgraph-nodeedge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q11:LangGraph中的” 节点（Node）"和”边（Edge）”与传统工作流有何不同？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q12agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q12：你如何量化一个Agent的性能？
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agentic-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agentic RAG专项问答
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agentic RAG专项问答">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q13-ragchunkagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q13: RAG系统中经常遇到检索出来的片段（Chunk）互相冲突，Agent该听谁的
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q14：如何处理企业知识库中的”权限隔离”问题？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q15rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q15：当知识库内容更新很快（如每日新闻或实时股价）时，你的RAG系统如何应对？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q16：如何提升问答准确度
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q16：如何提升问答准确度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1layout-aware-parsing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1、深度解析层：Layout-Aware Parsing（布局感知解析）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2multi-stage-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2、检索增强层：Multi-Stage Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3self-correctionself-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3、生成校验层：Self-Correction（Self-RAG）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q17：回答中如何包含原文档相关的图和表格
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q17：回答中如何包含原文档相关的图和表格">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 表格的处理（Tables）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 图片的处理 （Images）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_16" >
+        
+          
+          <label class="md-nav__link" for="__nav_16" id="__nav_16_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prualsight
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_16_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_16">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Prualsight
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sreln/2Linux_test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 Linux Fundamentals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sreln/1k8s_dev/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 Using Kubernetes as a Developer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sre/4sre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 SRE Test
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sreln/5agile/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 Agile Test
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../2025/sreln/6cloud/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 Cloud Native Test
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_17" >
+        
+          
+          <label class="md-nav__link" for="__nav_17" id="__nav_17_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    英语学习
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_17_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_17">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    英语学习
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Eng/1work/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 职场英语
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#q1agentllm-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q1：请简述Agent的基本架构组成，并解释其与传统LLM Chain的区别
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q1：请简述Agent的基本架构组成，并解释其与传统LLM Chain的区别">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 Agent 的基本架构组成
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-llm-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 Agent 与 传统 LLM Chain 的区别
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        形象比喻：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、 总结
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q2react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q2：解释ReAct模式的工作原理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q2：解释ReAct模式的工作原理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ReAct 的核心工作流程
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 一个具体的例子
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 为什么 ReAct 如此重要？（解决两大痛点）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-react" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 总结：ReAct 的精髓
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#q3agentlong-term-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q3：如何实现Agent的长期记忆（Long-term Memory)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q3：如何实现Agent的长期记忆（Long-term Memory)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 基于矢量数据库的语义搜索 (RAG 模式)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-recursive-summarization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 递归总结与记忆压缩 (Recursive Summarization)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-knowledge-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 实体与知识图谱记忆 (Knowledge Graph)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tiered-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 分层存储架构 (Tiered Memory)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-reflectionself-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 进阶方案：反射与自我优化 (Reflection/Self-Optimization)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        实现工具推荐
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-agent-systems-mas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、多智能体协同（Multi-Agent Systems, MAS）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="二、多智能体协同（Multi-Agent Systems, MAS）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q4agentmulti-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q4：单Agent遇到瓶颈时，为什么需要Multi-Agent？常见的协作模式有哪些？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q4：单Agent遇到瓶颈时，为什么需要Multi-Agent？常见的协作模式有哪些？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 为什么单 Agent 会遇到瓶颈？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 为什么需要 Multi-Agent？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-agent_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、 常见的 Multi-Agent 协作模式
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、 常见的 Multi-Agent 协作模式">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sequential-chain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 顺序流水线模式 (Sequential / Chain)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-manager-hub-and-spoke" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 主从模式 (Manager / Hub-and-Spoke)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-joint-collaboration-joint-effort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 协作/群智模式 (Joint Collaboration / Joint Effort)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-debate-peer-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 对抗/辩论模式 (Debate / Peer Review)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-hierarchical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 分层模式 (Hierarchical)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、 总结：从“全才”到“团队”
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q5：多智能体系统中如何解决”无限循环”或”通信冗余”问题？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q5：多智能体系统中如何解决”无限循环”或”通信冗余”问题？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#infinite-loops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        一、 解决“无限循环” (Infinite Loops)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#communication-redundancy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二、 解决“通信冗余” (Communication Redundancy)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、 工业界框架的成熟方案
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agentdesign-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        三、Agent核心设计模式（Design Patterns）
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="三、Agent核心设计模式（Design Patterns）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q6workflows-autonomousagents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q6：请对比”工作流（Workflows）"与” 自主智能体（AutonomousAgents）”的优劣。
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 概念定义
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 深度对比
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 优势与劣势分析
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 优势与劣势分析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        工作流 (Workflows)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#autonomous-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        自主智能体 (Autonomous Agents)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 总结与建议：如何选择？
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 总结与建议：如何选择？">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        选择工作流场景：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        选择自主智能体场景：
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-hybrid-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        趋势：混合模式 (The Hybrid Pattern)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q7-orchestrator-workers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q7：详细解释”编排者-执行者（Orchestrator-Workers）”模式。
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q8reflectionself-correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q8：什么是”反思/自我纠正（Reflection/Self-Correction）"模式？
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        四、深度技术实现与状态管理
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="四、深度技术实现与状态管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#09agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        09：在多轮对话Agent中，如何处理”状态爆炸”和” 上下文溢出”？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q10agentfunction-calling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q10：如何保证Agent调用工具（Function Calling）的可靠性？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q11langgraph-nodeedge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q11:LangGraph中的” 节点（Node）"和”边（Edge）”与传统工作流有何不同？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q12agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q12：你如何量化一个Agent的性能？
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agentic-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agentic RAG专项问答
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agentic RAG专项问答">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#q13-ragchunkagent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q13: RAG系统中经常遇到检索出来的片段（Chunk）互相冲突，Agent该听谁的
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q14" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q14：如何处理企业知识库中的”权限隔离”问题？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q15rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q15：当知识库内容更新很快（如每日新闻或实时股价）时，你的RAG系统如何应对？
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q16：如何提升问答准确度
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q16：如何提升问答准确度">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1layout-aware-parsing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1、深度解析层：Layout-Aware Parsing（布局感知解析）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2multi-stage-retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2、检索增强层：Multi-Stage Retrieval
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3self-correctionself-rag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3、生成校验层：Self-Correction（Self-RAG）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#q17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Q17：回答中如何包含原文档相关的图和表格
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Q17：回答中如何包含原文档相关的图和表格">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-tables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 表格的处理（Tables）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-images" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 图片的处理 （Images）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="1-agent">1 Agent 面试</h1>
+<h3 id="q1agentllm-chain">Q1：请简述Agent的基本架构组成，并解释其与传统LLM Chain的区别</h3>
+<p>回答要点：<strong>Agent = LLM +规划（Planning）+记忆（Memory）+工具使 (Tool Use).</strong></p>
+<p>区别：</p>
+<ul>
+<li>Chain是预定义的、线性的硬编码工作流。</li>
+<li>Agent具备”自主性”，它根据目标自发决定执行路径，通过推理循环（ReasoningLoop）不断调整策略。</li>
+</ul>
+<p>AI Agent（人工智能智能体）被认为是大模型走向通用人工智能（AGI）的核心形态。它的基本架构通常遵循 Lil'Log（OpenAI 研究员 Lilian Weng）提出的经典公式：<strong>Agent = LLM + 规划 + 记忆 + 工具使用</strong>。</p>
+<p>以下是 Agent 的基本架构组成及其与传统 LLM Chain（大模型链）的区别：</p>
+<h4 id="agent">一、 Agent 的基本架构组成</h4>
+<ol>
+<li>
+<p><strong>大脑（Brain - LLM）：</strong></p>
+<ul>
+<li>这是 Agent 的核心，通常由强大的大语言模型（如 GPT-4, Claude 3.5）担任。它负责推理、理解意图、做出决策。</li>
+</ul>
+</li>
+<li>
+<p><strong>规划（Planning）：</strong></p>
+<ul>
+<li><strong>任务拆解：</strong> Agent 会将复杂的目标分解为可操作的小步骤（如 Chain of Thought 或 Tree of Thoughts）。</li>
+<li><strong>反思与修正：</strong> Agent 能够对过去的行为进行自我批评和审视，如果发现路径不对，会调整策略（如 ReAct 模式）。</li>
+</ul>
+</li>
+<li>
+<p><strong>记忆（Memory）：</strong></p>
+<ul>
+<li><strong>短期记忆：</strong> 利用上下文（Context Window）记录当前的对话历史和推理过程。</li>
+<li><strong>长期记忆：</strong> 通常结合外部矢量数据库（RAG），存储历史经验、专业知识或用户偏好，以便在长周期任务中提取。</li>
+</ul>
+</li>
+<li>
+<p><strong>工具使用/动作（Action/Tool Use）：</strong></p>
+<ul>
+<li>这是 Agent “手脚”的体现。它通过调用外部 API（搜索网页、执行代码、操作数据库等）来获取模型训练数据之外的信息或改变物理/数字世界。</li>
+</ul>
+</li>
+</ol>
+<h4 id="agent-llm-chain">二、 Agent 与 传统 LLM Chain 的区别</h4>
+<p>传统 LLM Chain（如 LangChain 中的基本 Chain）和 Agent 的本质区别在于<strong>控制流的决定权</strong>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">维度</th>
+<th style="text-align: left;">LLM Chain (传统链式)</th>
+<th style="text-align: left;">AI Agent (智能体)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>执行逻辑</strong></td>
+<td style="text-align: left;"><strong>硬编码 (Hard-coded)</strong>。由开发者预先定义好步骤：A -&gt; B -&gt; C。</td>
+<td style="text-align: left;"><strong>动态编排 (Dynamic)</strong>。由 LLM 根据目标和当前环境决定下一步做什么。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>自主性</strong></td>
+<td style="text-align: left;">低。它像是一条流水线，每一步都是固定的。</td>
+<td style="text-align: left;">高。它像是一个项目经理，能根据反馈改变计划。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>应对复杂性</strong></td>
+<td style="text-align: left;">适合可预测、结构化的任务（如：翻译 -&gt; 总结）。</td>
+<td style="text-align: left;">适合模糊、开放、多步骤的任务（如：写一段代码并运行，报错了就去搜 Google 解决它）。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>循环与反馈</strong></td>
+<td style="text-align: left;">通常是单向执行，没有“重试”或“纠错”的闭环。</td>
+<td style="text-align: left;">具备<strong>推理-观察-行动 (Reasoning-Observation-Action)</strong> 的循环。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>工具调用</strong></td>
+<td style="text-align: left;">在特定步骤调用特定工具。</td>
+<td style="text-align: left;">根据需要自主决定何时使用哪个工具。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="_1">形象比喻：</h4>
+<ul>
+<li><strong>LLM Chain 像“菜谱”：</strong> 你必须严格按照第一步洗菜、第二步切菜、第三步炒菜的顺序执行。如果中间没菜了，程序可能直接崩溃或报错。</li>
+<li><strong>AI Agent 像“厨师”：</strong> 你给他的指令是“做顿红烧肉”。厨师会检查厨房有没有肉，没有肉就自己去买（工具调用）；火太大了就调小点（反思与修正）；他会根据实际情况自主完成任务。</li>
+</ul>
+<h4 id="_2">三、 总结</h4>
+<ul>
+<li><strong>LLM Chain</strong> 解决的是<strong>确定性流程</strong>的自动化。</li>
+<li><strong>Agent</strong> 解决的是<strong>不确定性环境</strong>下的目标达成。</li>
+</ul>
+<p>Agent 的出现意味着我们不再需要为每一个场景写死逻辑，而是提供目标和工具，让 LLM 充当“大脑”自主调度。这种<strong>从“面向过程编程”向“面向目标编程”</strong>的转变，正是 Agent 架构的核心魅力。</p>
+<h3 id="q2react">Q2：解释ReAct模式的工作原理</h3>
+<p>回答要点：ReAct （Reasoning+Acting）是Agent的基石。</p>
+<p>它将”；</p>
+<p><strong>思考”（Thought）和”行动”（Action）结合。LLM先生成一段推理，说明下一步要做什么，然后调用工具观察（Observation）结果，再根据结果进入下一轮推理。</strong></p>
+<p><strong>ReAct</strong> 是 <strong>Reasoning</strong>（推理）与 <strong>Acting</strong>（行动）的缩写。它是由 Shunyu Yao 等人在 2022 年（ICLR 2023）提出的一种促使大模型在复杂任务中交替进行“逻辑推理”和“外部执行”的方法论。</p>
+<p>简单来说，ReAct 模式让大模型像人类一样工作：<strong>先思考（Thought），再动手（Action），然后看结果（Observation），最后再决定下一步怎么做。</strong></p>
+<h4 id="1-react">1. ReAct 的核心工作流程</h4>
+<p>ReAct 的工作原理是一个循环的迭代过程，通常被称为 <strong>Thought-Action-Observation</strong> 循环：</p>
+<ol>
+<li><strong>Thought (推理/思考)：</strong><ul>
+<li>模型生成一段文字，描述当前的状态、面临的问题以及接下来的打算。</li>
+<li><em>作用：</em> 帮助模型拆解任务，确定需要调用什么工具，避免盲目行动。</li>
+</ul>
+</li>
+<li><strong>Action (行动)：</strong><ul>
+<li>模型根据思考的结果，输出一个具体的指令（例如调用搜索 API、执行 Python 代码或查询数据库）。</li>
+<li><em>作用：</em> 与外部世界交互，获取模型自身权重中不包含的实时或专业信息。</li>
+</ul>
+</li>
+<li><strong>Observation (观察)：</strong><ul>
+<li>系统执行 Action 后的返回结果（例如搜索到的网页片段、代码运行报错、数据库返回的行）。</li>
+<li><em>作用：</em> 提供外部反馈，作为下一次推理的依据。</li>
+</ul>
+</li>
+<li><strong>循环迭代：</strong><ul>
+<li>模型看到 Observation 后，进入下一个 <strong>Thought</strong> 阶段，评估结果是否满意。如果满意，则给出最终答案；如果不满意，则继续规划下一次 Action。</li>
+</ul>
+</li>
+</ol>
+<h4 id="2">2. 一个具体的例子</h4>
+<p>假设用户问：<strong>“现任苹果公司 CEO 出生的那一年，世界杯冠军是谁？”</strong></p>
+<ul>
+<li><strong>Thought 1:</strong> 我需要先知道现任苹果 CEO 是谁，以及他的出生年份。</li>
+<li><strong>Action 1:</strong> <code>Search("Current Apple CEO")</code></li>
+<li><strong>Observation 1:</strong> 苹果现任 CEO 是蒂姆·库克（Tim Cook），他出生于 1960 年。</li>
+<li><strong>Thought 2:</strong> 既然库克出生于 1960 年，我现在需要查找 1960 年的世界杯冠军是谁。</li>
+<li><strong>Action 2:</strong> <code>Search("1960 World Cup winner")</code></li>
+<li><strong>Observation 2:</strong> 1960 年实际上并没有举办世界杯（世界杯每四年一届，1958 年后是 1962 年）。但 1960 年举办了首届欧洲杯。</li>
+<li><strong>Thought 3:</strong> 搜索结果显示 1960 年没有世界杯。我应该告诉用户这一事实，或者检查用户是否指的是欧洲杯。根据问题，我先确认 1960 年确实没有世界杯。</li>
+<li><strong>Final Answer:</strong> 苹果现任 CEO 蒂姆·库克出生于 1960 年。然而，1960 年并没有举办足球世界杯，那一年举办的是第一届欧洲足球锦标赛（苏联队夺冠）。</li>
+</ul>
+<h4 id="3-react">3. 为什么 ReAct 如此重要？（解决两大痛点）</h4>
+<p>在 ReAct 出现之前，LLM 处理任务主要有两种模式，但都有缺陷：</p>
+<ul>
+<li><strong>只有 Reasoning (如 Chain of Thought):</strong><ul>
+<li>模型只在脑子里想。虽然逻辑清晰，但如果模型内部知识过时或错误，它会产生<strong>幻觉 (Hallucination)</strong>，一本正经地胡说八道。</li>
+</ul>
+</li>
+<li><strong>只有 Acting (如简单的 API 调用):</strong><ul>
+<li>模型直接调用工具。但由于缺乏思考，它可能无法理解复杂的指令，或者在工具返回错误信息时不知道如何调整策略，<strong>鲁棒性差</strong>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>ReAct 的优势：</strong></p>
+<ul>
+<li><strong>协同效应：</strong> 推理引导行动，行动验证推理。</li>
+<li><strong>可解释性：</strong> 开发者可以清晰地看到模型每一步的“心路历程”，便于调试。</li>
+<li><strong>准确性：</strong> 通过观察外部反馈，模型能及时修正路径，大大降低了幻觉。</li>
+</ul>
+<h4 id="4-react">4. 总结：ReAct 的精髓</h4>
+<p>ReAct 模式的精髓在于 <strong>“闭环反馈”</strong>。它不再是把一串指令丢给模型让它一次性输出，而是建立了一个 <strong>“规划 -&gt; 执行 -&gt; 检查结果 -&gt; 修正规划”</strong> 的动态机制。</p>
+<p>这种模式目前已成为 LangChain、AutoGPT、BabyAGI 等主流 Agent 框架实现<strong>自主调度（Autonomous Orchestration）</strong>的核心底层逻辑。</p>
+<h3 id="q3agentlong-term-memory">Q3：如何实现Agent的长期记忆（Long-term Memory)</h3>
+<p>回答要点：</p>
+<ul>
+<li>
+<p><strong>短期记忆：利用Context Window，存储当前会话的历史（Chat History)</strong></p>
+</li>
+<li>
+<p>长期记忆：通过RAG（检索增强）。将历史经验、知识编码为 Embedding存入向量数据库，Agent在执行任务前检索相关经
+Ja(Experience Retrieval).</p>
+</li>
+<li>
+<p>2026新趋势：利用长文本模型（Long-context LLMs）直接处理超长历史，或者通过”摘要层级结构”对记忆进行递归压缩。</p>
+</li>
+</ul>
+<p>实现 AI Agent 的长期记忆（Long-term Memory），本质上是让 Agent 突破 LLM <strong>上下文窗口（Context Window）</strong>的限制，能够跨越时间存储、检索并利用历史信息。</p>
+<p>目前，实现长期记忆的主流技术路径可以总结为以下几种方案：</p>
+<h4 id="1-rag">1. 基于矢量数据库的语义搜索 (RAG 模式)</h4>
+<p>这是目前最通用、最主流的方案，模拟的是人类的<strong>“语义记忆”</strong>。</p>
+<ul>
+<li>
+<p><strong>工作流程：</strong></p>
+<ol>
+<li><strong>存储：</strong> 将 Agent 过去的对话历史、任务执行结果、外部文档等切分成块（Chunks）。</li>
+<li><strong>向量化：</strong> 使用 Embedding 模型将文本转化为高维向量。</li>
+<li><strong>持久化：</strong> <strong>存入矢量数据库（如 Pinecone, Milvus, Weaviate, FAISS）</strong>。</li>
+<li><strong>检索：</strong> 当新请求进来时，将请求向量化，在库中搜索最相似的 top-k 条记录。</li>
+<li><strong>注入：</strong> 将检索到的相关记忆作为上下文（Context）输入给 LLM。</li>
+</ol>
+</li>
+<li>
+<p><strong>优点：</strong> 存储量大，检索速度快。</p>
+</li>
+<li>
+<p><strong>缺点：</strong> 缺乏时间序列逻辑，有时难以处理“昨天”和“今天”这种具有时间敏感性的冲突信息。</p>
+</li>
+</ul>
+<h4 id="2-recursive-summarization">2. 递归总结与记忆压缩 (Recursive Summarization)</h4>
+<p>这种方案模拟人类对信息的<strong>“抽象与提炼”</strong>，常见于长文本对话场景。</p>
+<ul>
+<li>
+<p><strong>工作流程：</strong></p>
+<ol>
+<li>当对话长度接近模型窗口上限时，触发一个“总结任务”。</li>
+<li>LLM 将之前的对话摘要成一段精华文字（如“用户提到他住在上海，喜欢猫”）。</li>
+<li>将摘要保存，并清理掉原始的琐碎对话。</li>
+<li>下一次交互时，模型读取的是这个“摘要”而非原始对话。</li>
+</ol>
+</li>
+<li>
+<p><strong>典型案例：</strong> ChatChain, LangChain 的 <code>ConversationSummaryMemory</code>。</p>
+</li>
+<li><strong>优点：</strong> 保持了逻辑连贯性，模型负担轻。</li>
+<li><strong>缺点：</strong> 随着压缩次数增加，细节会丢失（信息的逐级损耗）。</li>
+</ul>
+<h4 id="3-knowledge-graph">3. 实体与知识图谱记忆 (Knowledge Graph)</h4>
+<p>这种方案模拟人类的<strong>“逻辑关系记忆”</strong>，侧重于事实的准确性。</p>
+<ul>
+<li><strong>工作流程：</strong><ol>
+<li>Agent 从对话中提取三元组：<code>实体 - 关系 - 实体</code>（例如：<code>Tim Cook - 是 - Apple CEO</code>）。</li>
+<li>将这些关系存入图数据库（如 Neo4j）。</li>
+<li>查询时通过图谱路径检索关联信息。</li>
+</ol>
+</li>
+<li><strong>优点：</strong> 极其精准，不会产生幻觉，适合处理复杂的业务逻辑。</li>
+<li><strong>缺点：</strong> 提取和构建成本高，难以处理非结构化的情绪或氛围信息。</li>
+</ul>
+<h4 id="4-tiered-memory">4. 分层存储架构 (Tiered Memory)</h4>
+<p>受到操作系统（缓存-内存-硬盘）的启发，现代 Agent 往往采用多级存储：</p>
+<ol>
+<li><strong>感知记忆（Sensory Memory）：</strong> 当前输入的最直接上下文。</li>
+<li><strong>短期记忆（Short-term Memory）：</strong> 当前 Session 的最近几轮对话（直接放 Context 窗口）。</li>
+<li><strong>长期记忆（Long-term Memory）：</strong> <ul>
+<li><strong>经验数据库：</strong> 过去成功完成任务的步骤。</li>
+<li><strong>个性化数据库：</strong> 用户的偏好、职业、固定习惯。</li>
+</ul>
+</li>
+</ol>
+<h4 id="5-reflectionself-optimization">5. 进阶方案：反射与自我优化 (Reflection/Self-Optimization)</h4>
+<p>这是让 Agent 具有“成长性”的关键，代表作是斯坦福的虚拟小镇（Generative Agents）和 <strong>MemGPT</strong>。</p>
+<ul>
+<li><strong>反思机制 (Reflection)：</strong> Agent 定期审视自己的记忆库，问自己：“从过去一天的经历中，我学到了关于用户的哪三件最重要的事？”然后将这些反思结果存入长期记忆。</li>
+<li><strong>主动管理 (Memory Management)：</strong> 像操作系统管理内存一样，Agent 可以自主决定哪些信息是重要的需要永久保留，哪些是无用的可以删除（摒弃了被动检索）。</li>
+</ul>
+<h4 id="_3">实现工具推荐</h4>
+<p>如果你想动手实现，可以参考以下框架：</p>
+<ul>
+<li><strong>MemGPT：</strong> 专门为解决长记忆设计的框架，将 LLM 视为处理器，将向量库视为硬盘。</li>
+<li><strong>Zep：</strong> 专为 AI Agent 打造的长期记忆层，支持自动总结、命名实体识别和异步存储。</li>
+<li><strong>LangGraph：</strong> 通过状态机管理复杂的状态（State），可以方便地实现记忆的持久化。</li>
+<li><strong>Pinecone/Milvus：</strong> 作为底层的向量存储设施。</li>
+</ul>
+<h4 id="_4">总结</h4>
+<p>实现 Agent 长期记忆的最佳实践通常是：<strong>“向量数据库检索（找细节） + 定期总结（找主线） + 反思机制（提炼核心特征）”</strong> 的组合拳。</p>
+<h2 id="multi-agent-systems-mas">二、多智能体协同（Multi-Agent Systems, MAS）</h2>
+<h3 id="q4agentmulti-agent">Q4：单Agent遇到瓶颈时，为什么需要Multi-Agent？常见的协作模式有哪些？</h3>
+<p>原因：单个Agent在处理复杂、跨领域长任务时容易出现” 注意力漂移”或”推理链断裂”。</p>
+<p>协作模式：</p>
+<ul>
+<li><strong>中心化（Boss-Worker）：一个主Agent拆分任务并指派给子 Agent</strong>.</li>
+<li><strong>流水线（Pipeline/Sequential）：A的输出作为B的输入（如代码生成-&gt;代码审查-&gt;修复）</strong>。</li>
+<li><strong>民主协作（Joint Discussion）：多个Agent共同讨论得出结论。</strong></li>
+</ul>
+<p>当单个 Agent 在面对复杂任务遇到瓶颈时，引入 <strong>Multi-Agent System（MAS，多智能体系统）</strong> 是目前的必然趋势。</p>
+<h4 id="agent_1">一、 为什么单 Agent 会遇到瓶颈？</h4>
+<p>即使是 GPT-4 这样强大的模型，作为单 Agent 运行也会面临以下挑战：</p>
+<ol>
+<li><strong>上下文迷失（Context Overload）：</strong> 当任务极其复杂时，系统提示词（System Prompt）会变得非常冗长，模型容易顾此失彼，产生“注意力稀释”或忽略指令。</li>
+<li><strong>角色冲突（Role Confusion）：</strong> 一个模型很难同时演好“严谨的审计师”和“天马行空的创意家”。角色的对立会导致输出平庸化。</li>
+<li><strong>错误累积（Error Propagation）：</strong> 在长链路任务中，单 Agent 如果第一步走错，后面会沿着错误方向越走越远，缺乏有效的外部审视机制。</li>
+<li><strong>工具过载：</strong> 如果给一个 Agent 挂载 50 个工具，它在选择工具时会由于候选干扰太多而导致调用准确率大幅下降。</li>
+</ol>
+<h4 id="multi-agent">二、 为什么需要 Multi-Agent？</h4>
+<p>多智能体系统的核心逻辑是<strong>“分而治之”</strong>（Divide and Conquer）。</p>
+<ul>
+<li><strong>专业化（Specialization）：</strong> 每个 Agent 只负责一个子领域（如代码编写、文档撰写、质量测试），Prompt 更精简，性能更强。</li>
+<li><strong>对抗与校验（Criticism &amp; Verification）：</strong> 通过“引入第二双眼睛”，让一个 Agent 专门负责审核另一个 Agent 的结果，能显著降低幻觉。</li>
+<li><strong>模块化扩展：</strong> 增加新功能只需增加一个新的小 Agent，而不必重写庞大的主 Prompt。</li>
+</ul>
+<h4 id="multi-agent_1">三、 常见的 Multi-Agent 协作模式</h4>
+<p>目前的框架（如 AutoGen, LangGraph, CrewAI）主要采用以下几种协作模式：</p>
+<h5 id="1-sequential-chain"><strong>1. 顺序流水线模式 (Sequential / Chain)</strong></h5>
+<p>这是最简单的模式，任务像流水线一样传递。</p>
+<ul>
+<li><strong>流程：</strong> Agent A -&gt; Agent B -&gt; Agent C。</li>
+<li><strong>场景：</strong> 翻译并润色文章。Agent A 负责初译，Agent B 负责语法检查，Agent C 负责风格润色。</li>
+<li><strong>特点：</strong> 逻辑线性，适合步骤明确的任务。</li>
+</ul>
+<h5 id="2-manager-hub-and-spoke"><strong>2. 主从模式 (Manager / Hub-and-Spoke)</strong></h5>
+<p>类似于公司里的“经理与员工”。</p>
+<ul>
+<li><strong>流程：</strong> 存在一个 <strong>Manager Agent</strong>，它接收用户目标，拆解任务，分发给下属 <strong>Worker Agents</strong>，最后汇总结果。</li>
+<li><strong>场景：</strong> 软件开发。Manager 将需求拆分，分给前端 Agent、后端 Agent 和测试 Agent，最后由 Manager 合并代码。</li>
+<li><strong>特点：</strong> 控制力强，适合复杂且需要中心化调度的任务。</li>
+</ul>
+<h5 id="3-joint-collaboration-joint-effort"><strong>3. 协作/群智模式 (Joint Collaboration / Joint Effort)</strong></h5>
+<p>Agent 之间在一个共同的空间（如群聊或看板）内自由交互。</p>
+<ul>
+<li><strong>流程：</strong> 多个 Agent 看到同一个状态，根据自己的专业判断决定何时“举手”发言。</li>
+<li><strong>场景：</strong> 创意头脑风暴。产品经理、技术架构师、市场专家在一个会话中自由讨论。</li>
+<li><strong>特点：</strong> 灵活性极高，容易产生意想不到的创新。</li>
+</ul>
+<h5 id="4-debate-peer-review"><strong>4. 对抗/辩论模式 (Debate / Peer Review)</strong></h5>
+<p>让两个 Agent 持有相反观点或竞争关系。</p>
+<ul>
+<li><strong>流程：</strong> Agent A 给出方案，Agent B 专门负责找茬（红蓝对抗），Agent A 根据反馈修改，直到达成共识。</li>
+<li><strong>场景：</strong> 法律条文分析、科学论文评审、复杂算法的逻辑推演。</li>
+<li><strong>特点：</strong> 极大提高结果的严谨性和准确性。</li>
+</ul>
+<h5 id="5-hierarchical">5. 分层模式 (Hierarchical)</h5>
+<p>多级管理架构。</p>
+<ul>
+<li><strong>流程：</strong> 顶级经理指挥中层经理，中层经理指挥底层执行者。</li>
+<li><strong>场景：</strong> 跨国公司的市场进入战略分析。</li>
+<li><strong>特点：</strong> 适合规模极大的工程，避免单个 Manager 节点过热。</li>
+</ul>
+<h4 id="_5">四、 总结：从“全才”到“团队”</h4>
+<p>如果说 <strong>Single Agent</strong> 追求的是打造一个“全能天才”，那么 <strong>Multi-Agent</strong> 追求的就是构建一个“高效组织”。</p>
+<ul>
+<li><strong>单 Agent</strong> 像一名<strong>自由职业者</strong>，适合处理快、平、准的日常任务。</li>
+<li><strong>多 Agent</strong> 像一支<strong>特种部队</strong>，通过角色分工、相互审计和动态反馈，能够解决单模型无法逾越的复杂逻辑难题。</li>
+</ul>
+<p>在实际落地中，目前业界的共识是：<strong>宁可要 5 个各司其职的小 Agent，也不要 1 个写了 2000 行 Prompt 的超级 Agent。</strong></p>
+<h3 id="q5">Q5：多智能体系统中如何解决”无限循环”或”通信冗余”问题？</h3>
+<p>回答要点：</p>
+<ul>
+<li><strong>循环检测：引入状态机控制流程，设置最大迭代次数</strong>。</li>
+<li><strong>Token控制：对Agent间的对话进行摘要处理</strong>。</li>
+<li><strong>终止条件：明确定义任务完成的标准（Definition of Done）</strong></li>
+</ul>
+<p>在多智能体系统（Multi-Agent System, MAS）中，<strong>“无限循环”</strong>（指 Agent 之间陷入死循环或重复错误）和<strong>“通信冗余”</strong>（指无效信息堆叠、Token 浪费）是两个非常核心的工程挑战。</p>
+<p>以下是解决这些问题的常用策略和工程实践：</p>
+<h4 id="infinite-loops">一、 解决“无限循环” (Infinite Loops)</h4>
+<p>无限循环通常发生在 Agent 陷入“复读机”模式，或者两个 Agent 相互推诿、反复纠结于同一个无法解决的错误。</p>
+<ol>
+<li>
+<p><strong>设置强制终止条件 (Hard Constraints)：</strong></p>
+<ul>
+<li><strong>最大迭代次数 (Max Iterations)：</strong> 设定一个硬性上限（如 10 次或 20 次），一旦超过则强制停止并返回“任务失败”或当前最好结果。</li>
+<li><strong>Token 预算上限 (Token Budget)：</strong> 为整个任务流设置 Token 使用上限。</li>
+</ul>
+</li>
+<li>
+<p><strong>状态监控与检测 (State Detection)：</strong></p>
+<ul>
+<li><strong>重复检查 (Deduping)：</strong> 记录 Agent 的历史 Action 和 Thought。如果模型连续 3 次输出了完全相同的指令或思路，系统自动介入，强制修改 Prompt（例如：“你已经尝试过此方法且失败了，请换一种思路”）。</li>
+<li><strong>停滞检测 (Stagnation Detection)：</strong> 监控“任务进度”。如果 Observation（观察结果）在连续几轮中没有实质性变化，判定为停滞。</li>
+</ul>
+</li>
+<li>
+<p><strong>引入判定者/协调者 (Supervisor / Arbiter)：</strong></p>
+<ul>
+<li>引入一个高阶的 <strong>Manager Agent</strong>，专门负责监控对话流。如果它发现下属 Agent 陷入死循环，它有权打断对话，重新分配任务或直接改变策略。</li>
+</ul>
+</li>
+<li>
+<p><strong>环境对齐 (Environmental Grounding)：</strong></p>
+<ul>
+<li>当循环发生时，强制 Agent 调用一个“自检工具”。例如在代码循环报错时，强制其查看本地文件系统或执行 Linter，用外部世界的“物理事实”打破模型内部的逻辑循环。</li>
+</ul>
+</li>
+</ol>
+<h4 id="communication-redundancy">二、 解决“通信冗余” (Communication Redundancy)</h4>
+<p>冗余通常表现为 Agent 之间的“废话”（如：不断的客套、重复确认）以及全局广播导致的 Context 爆炸。</p>
+<ol>
+<li>
+<p><strong>改变通信拓扑结构 (Topology Optimization)：</strong></p>
+<ul>
+<li><strong>由“群聊”转为“私聊”：</strong> 不要让所有 Agent 都能看到所有人的发言（Broadcast）。采用 <strong>Point-to-Point (点对点)</strong> 通信，只有相关的人才接收特定信息。</li>
+<li><strong>分层架构 (Hierarchy)：</strong> 下层 Agent 只向直属上级汇报摘要，而不是把所有日志都传给顶层。</li>
+</ul>
+</li>
+<li>
+<p><strong>结构化输出 (Structured Communication)：</strong></p>
+<ul>
+<li><strong>强制 Schema：</strong> 要求 Agent 必须以 JSON 或特定的 XML 格式通信。在 Prompt 中明确禁止“客套话”（如：“好的，我非常乐意为您服务”）。</li>
+<li><strong>协议化：</strong> 规定通信协议，例如必须包含 <code>Reasoning</code> (理由)、<code>Action</code> (指令)、<code>Data</code> (数据) 三部分，忽略非结构化文字。</li>
+</ul>
+</li>
+<li>
+<p><strong>上下文摘要与压缩 (Context Compression)：</strong></p>
+<ul>
+<li><strong>短期记忆修剪：</strong> 只保留最近 $N$ 轮的原始对话。</li>
+<li><strong>滚动摘要：</strong> 每一轮对话后，由系统自动生成一份“当前进度摘要”，后续 Agent 只读摘要，不读原始长对话。</li>
+<li><strong>关键信息提取：</strong> 仅传递特定的“状态变量”（State），而非完整的聊天历史。</li>
+</ul>
+</li>
+<li>
+<p><strong>按需激活 (On-demand Activation)：</strong></p>
+<ul>
+<li>不是所有 Agent 都在每一轮被唤醒。通过 <strong>Router (路由)</strong> 机制，只有当 Manager 判定需要某 Agent 的专业技能时，才将其唤醒并将必要信息推给它。</li>
+</ul>
+</li>
+</ol>
+<h4 id="_6">三、 工业界框架的成熟方案</h4>
+<p>目前主流的 Agent 框架已经内置了一些机制来处理这些问题：</p>
+<ul>
+<li><strong>AutoGen (Microsoft)：</strong> <ul>
+<li>通过 <code>max_consecutive_auto_reply</code> 限制连续自动回复次数。</li>
+<li>利用 <code>GroupChatManager</code> 的选择机制（Selection Method）来决定下一个谁说话，减少无关发言。</li>
+</ul>
+</li>
+<li><strong>LangGraph (LangChain)：</strong><ul>
+<li><strong>状态机控制：</strong> 它将 Agent 协作抽象为图（Graph）。你可以精确控制每一步的跳转逻辑（Edges），如果检测到循环路径，可以通过逻辑条件跳转到 <code>END</code>。</li>
+<li><strong>Persistence (持久化)：</strong> 支持检查点（Checkpoints），当发生冗余或错误时，可以手动或自动回溯到之前的某个状态。</li>
+</ul>
+</li>
+<li><strong>CrewAI：</strong><ul>
+<li>强调“角色职责”，通过 <code>Process</code> 类（如 Sequential, Hierarchical）来规范任务流向，避免无序的通信。</li>
+</ul>
+</li>
+</ul>
+<h4 id="_7">总结</h4>
+<ul>
+<li><strong>解循环：</strong> 靠<strong>限额</strong>、<strong>重定向</strong>和<strong>外部反馈</strong>。</li>
+<li><strong>减冗余：</strong> 靠<strong>权限隔离</strong>、<strong>结构化协议</strong>和<strong>摘要机制</strong>。</li>
+</ul>
+<p>处理 MAS 的核心思想是：<strong>“像管理一个人类团队一样去管理 Agent”</strong>。明确的规章制度（Schema）、严密的汇报层级（Hierarchy）以及及时的绩效考核（Supervisor），是维持系统高效运转的关键。</p>
+<h2 id="agentdesign-patterns">三、Agent核心设计模式（Design Patterns）</h2>
+<h4 id="q6workflows-autonomousagents">Q6：请对比”工作流（Workflows）"与” 自主智能体（AutonomousAgents）”的优劣。</h4>
+<ul>
+<li>Workflows： 通过DAG（有向无环图）或状态机硬编码路径。优点是高可靠性、结果可预期，适用于报销审批、标准化客服。</li>
+<li>Autonomous Agents：由LLM决定循环次数和工具调用。优点是灵活性极高，适用于开放式研究、代码编写。</li>
+</ul>
+<p>面试金句：2026年的工程趋势是”用Workflow约束Agent”，即在框架定义的路径内给子Agent局部决策权。</p>
+<p>在 AI 系统设计中，<strong>工作流（Workflows）</strong>与<strong>自主智能体（Autonomous Agents）</strong>代表了两种截然不同的设计哲学：一个是“<strong>确定性的编排</strong>”，另一个是“<strong>概率性的自主</strong>”。</p>
+<p>以下是两者的详细对比、优劣分析以及适用场景：</p>
+<h4 id="1">1. 概念定义</h4>
+<ul>
+<li><strong>工作流 (Workflows)：</strong>
+    由开发者预先定义好步骤、分支和逻辑。AI（LLM）在其中通常扮演“执行节点”的角色，负责处理特定环节的任务。路径是固定的（A -&gt; B -&gt; if C then D）。<ul>
+<li><em>例子：</em> LangGraph 的状态机、低代码平台（如 Coze/Dify）的连线流程。</li>
+</ul>
+</li>
+<li><strong>自主智能体 (Autonomous Agents)：</strong>
+    由开发者给定一个目标（Goal）和一套工具（Tools）。Agent 拥有决策权，通过“思考-行动-观察”的循环自主决定执行步骤，路径是动态生成的。<ul>
+<li><em>例子：</em> AutoGPT、BabyAGI、基于 ReAct 模式的任务达成器。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2_1">2. 深度对比</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">维度</th>
+<th style="text-align: left;">工作流 (Workflows)</th>
+<th style="text-align: left;">自主智能体 (Autonomous Agents)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>控制权</strong></td>
+<td style="text-align: left;"><strong>人类开发者</strong>掌握控制权。</td>
+<td style="text-align: left;"><strong>LLM (大脑)</strong>掌握控制权。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>可预测性</strong></td>
+<td style="text-align: left;"><strong>极高</strong>。结果稳定，每一步都可预期。</td>
+<td style="text-align: left;"><strong>较低</strong>。同样的目标，每次执行路径可能不同。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>灵活性</strong></td>
+<td style="text-align: left;"><strong>低</strong>。遇到未定义的边界情况容易报错或停滞。</td>
+<td style="text-align: left;"><strong>极高</strong>。能根据环境反馈调整策略，应对复杂变数。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>调试成本</strong></td>
+<td style="text-align: left;"><strong>低</strong>。路径清晰，哪里报错修哪里。</td>
+<td style="text-align: left;"><strong>高</strong>。难以重现错误路径，容易进入死循环或产生幻觉。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Token 消耗</strong></td>
+<td style="text-align: left;"><strong>低</strong>。路径直达，效率高。</td>
+<td style="text-align: left;"><strong>高</strong>。需要大量的“思考”过程和重复尝试。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>适合规模</strong></td>
+<td style="text-align: left;">适合大规模、高频率的生产环境。</td>
+<td style="text-align: left;">适合小规模、高度定制、探索性的任务。</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3">3. 优势与劣势分析</h4>
+<h5 id="workflows"><strong>工作流 (Workflows)</strong></h5>
+<ul>
+<li><strong>优势：</strong><ul>
+<li><strong>可靠性与安全性：</strong> 非常稳定，不会跑偏，适合对错误零容忍的业务（如财务审核、法律流程）。</li>
+<li><strong>性能优化：</strong> 因为路径固定，可以针对每个节点进行专项提示词优化或微调（Fine-tuning）。</li>
+<li><strong>透明度：</strong> 过程完全可视化，非技术人员也能理解业务逻辑。</li>
+</ul>
+</li>
+<li><strong>劣势：</strong><ul>
+<li><strong>开发负担重：</strong> 开发者需要预见所有可能的情况。如果任务极其复杂，流程图会变成令人绝望的“蜘蛛网”。</li>
+<li><strong>扩展性差：</strong> 增加一个新功能可能需要重构整个逻辑链条。</li>
+</ul>
+</li>
+</ul>
+<h5 id="autonomous-agents"><strong>自主智能体 (Autonomous Agents)</strong></h5>
+<ul>
+<li><strong>优势：</strong><ul>
+<li><strong>解放双手：</strong> 开发者只需定义“做什么”，而不用管“怎么做”。</li>
+<li><strong>处理不确定性：</strong> 擅长处理模糊、开放式的问题（如：请帮我调研市场上所有竞品的定价并写一份分析报告）。</li>
+<li><strong>突现能力：</strong> 有时能发现开发者未曾预料到的高效路径。</li>
+</ul>
+</li>
+<li><strong>劣势：</strong><ul>
+<li><strong>不可控性（幻觉）：</strong> 可能在错误的方向上努力，甚至在自我反馈中产生逻辑闭环（陷入死循环）。</li>
+<li><strong>成本黑盒：</strong> 由于是动态迭代，很难预估完成任务需要消耗多少 Token 和时间。</li>
+</ul>
+</li>
+</ul>
+<h4 id="4">4. 总结与建议：如何选择？</h4>
+<p>在目前的工业界实践中，<strong>“工作流为主，Agent 为辅”</strong>是主流趋势。</p>
+<h5 id="_8"><strong>选择工作流场景：</strong></h5>
+<ol>
+<li><strong>流程标准：</strong> 任务可以被清晰地拆解为标准步骤（SOP）。</li>
+<li><strong>注重效率：</strong> 对响应时间有严格要求。</li>
+<li><strong>合规性高：</strong> 必须遵循特定的法律、财务或技术规范。</li>
+<li><em>例子：</em> 自动化客服、标准报告生成、数据清洗流水线。</li>
+</ol>
+<h5 id="_9"><strong>选择自主智能体场景：</strong></h5>
+<ol>
+<li><strong>目标导向：</strong> 路径极度不确定，甚至开发者都不知道该怎么做。</li>
+<li><strong>长尾任务：</strong> 场景太多，无法穷举所有分支。</li>
+<li><strong>个人助手：</strong> 需要极高的个性化和对用户意图的深度理解。</li>
+<li><em>例子：</em> 个人调研助手、代码自动修复、开放式解谜。</li>
+</ol>
+<h5 id="the-hybrid-pattern"><strong>趋势：混合模式 (The Hybrid Pattern)</strong></h5>
+<p>现在的顶尖设计往往是：<strong>在一个大的、确定的工作流中，嵌套几个微型的自主 Agent。</strong></p>
+<ul>
+<li>大的方向由工作流控制（保证不跑偏）。</li>
+<li>具体的、具有挑战性的子任务交给 Agent（保证灵活性）。</li>
+</ul>
+<p>这种模式通常被称为 <strong>“约束下的自主”</strong>，它平衡了系统的可靠性与灵活性。</p>
+<h3 id="q7-orchestrator-workers">Q7：详细解释”编排者-执行者（Orchestrator-Workers）”模式。</h3>
+<p>回答要点：</p>
+<p><strong>主Agent（Orchestrator）负责将复杂任务分解为子任务，分发给具有不同Skill的Worker Agents，最后汇总结果。</strong></p>
+<p><strong>适用场景：大型软件开发（一个写UI，一个写后端，一个写测试）。</strong></p>
+<p>难点：任务分解的粒度。如果拆得太细，通信成本极高；太粗，Worker会产生幻觉。</p>
+<h3 id="q8reflectionself-correction">Q8：什么是”反思/自我纠正（Reflection/Self-Correction）"模式？</h3>
+<p><strong>这是提升Agent成功率最有效的模式。Agent生成输出后，由另一个（或同一个）Agent扮演批评者（Critic），检查输出是否符合约束条件，并提供反馈让前者迭代。</strong></p>
+<p>技术细节：可以使用Reflexion架构，记录”失败轨迹”作为长短期记忆，避免重复同样的错误</p>
+<h2 id="_10">四、深度技术实现与状态管理</h2>
+<h3 id="09agent">09：在多轮对话Agent中，如何处理”状态爆炸”和” 上下文溢出”？</h3>
+<p>回答要点：</p>
+<p><strong>State Schema：定义严格的状态结构（如使用LangGraph的TypedDict），只保存核心变量。</strong></p>
+<p><strong>Trim Strategy：不仅是简单的截断，而是根据语义重要性保留（例如保留SystemPrompt、最近N轮对话和当前任务目标）。</strong></p>
+<p><strong>Summary Buffer： 将I日的对话摘要化，将摘要存入Context头部。</strong></p>
+<h3 id="q10agentfunction-calling">Q10：如何保证Agent调用工具（Function Calling）的可靠性？</h3>
+<p><strong>语法层面：利用JSON Mode或强类型约束。</strong></p>
+<p><strong>逻辑层面：引入”确认机制（Human-in-the-loop）”，对于高风险操作（如删库、转账）必须由人点击确认</strong>。</p>
+<p>重试逻辑：如果LLM生成的参数不合法，将报错信息返回给 LLM，让其自我修复（Self-heal）</p>
+<h3 id="q11langgraph-nodeedge">Q11:LangGraph中的” 节点（Node）"和”边（Edge）”与传统工作流有何不同？</h3>
+<p>传统工作流的边是固定的。</p>
+<p>LangGraph的边可以是条件边（Conditional Edges），由LLM的输出决定下一步走向哪个Node。</p>
+<p>支持循环（Cycles），这是Agent能够不断尝试直到成功的核心。</p>
+<h3 id="q12agent">Q12：你如何量化一个Agent的性能？</h3>
+<p><strong>任务成功率（Success Rate）</strong>：这是核心指标。</p>
+<p><strong>平均推理步数</strong>（Avg Steps）：步数越少，成本越低，响应越快。</p>
+<p><strong>工具调用准确率（Tool Call Accuracy）</strong>。</p>
+<p><strong>影子测试（Shadow Testing）</strong>：在生产环境并行跑新IAgent逻辑，对比输出差异。</p>
+<h2 id="agentic-rag">Agentic RAG专项问答</h2>
+<h3 id="q13-ragchunkagent">Q13: RAG系统中经常遇到检索出来的片段（Chunk）互相冲突，Agent该听谁的</h3>
+<p><strong>元数据加权：</strong>根据文档的实时性、权威性（部门等级）进行权重排序。</p>
+<p><strong>多智能体辩论</strong>（Multi-Agent Debate） ：让不同的Agent持不同的Chunk进行对比，识别！出冲突点并反馈给用户，或者根据逻辑一致性选择最合理的解释。</p>
+<p><strong>引用溯源</strong>：强制要求输出必须附带Source链接，让用户做最后校验。</p>
+<h3 id="q14">Q14：如何处理企业知识库中的”权限隔离”问题？</h3>
+<p>Agent会不会把高管工资查出来给普通员工</p>
+<p><strong>核心策略：RAG权限对齐。</strong></p>
+<p>实现方式：在向量数据库中，每个Embedding向量都附带ACL（访问控制列表）元数据。</p>
+<p>在Agent触发检索请求时，强制将”当前用户信息”作Filter注入检索语句中。确保在向量检索阶段就完成物理隔离，而不是靠提示词拦截。</p>
+<h3 id="q15rag">Q15：当知识库内容更新很快（如每日新闻或实时股价）时，你的RAG系统如何应对？</h3>
+<p><strong>动态路由</strong>：Agent根据问题类型识别出”实时性要求”，如果是实时问题，优先调用实时API或搜索工具，而非检索向量库。</p>
+<p><strong>流式索引更新</strong>：利用数据流（如Kafka）监听知识库变化，实现增量Embedding写入。</p>
+<p><strong>缓存失效策略：</strong> 针对高频问题设置TTL缓存，并在源数据更新时触发缓存失效</p>
+<h3 id="q16">Q16：如何提升问答准确度</h3>
+<p>提升准确度不能只靠Prompt，而是一套组合拳：</p>
+<h4 id="1layout-aware-parsing">1、深度解析层：Layout-Aware Parsing（布局感知解析）</h4>
+<p>痛点：传统的文本分割（Chunking）会打断表格结构或将标题与正文分离，导致语义断裂。</p>
+<p><strong>解决方案：</strong></p>
+<ul>
+<li>使用Layout Analysis 模型（如 DocLayout-YoLo或Unstructured）。将文档识别为：标题、正文、表格、图片、列表。</li>
+<li>语义分块：按标题层级（H1-H4）进行切分，而不是按字符数。确保每个Chunk都有完整的上下文。</li>
+</ul>
+<h4 id="2multi-stage-retrieval">2、检索增强层：Multi-Stage Retrieval</h4>
+<p>混合检索（Hybrid Search）：向量检索（语义）+BM25（关键词，解决专有名词、缩写问题）</p>
+<p>重排序（Reranking）：使用Cross-Encoder 模型（如BGE-Reranker）对初筛的Top-50进行精排。这是提升准确度性价比最高的方法。</p>
+<p>查询扩展（Query Expansion）：Agent自动生成3个同义问题并行检索，解决用户提问过于简单的问题。</p>
+<h4 id="3self-correctionself-rag">3、生成校验层：Self-Correction（Self-RAG）</h4>
+<p>验证节点：在生成答案前，让Agent判断：</p>
+<p>"检索到的内容是否足以回答问题？”（不够则重新检索）</p>
+<p>“答案中是否有任何内容是检索结果里没提到的？“（防止幻觉）</p>
+<h3 id="q17">Q17：回答中如何包含原文档相关的图和表格</h3>
+<p>这是目前工业界的难点，<strong>核心在于“多模态对齐”和“引用索引”</strong>。</p>
+<h4 id="1-tables">1. 表格的处理（Tables）</h4>
+<ul>
+<li>解析阶段：不要将表格转为纯文本。</li>
+<li>最佳实践：将表格解析为 Markdown 或 HTML格式。LLM 对结构化标记语言的理解能力远强于纯文本。</li>
+<li>摘要索引：为每个表格生成一个自然语言摘要（Summary），将摘要存入向量库。检索时通过摘要定位表格，但在生成时把完整的 Markdown 表格喂给 LLM。</li>
+<li>渲染阶段：前端直接渲染 LLM 输出的 Markdown 表格。</li>
+</ul>
+<h4 id="2-images">2. 图片的处理 （Images）</h4>
+<p><strong>多模态索引法：</strong></p>
+<ol>
+<li>Image Captioning：使用多模态模型（如GPT-40-mini 或本地的Qwen-VL）为图片生成详细描述。</li>
+<li>存入向量库：将“图片描述+图片ID +所在页码”存入向量库。</li>
+<li>检索逻辑：当用户问到“XX流程图” 时，匹配到图片描述。</li>
+</ol>
+<p><strong>回显机制：</strong></p>
+<ol>
+<li>在返回给用户的答案中，使用特定占位符，如［IMAGE_ID: 123］。</li>
+<li>前端解析该占位符，从静态资源服务器（OSS）调用对应的图片 URL 进行展示。</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2021-9999 Jacob Xi
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
