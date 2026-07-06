@@ -149,8 +149,9 @@ nav:
     - '5 Manage Job in the Database': 'chap10/5Autosys_job_cmd.md'
     - '6 Autotsys virtual resource management': 'chap10/6autosys_vir_resouce.md'
     - '7 Shell Script to check Autosys agent installed': 'chap10/7autosys_shell.md'
-  - '2025 - 面试准备':
+  - '2026 - 面试准备':
     - '0 2025-Intro': '2025/0intro.md'
+    - '2026 DevOps CheatSheet': '2026/2devops.md'
     - '1 CI/CD 之路-GitOps 面试题合集': '2025/1cicd.md'
     - '1 典型Linux面试题 (Greg, wget, curl，Vim)': '2025/1Linux.md'
     - '2 Docker面试10大必考题': '2025/2docker.md'
