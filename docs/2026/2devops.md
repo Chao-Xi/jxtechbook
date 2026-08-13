@@ -328,6 +328,68 @@ Terraform Best Practices
 
 - Use **Version Control** to manage your Terraform code.
 
+## 5. Cloud Services
+
+### 5-1 AWS (EC2, S3, IAM, VPC, Lambda)
+
+#### EC2 (Elastic Compute Cloud)
+
+● aws ec2 describe-instances – List all instances
+
+● aws ec2 start-instances --instance-ids <id> – Start an instance
+
+● aws ec2 stop-instances --instance-ids <id> – Stop an instance
+
+● aws ec2 terminate-instances --instance-ids <id> – Terminate an instance
+
+● aws ec2 create-key-pair --key-name <name> – Create a key pair
+
+● aws ec2 describe-security-groups – List security groups
+
+
+#### S3 (Simple Storage Service)
+
+● aws s3 ls – List buckets
+
+● `aws s3 mb s3://<bucket>` – Create a bucket
+
+● `aws s3 cp <file> s3://<bucket>/` – Upload a file
+
+● `aws s3 rm s3://<bucket>/<file>` – Delete a file
+
+● `aws s3 rb s3://<bucket> --force` – Delete a bucket
+
+● `aws s3 sync <local-dir> s3://<bucket>/` – Sync local and S3
+
+
+#### IAM (Identity and Access Management)
+
+● `aws iam list-users` – List IAM users
+
+● `aws iam create-user --user-name <name>` – Create a user
+
+● `aws iam attach-user-policy --user-name <name> --policy-arn <policy>` Attach a policy
+
+● `aws iam list-roles – List IAM roles`
+
+● `aws iam create-role --role-name <name> --assume-role-policy-document file://policy.json` – Create a role
+
+● `aws iam list-policies` – List policies
+
+
+#### Lambda (Serverless Computing)
+
+● `aws lambda list-functions` – List all Lambda functions
+
+● `aws lambda create-function --function-name <name> --runtime <runtime> --role <role> --handler <handler>` – Create a function
+
+● `aws lambda update-function-code --function-name <name> --zip-file fileb://<file>.zip` – Update function code
+
+● `aws lambda delete-function --function-name <name>` – Delete a function
+
+● `aws lambda invoke --function-name <name> output.json` – Invoke a function
+
+
 
 ## 9. Networking, Ports & Load Balancing
 
