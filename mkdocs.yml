@@ -152,6 +152,7 @@ nav:
   - '2026 - 面试准备':
     - '0 2025-Intro': '2025/0intro.md'
     - '2026 DevOps CheatSheet': '2026/2devops.md'
+    - '2026 IAC + Configuration Management1': '2026/1iac.md'
     - '1 CI/CD 之路-GitOps 面试题合集': '2025/1cicd.md'
     - '1 典型Linux面试题 (Greg, wget, curl，Vim)': '2025/1Linux.md'
     - '2 Docker面试10大必考题': '2025/2docker.md'
@@ -182,6 +183,7 @@ nav:
     - '6 Kubernetes SRE part2': '2025/3kubernetes_sre2.md'
     - '6 Kubernetes SRE part3': '2025/3kubernetes_sre3.md'
     - '7 Git Scenario-Based Questions': '2025/14git.md'
+    - '2026 Millennium Python Test': '2026/4millennium_python.md'
   - 'SRE-Tes-Prep':
     - '1 SRE 面试2025': '2025/sre/0interview.md' 
     - '2 SRE Linux All2025': '2025/sre/1linux.md' 
