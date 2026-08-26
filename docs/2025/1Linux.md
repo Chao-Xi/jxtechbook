@@ -1,9 +1,138 @@
-# 1 典型Linux面试题 (Greg, wget, curl，Vim) 
+# 1 典型Linux面试题 2026
 
-### 1 如何查看系统资源使用情况？
+
+## DevOps Interview – Linux & Command Line Preparation
+
+
+### 1. File & Directory Management
+
+ls 列出文件和目录。
 
 ```
-top             # 实时显示系统运行信息（CPU、内存、进程）
+ls
+ls -l
+ls -la
+ls -lh
+ls -lt
+```
+
+> How do you find the 10 most recently modified files?
+
+```
+ls -lt | head
+```
+
+
+cp 复制文件或目录。
+
+```
+cp file.txt /tmp/
+cp file.txt backup.txt
+cp -r directory /tmp/
+cp -p file.txt backup.txt
+```
+
+* `-r` → recursive
+* `-p` → preserve permissions/timestamps
+
+
+### 2. File Content & Searching
+
+head
+
+```
+head file.txt
+head -n 20 file.txt
+```
+
+tail
+
+```
+tail file.txt
+tail -n 100 app.log
+tail -f app.log
+```
+
+**How do you monitor a log file in real time?**
+
+```
+tail -F /var/log/app.log
+
+tail -f /var/log/app.log
+```
+
+**grep**
+
+
+```
+grep "ERROR" app.log
+
+grep -i "error" app.log
+grep -n "error" app.log
+grep -r "error" /var/log/
+grep -v "INFO" app.log
+```
+
+
+| 参数   | 含义                    |
+| ---- | --------------------- |
+| `-i` | ignore case           |
+| `-n` | line number           |
+| `-r` | recursive             |
+| `-v` | exclude/match inverse |
+| `-E` | extended regex        |
+
+**`grep -i "error" app.log | tail -50`**
+
+
+### find
+
+```
+find /var/log -name "*.log"
+
+# 按类型：
+find /home -type f
+find /home -type d
+
+
+# 按大小：
+find /var/log -type f -size +100M
+
+# 删除：
+find /tmp -name "*.tmp" -delete
+
+find /tmp -name "*.tmp" -print
+先确认，再删除。
+```
+
+
+### 4. Permissions
+
+umask 这是你原资料中需要修正的地方
+
+```
+sudo chown user file.txt
+sudo chown user:group file.txt
+sudo chown -R user:group /opt/app
+```
+
+umask: 这是你原资料中需要修正的地方。
+
+```
+umask 022
+```
+
+
+`top`             # 实时显示系统运行信息（CPU、内存、进程）
+
+实时查看：
+
+* CPU
+* memory
+* processes
+* load
+
+```
 htop            # top 的增强版（需安装）
 free -h         # 查看内存使用情况
 df -h           # 查看磁盘使用率
@@ -13,9 +142,406 @@ iostat -x 1     # I/O 负载（需安装 sysstat）
 uptime          # 查看系统运行时长和平均负载
 ```
 
-### 2 如何查看端口是否被占用？
 
-**面试官目的：排查端口冲突或服务是否成功启动。**
+> **The server is very slow. How do you troubleshoot?**
+
+应该形成一个 troubleshooting flow：
+
+```
+Server Slow
+     │
+     ├── CPU?
+     │
+     ├── Memory?
+     │
+     ├── Disk?
+     │
+     ├── I/O?
+     │
+     ├── Network?
+     │
+     └── Application?
+```
+
+**CPU**
+
+top 或者 uptime
+
+查看 load average：
+
+`load average: 2.1, 1.8, 1.5`
+
+一般对应：
+
+```
+1 min
+5 min
+15 min
+```
+
+**Memory**
+
+`free -h`
+
+重点关注：
+
+* total
+* used
+* free
+* available
+* swap
+
+**Disk** `df -h`
+
+**查看 filesystem 使用率。**
+
+例如： `/dev/sda1  100G  98G  2G  98%`
+
+哪个目录占空间？
+
+`du -sh /*`
+
+进一步：
+
+`du -sh /var/*`
+
+更方便：
+
+```
+ncdu /
+Disk I/O
+iostat -xz 1
+```
+
+### Network Troubleshooting Interview Flow
+
+> Application cannot connect to another service. How do you troubleshoot?
+
+```
+1. DNS
+   ↓
+dig service.example.com
+
+2. Network connectivity
+   ↓
+ping service.example.com
+
+3. Port connectivity
+   ↓
+nc -zv service.example.com 443
+
+4. HTTP layer
+   ↓
+curl -v https://service.example.com
+
+5. Local listening port
+   ↓
+ss -lntp
+
+6. Firewall
+   ↓
+iptables / nftables / cloud NSG
+
+7. Application logs
+   ↓
+journalctl / application logs
+```
+
+
+### Logs
+
+
+journalctl
+
+**systemd 系统非常重要。** `journalctl`
+
+某个 service： `journalctl -u nginx`
+
+最近日志： `journalctl -u nginx --since "1 hour ago"`
+
+实时： `journalctl -u nginx -f`
+
+
+### File Transfer
+
+
+scp
+
+```
+scp file.txt user@server:/tmp/
+```
+
+从远程复制：
+
+```
+scp user@server:/tmp/file.txt .
+```
+
+rsync
+
+```
+rsync -avz source/ user@server:/destination/
+
+
+rsync -avz --delete source/ destination/
+```
+
+#### Archive
+
+```
+创建： tar -cvf archive.tar directory/
+
+创建： tar -czvf archive.tar.gz directory/
+
+解压： tar -xzvf archive.tar.gz
+
+查看： tar -tzvf archive.tar.gz
+
+
+c = create
+x = extract
+t = list
+v = verbose
+f = file
+z = gzip
+```
+
+
+### Text Processing
+
+
+**awk**  `awk '{print $1}' file.txt`
+
+
+`ps aux | awk '{print $1,$2,$11}'`
+
+
+**sed** 替换：
+
+`sed 's/old/new/g' file.txt`
+
+**直接修改：**
+
+`sed -i 's/old/new/g' file.txt`
+
+**sort**
+
+```
+sort file.txt
+sort -n numbers.txt
+sort -r file.txt
+```
+
+**uniq**
+
+`sort file.txt | uniq`
+
+统计：  `sort file.txt | uniq -c`
+
+**wc**
+
+```
+wc -l file.txt
+```
+
+统计行数。
+
+**cut**
+
+`cut -d',' -f1 file.csv`
+
+**xargs**
+
+
+```
+find . -name "*.log" | xargs rm
+
+生产环境更安全的方式：
+
+find . -name "*.log" -print0 | xargs -0 rm
+
+find . -name "*.log" -delete
+```
+
+
+
+16. Cron
+
+编辑： `crontab -e`
+
+例如：
+
+`0 2 * * * /opt/scripts/backup.sh`
+
+意思：
+
+02:00 every day
+
+Cron 五个字段：
+
+* minute
+* hour
+* day of month
+* month
+* day of week
+
+记忆：
+
+```
+* * * * *
+│ │ │ │ │
+│ │ │ │ └── day of week
+│ │ │ └──── month
+│ │ └────── day
+│ └──────── hour
+└────────── minute
+
+```
+
+
+### Git
+
+```
+Working Directory
+       ↓
+git add
+       ↓
+Staging Area
+       ↓
+git commit
+       ↓
+Local Repository
+       ↓
+git push
+       ↓
+Remote Repository
+```
+
+> You have uncommitted changes but need to switch branches.
+
+```
+git stash
+git checkout other-branch
+```
+
+
+### Kubernetes
+
+```
+kubectl get pod
+       ↓
+kubectl describe pod
+       ↓
+kubectl logs
+       ↓
+kubectl logs --previous
+       ↓
+kubectl exec
+       ↓
+kubectl get events
+       ↓
+Check Service
+       ↓
+Check Endpoints
+       ↓
+Check DNS
+       ↓
+Check NetworkPolicy
+```
+
+
+#### Kubernetes Troubleshooting Cheat Sheet
+
+CrashLoopBackOff
+
+```
+kubectl logs pod
+kubectl logs pod --previous
+kubectl describe pod pod
+```
+
+重点检查：
+
+* application crash
+* wrong command
+* environment variables
+* secrets
+* config
+* liveness probe
+* readiness probe
+* resource limits
+
+
+
+
+**ImagePullBackOff**
+
+`kubectl describe pod pod`
+
+检查：
+
+* image name
+* image tag
+* registry
+* credentials
+* imagePullSecrets
+
+
+**Pending**
+
+`kubectl describe pod pod`
+
+检查：
+
+* CPU/memory
+* node availability
+* taints/tolerations
+* nodeSelector
+* affinity
+* PVC
+
+
+**Service 无法访问**
+
+```
+kubectl get svc
+kubectl get endpoints
+kubectl describe svc <service>
+kubectl get pods --show-labels
+```
+
+重点检查：
+
+```
+Service selector
+       ↓
+Pod labels
+       ↓
+Endpoints
+```
+
+### Performance Tools
+
+```
+top
+free -h
+df -h
+du -sh
+vmstat
+iostat
+sar
+```
+
+```
+CPU       → top
+Memory    → free
+Disk      → df / du
+Disk I/O  → iostat
+System    → vmstat
+Historical→ sar
+```
+
+### **面试官目的：排查端口冲突或服务是否成功启动。**
 
 ```
 netstat -tulnp | grep :端口号
@@ -50,6 +576,8 @@ lsof -p PID                   # 查看进程打开的文件
 
 strace -p PID                 # 跟踪系统调用（排查卡顿）
 ```
+
+
 
 ### 5 软链接和硬链接的区别？
 
