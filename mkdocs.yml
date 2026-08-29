@@ -155,6 +155,7 @@ nav:
     - '2026 IAC + Configuration Management1': '2026/1iac.md'
     - '2026 典型Linux面试题': '2025/1Linux.md'
     - '2026 Monitoring & Logging / Security & Compliance': '2026/2monitor_sec.md'
+    - '2026 Networking, Ports & Load Balancing': '2026/5network.md'
     - '1 CI/CD 之路-GitOps 面试题合集': '2025/1cicd.md'
     - '2 Docker面试10大必考题': '2025/2docker.md'
     - '3 Kubernetes 面试题精解：从入门到进阶(2025)': '2025/3kubernetes.md'

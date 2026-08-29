@@ -1,4 +1,2824 @@
-# 1 CI/CD 之路 & GitOps 面试题合集
+# 2026 CI/CD 之路 & GitOps 面试题合集
+
+这部分非常适合放进你的 **DevOps / Platform Operations 面试准备**。你原始资料覆盖得不错，但存在一些明显的格式、命令和最佳实践问题。尤其是 **Jenkins CLI、Credentials、Docker、Kubernetes、Terraform、Trivy、SonarQube**，面试官更可能从“为什么这样设计”和“失败怎么排查”来问。
+
+我建议整理成下面这份 **Jenkins CI/CD Interview Guide**。
+
+## Jenkins CI/CD – DevOps Interview Preparation
+
+### 1. CI/CD 核心概念
+
+Continuous Integration — CI
+
+目标：
+
+> Developers frequently integrate code into a shared repository, and automated builds/tests validate every change.
+
+典型流程：
+
+```text
+Developer
+   ↓
+Git Push
+   ↓
+Webhook
+   ↓
+Jenkins
+   ↓
+Checkout
+   ↓
+Build
+   ↓
+Unit Test
+   ↓
+Code Quality
+   ↓
+Security Scan
+```
+
+---
+
+### Continuous Delivery vs Continuous Deployment
+
+**Continuous Delivery**
+
+代码经过自动化验证后，已经可以发布到生产环境，但生产部署可能需要人工批准。
+
+```text
+Build → Test → Security → Staging → Manual Approval → Production
+```
+
+**Continuous Deployment**
+
+通过验证后自动部署到生产环境：
+
+```text
+Build → Test → Security → Staging → Production
+```
+
+面试重点
+
+> CI is primarily about continuously integrating and validating changes.
+> CD can mean Continuous Delivery or Continuous Deployment. Continuous Deployment automatically releases validated changes to production.
+
+---
+
+### 2. Jenkins Architecture
+
+这是 Jenkins 面试非常重要的知识。
+
+```text
+                  GitHub
+                    │
+                 Webhook
+                    │
+                    ▼
+              Jenkins Controller
+                    │
+              Schedule / Pipeline
+                    │
+          ┌─────────┴─────────┐
+          ▼                   ▼
+     Agent 1              Agent 2
+     Linux                Docker
+          │                   │
+          ▼                   ▼
+       Build/Test          Build/Test
+```
+
+ Controller
+
+负责：
+
+* Pipeline orchestration
+* Job scheduling
+* Credentials management
+* Agent management
+* Configuration
+
+Agent
+
+负责真正执行：
+
+* Build
+* Test
+* Docker build
+* Security scan
+* Deployment
+
+
+### 3. Jenkins Installation on Ubuntu
+
+你原来的安装步骤基本正确，但建议用现代 Jenkins repository keyring 方式。
+
+```bash id="w8x2q1"
+sudo apt update
+
+sudo apt install -y fontconfig openjdk-17-jre wget
+
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] \
+https://pkg.jenkins.io/debian-stable binary/" | \
+sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update
+sudo apt install -y jenkins
+```
+
+启动：
+
+```bash id="f0p8q5"
+sudo systemctl enable --now jenkins
+```
+
+检查：
+
+```bash id="y8x2wv"
+sudo systemctl status jenkins
+```
+
+查看日志：
+
+```bash id="3s8p0z"
+sudo journalctl -u jenkins -f
+```
+
+初始密码：
+
+```bash id="k5h3mn"
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+默认端口：
+
+```text id="n9s4xa"
+8080
+```
+
+---
+
+### 4. Jenkins Service Management
+
+最重要的几个：
+
+```bash id="r6n3bw"
+sudo systemctl start jenkins
+sudo systemctl stop jenkins
+sudo systemctl restart jenkins
+sudo systemctl status jenkins
+```
+
+日志：
+
+```bash id="2xk9qd"
+sudo journalctl -u jenkins
+sudo journalctl -u jenkins -f
+```
+
+ 面试题
+
+> Jenkins is not starting. What do you check?
+
+建议回答：
+
+```text
+systemctl status jenkins
+        ↓
+journalctl -u jenkins
+        ↓
+Java version
+        ↓
+Jenkins configuration
+        ↓
+Port 8080
+        ↓
+Disk space
+        ↓
+Memory
+        ↓
+Permissions
+```
+
+例如：
+
+```bash id="t8d5rx"
+java -version
+df -h
+free -h
+ss -lntp | grep 8080
+```
+
+---
+
+### 5. Jenkins Environment Variables
+
+常见：
+
+| Variable       | Meaning                |
+| -------------- | ---------------------- |
+| `JENKINS_HOME` | Jenkins data directory |
+| `BUILD_NUMBER` | Current build number   |
+| `JOB_NAME`     | Job name               |
+| `BUILD_ID`     | Build identifier       |
+| `BUILD_URL`    | Build URL              |
+| `WORKSPACE`    | Workspace directory    |
+| `NODE_NAME`    | Agent/node name        |
+| `GIT_COMMIT`   | Git commit checked out |
+
+Pipeline 中：
+
+```groovy
+echo "Build: ${env.BUILD_NUMBER}"
+echo "Workspace: ${env.WORKSPACE}"
+echo "Commit: ${env.GIT_COMMIT}"
+```
+
+---
+
+### 6. Declarative Pipeline
+
+这是 Jenkins 面试必须掌握的。
+
+```groovy id="v4p1zn"
+pipeline {
+    agent any
+
+    environment {
+        APP_ENV = 'production'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/your-repo.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'scp target/*.jar user@server:/deploy/'
+            }
+        }
+    }
+}
+```
+
+Declarative Pipeline 核心结构
+
+```text
+pipeline
+ ├── agent
+ ├── environment
+ ├── parameters
+ ├── triggers
+ ├── stages
+ │    ├── stage
+ │    │    └── steps
+ │    └── stage
+ └── post
+```
+
+---
+
+### 7. Scripted Pipeline
+
+```groovy id="1x5j7a"
+node {
+    stage('Checkout') {
+        git 'https://github.com/your-repo.git'
+    }
+
+    stage('Build') {
+        sh 'mvn clean package'
+    }
+
+    stage('Test') {
+        sh 'mvn test'
+    }
+
+    stage('Deploy') {
+        sh 'scp target/*.jar user@server:/deploy/'
+    }
+}
+```
+
+### Declarative vs Scripted
+
+| Declarative                           | Scripted                  |
+| ------------------------------------- | ------------------------- |
+| Structured                            | More flexible             |
+| Easier to read                        | More programming-oriented |
+| Easier validation                     | More complex              |
+| Preferred for many standard pipelines | Useful for complex logic  |
+
+面试可以回答：
+
+> I generally prefer Declarative Pipeline for standard CI/CD workflows because it provides a clear structure and built-in pipeline features. I use Scripted Pipeline when more dynamic programming logic is required.
+
+---
+
+### 8. Jenkins Webhook
+
+典型流程：
+
+```text
+Developer
+   │
+   │ git push
+   ▼
+GitHub
+   │
+   │ webhook
+   ▼
+Jenkins
+   │
+   ▼
+Pipeline
+```
+
+GitHub webhook endpoint：
+
+```text
+/github-webhook/
+```
+
+例如：
+
+```text
+https://jenkins.example.com/github-webhook/
+```
+
+为什么使用 Webhook？
+
+**避免 Jenkins 不断 polling Git。**
+
+Webhook：
+
+```text
+Push → GitHub immediately notifies Jenkins
+```
+
+Polling：
+
+```text
+Jenkins → GitHub
+Jenkins → GitHub
+Jenkins → GitHub
+```
+
+Webhook 通常更及时，也减少不必要的 SCM polling。
+
+---
+
+### 9. Jenkins Triggers
+
+Cron：
+
+```groovy id="2fq7bn"
+triggers {
+    cron('H 4 * * *')
+}
+```
+
+这里的 `H` 很重要。
+
+> `H` allows Jenkins to distribute jobs rather than having many jobs execute at exactly the same time.
+
+SCM polling：
+
+```groovy id="g4x0m2"
+triggers {
+    pollSCM('H/5 * * * *')
+}
+```
+
+表示大约每 5 分钟检查 SCM。
+
+---
+
+### 10. CI/CD Pipeline Best Practice
+
+不要简单做：
+
+```text
+Checkout
+ ↓
+Build
+ ↓
+Deploy
+```
+
+更完整：
+
+```text
+Checkout
+   ↓
+Build
+   ↓
+Unit Test
+   ↓
+Static Code Analysis
+   ↓
+Dependency Scan
+   ↓
+Container Build
+   ↓
+Container Scan
+   ↓
+Push Image
+   ↓
+Deploy to Dev
+   ↓
+Integration Test
+   ↓
+Deploy to Staging
+   ↓
+Approval / Automated Gate
+   ↓
+Production
+```
+
+这才是 DevSecOps Pipeline。
+
+---
+
+###  11. Docker + Jenkins
+
+你原来的例子可以改进为：
+
+```groovy id="8x7z3p"
+pipeline {
+    agent any
+
+    stages {
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t my-app:${BUILD_NUMBER} .'
+            }
+        }
+
+        stage('Scan Image') {
+            steps {
+                sh 'trivy image my-app:${BUILD_NUMBER}'
+            }
+        }
+    }
+}
+```
+
+### 为什么不要一直使用 `latest`？
+
+不推荐：
+
+```text
+my-app:latest
+```
+
+更推荐：
+
+```text
+my-app:${BUILD_NUMBER}
+```
+
+或者：
+
+```text
+my-app:${GIT_COMMIT}
+```
+
+例如：
+
+```text
+my-app:a83f91c
+```
+
+这样可以实现：
+
+* traceability
+* reproducibility
+* rollback
+
+---
+
+### 12. Docker Registry
+
+Jenkins Pipeline：
+
+```groovy id="9y3x6m"
+pipeline {
+    agent any
+
+    environment {
+        IMAGE = 'myregistry.example.com/my-app'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                sh "docker build -t ${IMAGE}:${BUILD_NUMBER} ."
+            }
+        }
+
+        stage('Push') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'registry-credentials',
+                        usernameVariable: 'REGISTRY_USER',
+                        passwordVariable: 'REGISTRY_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "$REGISTRY_PASSWORD" | \
+                          docker login myregistry.example.com \
+                          -u "$REGISTRY_USER" --password-stdin
+
+                        docker push "$IMAGE:$BUILD_NUMBER"
+                    '''
+                }
+            }
+        }
+    }
+}
+```
+
+面试重点
+
+**不要把 password/token 写在 Jenkinsfile 中。**
+
+错误：
+
+```groovy
+sh 'docker login -u admin -p MyPassword'
+```
+
+正确：
+
+```text
+Jenkins Credentials
+       ↓
+withCredentials
+       ↓
+Environment variable
+       ↓
+Command
+```
+
+---
+
+### 13. Kubernetes Deployment
+
+你原来的：
+
+```text
+kubectl apply -f k8s/deployment.
+```
+
+这里明显应该是：
+
+```bash id="x4y8z0"
+kubectl apply -f k8s/deployment.yaml
+```
+
+Pipeline：
+
+```groovy id="n5p2vr"
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f k8s/deployment.yaml'
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh 'kubectl rollout status deployment/my-app'
+            }
+        }
+    }
+}
+```
+
+更好的方式
+
+不要直接：
+
+```bash
+kubectl apply
+```
+
+可以：
+
+```text
+Jenkins
+   ↓
+Helm
+   ↓
+Kubernetes
+```
+
+或者：
+
+```text
+Jenkins
+   ↓
+GitOps repository
+   ↓
+Argo CD
+   ↓
+AKS
+```
+
+---
+
+### 14. Jenkins + Terraform
+
+建议：
+
+```groovy id="6v2j0p"
+pipeline {
+    agent any
+
+    stages {
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                sh 'terraform validate'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                sh 'terraform apply -auto-approve tfplan'
+            }
+        }
+    }
+}
+```
+
+面试重点
+
+Production 环境不建议无条件：
+
+```bash
+terraform apply -auto-approve
+```
+
+更合理：
+
+```text
+terraform fmt
+      ↓
+terraform validate
+      ↓
+terraform plan
+      ↓
+Review / Approval
+      ↓
+terraform apply
+```
+
+如果是完全自动化的 Continuous Deployment，则可以根据组织的 governance/risk requirements 自动 apply。
+
+---
+
+### 15. Trivy Security Scan
+
+基本：
+
+```groovy id="9b1v5x"
+stage('Security Scan') {
+    steps {
+        sh 'trivy image my-app:${BUILD_NUMBER}'
+    }
+}
+```
+
+更严格：
+
+```groovy id="h4n7sq"
+stage('Security Scan') {
+    steps {
+        sh '''
+            trivy image \
+              --exit-code 1 \
+              --severity HIGH,CRITICAL \
+              my-app:${BUILD_NUMBER}
+        '''
+    }
+}
+```
+
+关键参数
+
+```text
+--severity HIGH,CRITICAL
+```
+
+只关注 HIGH / CRITICAL。
+
+```text
+--exit-code 1
+```
+
+发现符合条件的 vulnerability 时返回非零 exit code。
+
+于是：
+
+```text
+Vulnerability
+      ↓
+Trivy exit code 1
+      ↓
+Jenkins stage FAILED
+      ↓
+Pipeline STOP
+      ↓
+No deployment
+```
+
+这就是 **Security Gate**。
+
+---
+
+### 16. OWASP Dependency Check
+
+例如：
+
+```groovy id="q3m8yv"
+stage('Dependency Check') {
+    steps {
+        sh '''
+            mvn org.owasp:dependency-check-maven:check \
+              -DfailBuildOnCVSS=7
+        '''
+    }
+}
+```
+
+Pipeline：
+
+```text
+Source Code
+    ↓
+Maven Dependencies
+    ↓
+OWASP Dependency Check
+    ↓
+CVSS >= 7?
+    ├── YES → FAIL
+    └── NO  → Continue
+```
+
+---
+
+### 17. SonarQube
+
+你的原始资料使用：
+
+```text
+-Dsonar.login
+```
+
+属于旧式写法，不建议作为新项目的首选。
+
+更现代的 Jenkins Pipeline 通常通过 Jenkins Credentials + SonarQube integration 来管理认证。
+
+例如：
+
+```groovy id="p3x5mr"
+pipeline {
+    agent any
+
+    stages {
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+        }
+    }
+}
+```
+
+如果配置了 Quality Gate，可以进一步：
+
+```groovy id="7k1w9c"
+stage('Quality Gate') {
+    steps {
+        timeout(time: 10, unit: 'MINUTES') {
+            waitForQualityGate abortPipeline: true
+        }
+    }
+}
+```
+
+这样：
+
+```text
+SonarQube
+    ↓
+Quality Gate
+    ↓
+PASS → Continue
+FAIL → Abort Pipeline
+```
+
+---
+
+### 18. Jenkins Credentials
+
+这是面试高频问题。
+
+不要：
+
+```groovy
+environment {
+    PASSWORD = 'MyPassword'
+}
+```
+
+不要：
+
+```bash
+docker login -u admin -p password
+```
+
+使用：
+
+```groovy id="j7c3v2"
+withCredentials([
+    usernamePassword(
+        credentialsId: 'docker-registry',
+        usernameVariable: 'USERNAME',
+        passwordVariable: 'PASSWORD'
+    )
+]) {
+    sh '''
+        echo "$PASSWORD" | docker login \
+          -u "$USERNAME" \
+          --password-stdin
+    '''
+}
+```
+
+Credentials 常见类型
+
+```text
+Username / Password
+SSH Username with private key
+Secret text
+Secret file
+Certificate
+```
+
+---
+
+### 19. Jenkins File Parameter
+
+你原来的例子：
+
+```groovy
+parameters {
+    file(name: 'configFile')
+}
+```
+
+面试中需要注意：**不要随意把用户上传的文件直接 `cat` 或执行。**
+
+如果只是读取：
+
+```groovy id="7j3q5s"
+pipeline {
+    agent any
+
+    parameters {
+        file(name: 'configFile')
+    }
+
+    stages {
+        stage('Read File') {
+            steps {
+                sh 'cat "$configFile"'
+            }
+        }
+    }
+}
+```
+
+实际生产环境应该考虑：
+
+* file validation
+* file size
+* file type
+* secrets
+* untrusted input
+* workspace cleanup
+
+---
+
+### 20. Jenkins Backup
+
+你的：
+
+```bash
+cp -r $JENKINS_HOME /backup/
+```
+
+可以作为简单 POC，但生产环境需要更谨慎。
+
+Jenkins 最重要的数据通常位于：
+
+```text
+$JENKINS_HOME
+```
+
+包括：
+
+* jobs
+* credentials
+* plugins
+* configuration
+* secrets
+* build metadata
+
+面试回答
+
+> How would you back up Jenkins?
+
+可以回答：
+
+```text
+JENKINS_HOME
+      ↓
+Backup storage
+      ↓
+Encrypted
+      ↓
+Off-site / durable storage
+      ↓
+Regular restore testing
+```
+
+关键不是：
+
+> “I copy the directory.”
+
+而是：
+
+> **Backup + encryption + retention + disaster recovery + restore testing.**
+
+---
+
+### 21. Jenkins Node Management
+
+基本概念：
+
+```text
+Jenkins Controller
+       │
+       ├── Linux Agent
+       ├── Windows Agent
+       └── Docker/Kubernetes Agent
+```
+
+面试中推荐强调：
+
+> Avoid running heavy builds directly on the Jenkins controller. Use agents for build and deployment workloads.
+
+---
+
+### 22. Jenkins CLI
+
+你原来的 CLI 基本正确，但有一个面试上的注意点：
+
+Jenkins CLI 通常需要认证，例如：
+
+```bash id="x1j7p4"
+java -jar jenkins-cli.jar \
+  -s https://jenkins.example.com/ \
+  -auth user:API_TOKEN \
+  list-jobs
+```
+
+常见：
+
+```bash id="c3n9az"
+java -jar jenkins-cli.jar -s <url> list-jobs
+java -jar jenkins-cli.jar -s <url> build <job>
+java -jar jenkins-cli.jar -s <url> get-job <job>
+java -jar jenkins-cli.jar -s <url> list-plugins
+```
+
+安全重点
+
+不要把 password 放到：
+
+```bash
+-auth user:password
+```
+
+优先使用 API token，并注意 shell history 和 credential exposure。
+
+---
+
+### 23. Jenkins Pipeline Failure Handling
+
+非常推荐你掌握 `post`：
+
+```groovy id="w9r2k5"
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline succeeded'
+        }
+
+        failure {
+            echo 'Pipeline failed'
+        }
+
+        always {
+            echo 'Pipeline completed'
+        }
+    }
+}
+```
+
+常见：
+
+```text
+always
+success
+failure
+unstable
+aborted
+changed
+```
+
+---
+
+### 24. Jenkins Pipeline with Security
+
+如果你面试 DevOps / DevSecOps，我建议你最终记住这个 Pipeline：
+
+```text id="7u5g1e"
+                Git Push
+                   │
+                   ▼
+               Jenkins
+                   │
+                   ▼
+               Checkout
+                   │
+                   ▼
+                 Build
+                   │
+                   ▼
+              Unit Tests
+                   │
+                   ▼
+             SonarQube
+                   │
+                   ▼
+        OWASP Dependency Check
+                   │
+                   ▼
+             Docker Build
+                   │
+                   ▼
+             Trivy Scan
+                   │
+              ┌────┴────┐
+              │         │
+            FAIL       PASS
+              │         │
+              ▼         ▼
+            STOP     Push Image
+                        │
+                        ▼
+                 Deploy to Dev
+                        │
+                        ▼
+                Integration Test
+                        │
+                        ▼
+                    Staging
+                        │
+                        ▼
+                  Approval/Gate
+                        │
+                        ▼
+                   Production
+```
+
+---
+
+### 25. Jenkins vs GitHub Actions vs GitLab CI
+
+面试很容易问这个。
+
+|                  | Jenkins      | GitHub Actions            | GitLab CI              |
+| ---------------- | ------------ | ------------------------- | ---------------------- |
+| Type             | CI/CD server | CI/CD platform            | CI/CD platform         |
+| Configuration    | Jenkinsfile  | YAML                      | `.gitlab-ci.yml`       |
+| Runner           | Agents       | GitHub-hosted/self-hosted | GitLab Runner          |
+| Plugin ecosystem | 非常丰富         | Actions                   | Templates/Integrations |
+| Hosting          | Self-hosted  | SaaS + self-hosted        | SaaS + self-managed    |
+| Customization    | 非常高          | 高                         | 高                      |
+| Operations       | 自己维护较多       | 较少                        | 取决于部署模式                |
+
+面试回答
+
+> Jenkins provides extensive flexibility and a mature plugin ecosystem, but it requires more operational overhead. GitHub Actions and GitLab CI are more tightly integrated with their respective source-control platforms and can reduce CI/CD infrastructure management.
+
+---
+
+### 26. Jenkins 面试最重要的 15 个问题
+
+建议你重点练这 15 个：
+
+Q1. What is Jenkins?
+
+> Jenkins is an automation server commonly used to implement CI/CD pipelines, automate builds, tests, security scanning, and deployments.
+
+Q2. Declarative vs Scripted Pipeline？
+
+重点：
+
+```text
+Declarative → structured/simple/maintainable
+Scripted    → flexible/programmatic
+```
+
+Q3. Controller vs Agent？
+
+```text
+Controller → orchestration
+Agent      → workload execution
+```
+
+Q4. How does GitHub trigger Jenkins?
+
+```text
+Git push
+ ↓
+GitHub webhook
+ ↓
+Jenkins
+ ↓
+Pipeline
+```
+
+ Q5. How do you store secrets?
+
+> Jenkins Credentials, not hard-coded in Jenkinsfile.
+
+Q6. How do you prevent vulnerable Docker images from being deployed?
+
+```text
+Trivy
+ ↓
+HIGH/CRITICAL
+ ↓
+non-zero exit code
+ ↓
+Pipeline fails
+```
+
+Q7. How do you implement quality gates?
+
+```text
+SonarQube
+ ↓
+Quality Gate
+ ↓
+PASS / FAIL
+```
+
+Q8. How do you deploy to Kubernetes?
+
+```text
+kubectl
+```
+
+或者：
+
+```text
+Helm
+```
+
+或者更现代：
+
+```text
+GitOps → Argo CD
+```
+
+Q9. Jenkins pipeline fails. How do you troubleshoot?
+
+```text
+Console Output
+ ↓
+Stage
+ ↓
+Command
+ ↓
+Agent
+ ↓
+Credentials
+ ↓
+Network
+ ↓
+External dependency
+```
+
+Q10. Jenkins agent is offline?
+
+检查：
+
+```text
+Agent connectivity
+Java/runtime
+SSH
+Resource availability
+Network
+Jenkins logs
+```
+
+Q11. How do you make builds reproducible?
+
+使用：
+
+```text
+versioned dependencies
+immutable artifacts
+containerized build environment
+commit SHA/image digest
+```
+
+Q12. Why not use `latest`?
+
+因为：
+
+```text
+latest
+ ↓
+mutable
+ ↓
+hard to trace
+ ↓
+hard to rollback
+```
+
+推荐：
+
+```text
+image:<git-sha>
+image:<build-number>
+```
+
+Q13. How do you handle rollback?
+
+```text
+previous artifact/image
+       ↓
+redeploy
+```
+
+Kubernetes：
+
+```bash id="cb1u9f"
+kubectl rollout undo deployment/my-app
+```
+
+Q14. How do you secure Jenkins?
+
+重点回答：
+
+```text
+RBAC
+Credentials
+Least privilege
+HTTPS
+Plugin updates
+Agent isolation
+Secret management
+Audit logs
+Network restrictions
+Backup
+```
+
+Q15. Jenkins vs GitOps？
+
+这是你做 **Azure/AKS/Platform Operations** 面试时非常值得准备的问题：
+
+```text
+Traditional CI/CD:
+
+Jenkins
+   ↓
+kubectl apply
+   ↓
+Kubernetes
+```
+
+GitOps：
+
+```text
+Jenkins
+   ↓
+Build/Test/Scan
+   ↓
+Container Registry
+   ↓
+Git deployment repository
+   ↓
+Argo CD
+   ↓
+AKS
+```
+
+GitOps 的核心是：
+
+> **Git is the desired state, and Argo CD continuously reconciles the cluster to that desired state.**
+
+
+
+这部分建议你也不要只是当成 **Argo CD command cheat sheet**。对于 DevOps / Platform Operations 面试，Argo CD 最重要的是理解 **GitOps 架构、Desired State vs Live State、Sync、Drift、Rollback、Jenkins 与 Argo CD 的职责边界**。
+
+另外，你这份资料里有几处 **Argo CD 版本和命令已经过时/不准确**，我帮你整理成面试版。
+
+# Argo CD / GitOps – DevOps Interview Guide
+
+## 1. What is Argo CD?
+
+Argo CD 是一个 Kubernetes 的 **GitOps Continuous Delivery** 工具。
+
+核心思想：
+
+> Git defines the desired state, and Argo CD continuously reconciles the Kubernetes cluster to that desired state.
+
+最重要的一句话：
+
+```text
+Git = Desired State
+Kubernetes = Live State
+Argo CD = Reconciliation Engine
+```
+
+---
+
+## 2. Traditional CI/CD vs GitOps
+
+
+### Traditional Jenkins deployment
+
+```text
+Developer
+    |
+    | git push
+    v
+ GitHub
+    |
+    v
+ Jenkins
+    |
+    | docker build
+    v
+ Container Registry
+    |
+    | kubectl apply
+    v
+ Kubernetes
+```
+
+Jenkins 直接操作 Kubernetes。
+
+
+### 3. GitOps Architecture
+
+推荐你重点记这个：
+
+```text
+                  Developer
+                      |
+                      | git push
+                      v
+                Application Repo
+                      |
+                      v
+                   Jenkins
+                      |
+             Build / Test / Scan
+                      |
+                      v
+               Container Registry
+                      |
+                      |
+                      v
+              Deployment Repo
+                      |
+                      | desired state
+                      v
+                   Argo CD
+                      |
+              Reconciliation
+                      |
+                      v
+                Kubernetes
+                      |
+                      v
+                 Running Pods
+```
+
+关键区别：
+
+**Jenkins**
+
+负责：
+
+```text
+Build
+Test
+Security Scan
+Package
+Push Image
+```
+
+**Argo CD**
+
+负责：
+
+```text
+Deployment
+Synchronization
+Drift Detection
+Reconciliation
+Rollback
+```
+
+所以可以说：
+
+> Jenkins is responsible for CI and artifact creation, while Argo CD is responsible for GitOps-based continuous delivery to Kubernetes.
+
+
+
+### 4. Desired State vs Live State
+
+这是 Argo CD 最核心的概念。
+
+Git：
+
+```yaml
+replicas: 3
+```
+
+代表：
+
+```text
+Desired State = 3 replicas
+```
+
+Kubernetes 实际：
+
+```text
+Running Pods = 2
+```
+
+于是：
+
+```text
+Desired State
+      |
+      | replicas = 3
+      v
+   Argo CD
+      |
+      | compare
+      v
+Live State
+      |
+      | replicas = 2
+```
+
+Argo CD 发现：
+
+```text
+Desired != Live
+```
+
+于是：
+
+```text
+OutOfSync
+```
+
+如果启用了 automated sync：
+
+```text
+OutOfSync
+    |
+    v
+Argo CD
+    |
+    v
+Reconcile
+    |
+    v
+3 replicas
+```
+
+最终：
+
+```text
+Synced
+Healthy
+```
+
+---
+
+### 5. Sync vs Refresh
+
+这个概念非常容易被面试官问。
+
+**Refresh**
+
+```bash
+argocd app get myapp
+```
+
+或者：
+
+```bash
+argocd app refresh myapp
+```
+
+Refresh 的核心：
+
+> Re-evaluate the application state and detect changes.
+
+它主要是：
+
+```text
+Git
+ ↓
+Argo CD
+ ↓
+Compare
+ ↓
+Detect changes
+```
+
+**Refresh 不等于部署。**
+
+**Sync**
+
+```bash
+argocd app sync myapp
+```
+
+Sync 才是：
+
+```text
+Desired State
+      ↓
+Kubernetes
+```
+
+也就是执行 deployment。
+
+### 6. Sync Status
+
+常见：
+
+```text
+Synced
+OutOfSync
+Unknown
+```
+
+**Synced**
+
+```text
+Git desired state
+        =
+Kubernetes live state
+```
+
+**OutOfSync**
+
+```text
+Git desired state
+        !=
+Kubernetes live state
+```
+
+例如：
+
+```text
+Git:
+replicas = 3
+
+K8S:
+replicas = 2
+```
+
+Argo CD：
+
+```text
+OutOfSync
+```
+
+
+### 7. Application Health
+
+**Sync Status 和 Health 是两个不同概念。**
+
+例如：
+
+```text
+Sync Status: Synced
+Health: Degraded
+```
+
+这完全可能。
+
+为什么？
+
+因为：
+
+```text
+Git configuration
+        ↓
+correctly deployed
+        ↓
+Synced
+```
+
+但是：
+
+```text
+Pod
+ ↓
+CrashLoopBackOff
+```
+
+所以：
+
+```text
+Health = Degraded
+```
+
+面试回答
+
+> Sync status tells me whether the live state matches the desired state, while health indicates whether the deployed resources are actually healthy.
+
+这个回答非常重要。
+
+
+### 8. Install Argo CD CLI
+
+macOS：
+
+```bash
+brew install argocd
+```
+
+检查：
+
+```bash
+argocd version
+```
+
+Linux 安装时，你原资料使用了固定的：
+
+```text
+v2.5.4
+```
+
+这个版本已经非常老。
+
+面试资料不要固定记 `v2.5.4`，更推荐：
+
+> Install the current supported Argo CD CLI version that matches the Argo CD server version.
+
+
+### 9. Install Argo CD on Kubernetes
+
+创建 namespace：
+
+```bash
+kubectl create namespace argocd
+```
+
+安装：
+
+```bash
+kubectl apply -n argocd \
+  -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+这里你原来的：
+
+```text
+install.
+```
+
+应该注意文件名通常是：
+
+```text
+install.yaml
+```
+
+检查：
+
+```bash
+kubectl get pods -n argocd
+```
+
+检查 services：
+
+```bash
+kubectl get svc -n argocd
+```
+
+### 10. Access Argo CD UI
+
+最简单的 POC：
+
+```bash
+kubectl port-forward svc/argocd-server \
+  -n argocd 8080:443
+```
+
+然后访问：
+
+```text
+https://localhost:8080
+```
+
+注意是：
+
+```text
+HTTPS
+```
+
+不是：
+
+```text
+HTTP
+```
+
+### 11. Argo CD Initial Admin Password
+
+你原来的资料这里需要修改。
+
+不要使用：
+
+```bash
+kubectl logs <argocd-server-pod> | grep admin
+```
+
+现代 Argo CD 安装中，初始 admin password 通常在 Secret 中。
+
+使用：
+
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d
+```
+
+然后：
+
+```bash
+argocd login localhost:8080 \
+  --username admin \
+  --password <password> \
+  --insecure
+```
+
+因为你的 port-forward 使用 HTTPS，但通常是 self-signed certificate，所以 POC 中常用：
+
+```text
+--insecure
+```
+
+生产环境应该使用正确的 TLS certificate，而不是长期依赖 `--insecure`。
+
+### 12. Argo CD Application
+
+这是 Argo CD 最重要的对象。
+
+一个 Application 通常定义：
+
+```text
+Source
+  +
+Destination
+  +
+Project
+```
+
+例如：
+
+```text
+Git Repository
+     |
+     | path: k8s/prod
+     v
+   Argo CD
+     |
+     | destination
+     v
+ Kubernetes Cluster
+     |
+     | namespace
+     v
+   production
+```
+
+
+### 13. Create Application
+
+CLI：
+
+```bash
+argocd app create myapp \
+  --repo https://github.com/example/my-app-config.git \
+  --path k8s \
+  --dest-server https://kubernetes.default.svc \
+  --dest-namespace myapp
+```
+
+然后：
+
+```bash
+argocd app get myapp
+```
+
+同步：
+
+```bash
+argocd app sync myapp
+```
+
+
+### 14. List Applications
+
+```bash
+argocd app list
+```
+
+这是面试中非常常用的命令。
+
+例如：
+
+```text
+NAME       CLUSTER     NAMESPACE   SYNC      HEALTH
+myapp      in-cluster  production  Synced    Healthy
+```
+
+###  15. Application Diff
+
+非常重要：
+
+```bash
+argocd app diff myapp
+```
+
+它用于比较：
+
+```text
+Git desired state
+        vs
+Kubernetes live state
+```
+
+例如：
+
+```text
+Git:
+replicas: 3
+
+Cluster:
+replicas: 2
+```
+
+diff 会显示这个差异。
+
+
+### 16. Manual Sync
+
+```bash
+argocd app sync myapp
+```
+
+执行：
+
+```text
+Git
+ ↓
+Argo CD
+ ↓
+Kubernetes
+```
+
+### 17. Automated Sync
+
+真正 GitOps 的核心通常是：
+
+```text
+syncPolicy:
+  automated:
+```
+
+例如 Application：
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/example/my-app-config.git
+    targetRevision: main
+    path: k8s
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+### 18. `prune`
+
+这个非常重要。
+
+假设 Git：
+
+```text
+deployment.yaml
+service.yaml
+```
+
+之前：
+
+```text
+deployment.yaml
+service.yaml
+configmap.yaml
+```
+
+如果从 Git 删除：
+
+```text
+configmap.yaml
+```
+
+GitOps desired state 已经不再包含 ConfigMap。
+
+如果：
+
+```yaml
+prune: true
+```
+
+Argo CD 可以删除 Kubernetes 中已经不属于 desired state 的资源。
+
+```text
+Git
+ |
+ | ConfigMap removed
+ v
+Argo CD
+ |
+ | prune
+ v
+Kubernetes
+ |
+ └── ConfigMap deleted
+```
+
+### 19. `selfHeal`
+
+假设 Git：
+
+```text
+replicas: 3
+```
+
+但是有人手动：
+
+```bash
+kubectl scale deployment myapp --replicas=1
+```
+
+现在：
+
+```text
+Git = 3
+K8S = 1
+```
+
+出现：
+
+```text
+OutOfSync
+```
+
+如果：
+
+```yaml
+selfHeal: true
+```
+
+**Argo CD 会自动 reconcile：**
+
+```text
+K8S = 1
+   ↓
+Argo CD detects drift
+   ↓
+self-heal
+   ↓
+K8S = 3
+```
+
+面试回答
+
+> Self-healing allows Argo CD to automatically correct manual changes in the cluster and restore the state defined in Git.
+
+
+### 20. GitOps 的最大优势：Drift Detection
+
+这是你面试应该重点讲的。
+
+```text
+                Git
+                 |
+          Desired State
+                 |
+                 v
+              Argo CD
+                 |
+          Compare / Reconcile
+                 |
+                 v
+             Kubernetes
+                 |
+            Live State
+```
+
+如果：
+
+```text
+Desired != Live
+```
+
+就是：
+
+```text
+Configuration Drift
+```
+
+Argo CD 可以发现并纠正。
+
+## 21. Rollback
+
+你原来的：
+
+```bash
+argocd app rollback <app-name> <revision>
+```
+
+这个不要作为面试重点去背。
+
+更重要的是理解：
+
+> GitOps rollback should preferably be performed by reverting the Git change.
+
+例如：
+
+```text
+Commit A
+   ↓
+Version 1
+```
+
+然后：
+
+```text
+Commit B
+   ↓
+Version 2
+```
+
+Version 2 有问题：
+
+```text
+git revert <commit-B>
+```
+
+然后：
+
+```text
+Git
+ ↓
+Argo CD
+ ↓
+Sync
+ ↓
+Version 1
+```
+
+这比直接：
+
+```bash
+kubectl rollout undo
+```
+
+更符合 GitOps 思维，因为 **Git remains the source of truth**。
+
+### 22. Argo CD + Jenkins
+
+这是 DevOps 面试非常可能出现的架构题。
+
+
+```text
+Jenkins
+   |
+   | kubectl apply
+   v
+Kubernetes
+```
+
+ GitOps：
+
+```text
+                    ┌──────────────┐
+                    │ Application  │
+                    │ Source Repo  │
+                    └──────┬───────┘
+                           │
+                           v
+                       Jenkins
+                           │
+                 Build / Test / Scan
+                           │
+                           v
+                    Container Registry
+                           │
+                           │ image
+                           v
+                    Deployment Repo
+                           │
+                           v
+                       Argo CD
+                           │
+                     Reconcile
+                           │
+                           v
+                      Kubernetes
+```
+
+
+### 23. 一个完整的 GitOps CI/CD
+
+例如开发者修改代码：
+
+```text
+Developer
+    |
+    | git push
+    v
+GitHub
+    |
+    v
+Jenkins
+    |
+    ├── Build
+    ├── Unit Test
+    ├── SonarQube
+    ├── OWASP Dependency Check
+    ├── Docker Build
+    └── Trivy
+             |
+             v
+      Container Registry
+             |
+             v
+      Update Image Tag
+             |
+             v
+       Deployment Repo
+             |
+             v
+          Argo CD
+             |
+             v
+        Kubernetes
+```
+
+
+### 24. Argo CD + Trivy
+
+你前面准备的 Trivy 资料和 Argo CD 可以组合起来。
+
+注意职责：
+
+**Trivy**
+
+负责：
+
+```text
+Image vulnerability scanning
+```
+
+Argo CD
+
+负责：
+
+```text
+Deployment / Reconciliation
+```
+
+不要让 Argo CD 自己承担 vulnerability scanning。
+
+正确：
+
+```text
+Jenkins
+  |
+  ├── Docker Build
+  |
+  ├── Trivy Scan
+  |
+  └── PASS
+        |
+        v
+   Deployment Repo
+        |
+        v
+      Argo CD
+```
+
+如果 Trivy：
+
+```text
+CRITICAL vulnerability
+```
+
+则：
+
+```text
+Pipeline FAIL
+     ↓
+Don't update deployment repo
+     ↓
+Argo CD doesn't deploy
+```
+
+这就是很标准的 **DevSecOps + GitOps**。
+
+### 25. Argo CD Projects
+
+Project 用于做：
+
+```text
+RBAC
+Repository restrictions
+Cluster restrictions
+Namespace restrictions
+Resource restrictions
+```
+
+例如：
+
+```text
+Project: production
+```
+
+允许：
+
+```text
+Repository:
+github.com/company/prod-config
+```
+
+允许：
+
+```text
+Cluster:
+production-aks
+```
+
+允许 namespace：
+
+```text
+production
+```
+
+这样可以防止一个 Application 随意部署到任何 cluster / namespace。
+
+### 26. RBAC
+
+生产环境非常重要。
+
+典型：
+
+```text
+Admin
+  |
+  ├── Manage Projects
+  ├── Manage Applications
+  └── Manage Repositories
+
+Developer
+  |
+  ├── View Applications
+  └── Sync specific applications
+
+ReadOnly
+  |
+  └── View
+```
+
+核心原则：
+
+> Least privilege.
+
+### 27. Argo CD Troubleshooting
+
+这是 Platform / DevOps 面试非常重要的一部分。
+
+如果：
+
+```text
+Application = OutOfSync
+```
+
+首先：
+
+```bash
+argocd app get myapp
+```
+
+然后：
+
+```bash
+argocd app diff myapp
+```
+
+查看：
+
+```bash
+argocd app manifests myapp
+```
+
+然后检查 Kubernetes：
+
+```bash
+kubectl get pods -n myapp
+kubectl get events -n myapp
+```
+
+查看 Pod：
+
+```bash
+kubectl describe pod <pod> -n myapp
+```
+
+日志：
+
+```bash
+kubectl logs <pod> -n myapp
+```
+
+### 28. Troubleshooting Flow
+
+建议你面试直接记这个：
+
+```text
+Argo CD Application
+        |
+        v
+Sync Status?
+        |
+   ┌────┴─────┐
+   |          |
+ Synced    OutOfSync
+              |
+              v
+         argocd app diff
+              |
+              v
+        Check Git source
+              |
+              v
+        Check manifests
+              |
+              v
+         Check K8S
+              |
+              v
+        kubectl describe
+              |
+              v
+          Pod logs
+              |
+              v
+        Events / RBAC
+```
+
+### 29. 如果 Application 是 Synced 但 Degraded？
+
+这个问题非常经典。
+
+例如：
+
+```text
+Sync = Synced
+Health = Degraded
+```
+
+不要说：
+
+> Git is wrong.
+
+应该回答：
+
+> The desired configuration has been successfully synchronized, but one or more Kubernetes resources are unhealthy.
+
+然后检查：
+
+```bash
+kubectl get pods
+kubectl get events
+kubectl describe pod
+kubectl logs
+```
+
+例如：
+
+```text
+CrashLoopBackOff
+ImagePullBackOff
+Pending
+Readiness probe failed
+Insufficient CPU/memory
+RBAC error
+```
+
+### 30. Notifications
+
+Argo CD Notifications 可以发送：
+
+```text
+Slack
+Email
+Webhook
+Microsoft Teams
+```
+
+典型：
+
+```text
+Application Synced
+Application Failed
+Application Degraded
+Application OutOfSync
+```
+
+生产环境可以设计：
+
+```text
+Argo CD
+   |
+   ├── Sync Failed
+   │      ↓
+   │   Teams/Slack
+   │
+   └── Deployment Healthy
+          ↓
+       Notification
+```
+
+
+### 31. Argo CD Security Best Practices
+
+面试可以回答：
+
+```text
+1. RBAC
+2. Least privilege
+3. HTTPS/TLS
+4. SSO/OIDC
+5. Restrict repositories
+6. Restrict clusters
+7. Restrict namespaces
+8. Protect Git repository
+9. Protect deployment branches
+10. Avoid storing secrets directly in Git
+```
+
+尤其是 Secrets。
+
+不要：
+
+```yaml
+password: MyPassword123
+```
+
+直接放 Git。
+
+更合理：
+
+```text
+Azure Key Vault
+       ↓
+External Secrets / CSI
+       ↓
+Kubernetes
+```
+
+或者使用其他 secrets management solution。
+
+
+### 32. Argo CD 面试最重要的 15 个问题
+
+**Q1. What is Argo CD?**
+
+> Argo CD is a declarative GitOps continuous delivery tool for Kubernetes that continuously reconciles the cluster with the desired state stored in Git.
+
+
+**Q2. What is GitOps?**
+
+核心：
+
+```text
+Git = Source of Truth
+```
+
+然后：
+
+```text
+Git
+ ↓
+Desired State
+ ↓
+Controller
+ ↓
+Kubernetes
+```
+
+**Q3. What is OutOfSync?**
+
+```text
+Desired State != Live State
+```
+
+**Q4. What is Sync?**
+
+> Applying the desired state from Git to the Kubernetes cluster.
+
+
+
+**Q5. Refresh vs Sync?**
+
+```text
+Refresh → detect/recalculate state
+Sync    → apply desired state
+```
+
+**Q6. What is selfHeal?**
+
+> Automatically correct cluster drift back to the desired state defined in Git.
+
+**Q7. What is prune?**
+
+**Remove resources from the cluster that are no longer defined in the desired state.**
+
+
+**Q8. Why use Argo CD instead of Jenkins `kubectl apply`?**
+
+重点回答：
+
+```text
+Declarative
+Git as source of truth
+Drift detection
+Self-healing
+Auditability
+Rollback through Git
+Separation of CI and CD
+```
+
+**Q9. Jenkins vs Argo CD?**
+
+```text
+Jenkins:
+
+Build
+Test
+Scan
+Package
+
+Argo CD:
+
+Deploy
+Sync
+Reconcile
+Drift detection
+Self-healing
+```
+
+**Q10. How do you rollback?**
+
+最佳回答：
+
+> Revert the deployment change in Git and let Argo CD reconcile the cluster back to the previous desired state.
+
+
+**Q11. What if someone manually changes Kubernetes?**
+
+```text
+kubectl change
+      ↓
+Live state changes
+      ↓
+Git != Kubernetes
+      ↓
+OutOfSync
+      ↓
+selfHeal
+      ↓
+restore desired state
+```
+
+**Q12. Synced but Degraded?**
+
+> Configuration is synchronized, but the deployed resources are unhealthy.
+
+
+**Q13. How do you troubleshoot OutOfSync?**
+
+```bash
+argocd app get myapp
+argocd app diff myapp
+```
+
+然后检查：
+
+```bash
+kubectl get pods
+kubectl describe
+kubectl logs
+kubectl get events
+```
+
+
+**Q14. How do you secure Argo CD?**
+
+```text
+RBAC
+SSO/OIDC
+TLS
+Least privilege
+Repository restrictions
+Project restrictions
+Cluster restrictions
+Secret management
+```
+
+**Q15. Explain your Jenkins + Argo CD architecture.**
+
+可以直接回答：
+
+> Jenkins handles the CI part, including source checkout, build, unit tests, code analysis, dependency scanning, container image building and vulnerability scanning. After the image is pushed to the container registry, the deployment repository is updated with the new image version. Argo CD monitors the deployment repository and reconciles the Kubernetes cluster to the desired state defined in Git.
+
+
+
+**33. 你现在应该把 Jenkins + Argo CD 连起来理解**
+
+你前面整理的 Jenkins、Trivy、OWASP、SonarQube，再加上现在的 Argo CD，已经可以形成一个完整的 **DevSecOps + GitOps Interview Story**：
+
+```text
+                         GitHub
+                            |
+                     Developer Push
+                            |
+                            v
+                       Jenkins CI
+                            |
+             ┌──────────────┼──────────────┐
+             |              |              |
+             v              v              v
+           Build         SonarQube       OWASP
+             |              |              |
+             └──────────────┼──────────────┘
+                            |
+                            v
+                      Docker Build
+                            |
+                            v
+                         Trivy
+                            |
+                    ┌───────┴───────┐
+                    |               |
+                  FAIL             PASS
+                    |               |
+                   STOP             v
+                            Container Registry
+                                    |
+                                    v
+                           Deployment Git Repo
+                                    |
+                                    v
+                                Argo CD
+                                    |
+                              GitOps Sync
+                                    |
+                                    v
+                               Kubernetes
+                                    |
+                         ┌──────────┴──────────┐
+                         |                     |
+                       Healthy             Degraded
+                         |                     |
+                         v                     v
+                       Done              Troubleshooting
+```
+
+**这张架构图建议你重点背下来。**
+
+因为它可以同时回答：
+
+* Jenkins CI/CD
+* GitOps
+* Argo CD
+* Docker
+* Kubernetes
+* Trivy
+* OWASP
+* SonarQube
+* Security Gate
+* Deployment
+* Rollback
+* Drift Detection
+* Self-Healing
+* DevSecOps
+
+
+
+
+
+
 
 ## 1 CI/CD 之路
 
