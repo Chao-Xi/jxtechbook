@@ -151,7 +151,6 @@ nav:
     - '7 Shell Script to check Autosys agent installed': 'chap10/7autosys_shell.md'
   - '2026 - 面试准备':
     - '0 2025-Intro': '2025/0intro.md'
-    - '2026 DevOps CheatSheet': '2026/2devops.md'
     - '2026 IAC + Configuration Management1': '2026/1iac.md'
     - '2026 典型Linux面试题': '2025/1Linux.md'
     - '2026 Monitoring & Logging / Security & Compliance': '2026/2monitor_sec.md'

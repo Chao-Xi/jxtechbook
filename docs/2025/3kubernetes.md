@@ -1316,6 +1316,133 @@ Usage:
   kubectl [flags] [options]
 ```
 
+
+## K8s 资源设置不合理，钱就在悄悄流走：request、limit 和 HPA 怎么配
+
+### request：K8s 用来算账的数字
+
+**request 是 Pod 启动时保证能拿到的 CPU 和内存。调度器（scheduler）拿到这个数，才知道该把 Pod 放到哪台节点上。**
+
+举个例子，一个 Pod 写了 requests.memory: 512Mi，调度器就只会把它放到还剩 512Mi 可分配内存的节点。如果节点上剩余内存不够，Pod 就 Pending（排队等待），不会强行塞进去。
+
+这就带来一个反直觉的结论：request 不是实际用了多少，而是你向 K8s 承诺至少要这么多。request 设得比真实用量大得多，等于向 K8s 多报需求，结果就是：
+
+• **调度器以为节点满了，去开新的节点**；
+
+• **集群里看着 CPU 监控才 20%，但节点数还在涨**；
+
+• 云厂商账单按节点算的，节点一多，钱就上去了。
+
+### limit：兜底用的天花板
+
+limit 是 Pod 最多能用的 CPU 和内存上限。设了之后有不同后果：
+
+
+- CPU 超了 limit：容器会被节流（throttle），就是跑得慢一点，不会被杀。
+- 内存超了 limit：容器会被 OOMKill，直接重启。
+
+
+**内存比 CPU 危险，因为重启会丢请求、丢本地状态。**
+
+所以内存 limit 要么不设，要么设成和 request 一样大（也就是 Guaranteed 模式）。那种 request 256Mi、limit 4Gi 的写法看似留了缓冲，实际只是把 OOMKill 推迟到内存爆掉那一刻
+
+```
+# 内存 request 和 limit 一样，比较稳
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi   # 关键：和 request 一致
+```
+
+**CPU 的 limit 设高一点可以接受，比如 cpu: 500m 这种允许突发（burst）的写法。设成 cpu: 100m（和 request 一样）就退化成 Guaranteed，没有弹性。**
+
+
+**怎么知道真实用量：先看监控，再设 request**
+
+request 和 limit 都不能拍脑袋写。最稳的做法是先观察 7-14 天的真实用量，再设值。
+
+Prometheus 里有几个常用查询：
+
+```
+# Pod 内存实际用量（按 Workload 聚合）
+sum by (namespace, pod) (
+  container_memory_working_set_bytes{namespace!=""}
+)
+
+# Pod CPU 实际使用率（相对 request）
+sum by (namespace, pod) (
+  rate(container_cpu_usage_seconds_total{container!="", container!="POD"}[5m])
+)
+/
+sum by (namespace, pod) (
+  kube_pod_container_resource_requests{resource="cpu", container!="", container!="POD"}
+)
+```
+
+第二段算出来的就是用了 request 的百分之多少。如果一个 Pod 长期在 30% 以下，说明 request 设高了，可以往下调。
+
+内存 request：用 p95 或 p99 的实际用量，避免被偶尔的内存峰值打挂。
+
+CPU request：用 p80 的实际用量，再留 10%–20% buffer。
+
+**每三个月复盘一次：业务会变，配过一次就不动，时间长了又会失真。**
+
+### HPA：request 没配对，它就瞎算
+
+HPA（Horizontal Pod Autoscaler）是按利用率百分比扩缩容的。这个利用率是用 request 做分母算出来的：
+
+> 利用率 = 实际 CPU 用量 / request.cpu
+
+**如果一个 Pod 的 request 写得特别高，比如真实只用 0.1 核、request 写了 1 核，那 HPA 看到的利用率永远是 10% 上下，永远不会扩容。**
+
+反过来，request 写低了，业务一忙 HPA 就疯狂拉 Pod，节点爆掉，Pod 各种 Pending。
+
+要让 HPA 真正起作用，request 必须贴近真实用量。HPA 配置本身不复杂，常见的样子是：
+
+```
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: api-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: api
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70   # 平均用到 request 的 70% 就扩
+```
+
+averageUtilization: 70 的意思是平均利用率到 70% 就触发扩容。这个值不是越大越好——设太高扩容不及时，设太低会震荡。
+
+* 不要 HPA 和 VPA 同时配 CPU/内存。两者都会改副本数或 request，互相打架。
+
+* 配 HPA 必须先装 metrics-server。kubectl top pod 能用是前提。
+
+* minReplicas 不要设为 1。单个副本 + 滚动更新 = 服务中断窗口。
+
+* 扩缩容间隔不要太短（默认 15s）。频率太快，监控系统都跟不上
+
+**完整成本优化的三步顺序**
+
+
+1. 先看账单和监控：找出节点数过多但 CPU 整体利用率低的集群。
+2. 调 request 和 limit：按上面的 p80/p95 方法重写，逐个 Deployment 推。
+3. 配 HPA：request 改对了再配，否则等于在错的基础上自动化。
+
+
+
+
 ## VPA vs QOS
 
 ### How VPA Works
