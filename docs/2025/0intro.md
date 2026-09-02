@@ -79,16 +79,16 @@ And also worked as Infra engineer and project manager, corrdinate with different
 
 And after that, I was internal transfered to Global IB research team as Senior Devops Engineer.
 
-Worked with global team to migrate global research analyst platform to China region mainly like, setup on-premise datacenter for different envionments with new designed Gilab-CI as CI pipeline and designed new puppet modules as CD pipeline. To automate all buildout steps
+Worked with global team to migrate global research analyst platform to China region mainly like, setup on-premise datacenter for different envionments with new designed Gilab-CI as CI pipeline inlcluding the all kinds of scan, like SonarQube, Nexus, fortifyScan etc and designed new puppet modules as CD pipeline. To automate all buildout steps
 
 And aprart from this project. And now I'm work in gobal team to manage and operate the global systems. Like helped and setup OpenAI service in Azure cloud with terraform code, Azure Devops pipeline to automate the setup process.
 
 
 And right now I'm working with Micsoft azure team to build out Azure congnitive AI translate service in HCI AKS cluster now it’s called Azure local Cluster for Chinese-Eng translate service for China analyst.
 
-It’s is hybrid setup， one end is on public cloud to receive token usage,I build out service on public cloud via terraform and gitlabCICD to deploy the service. Anthor end is running on on-premise datacenter AKS cluster. I’building out HELM chart via gitlab CICD pipeline, included AKV to store the service secret, haproxy as ingress since nginx ingress retired these days. And use loki and prometheus to pull metrics and logs from service and view the data on Grafana
+It’s is hybrid setup， one end is on public cloud to receive token usage,I build out service on public cloud via terraform and gitlabCICD to deploy the service. Anthor end is running on on-premise datacenter AKS cluster. I’building out HELM chart via gitlab CICD pipeline, included AKV to store the service secret, enable SA to connect with OICD, using secretstore and external secret from fetch secret from both akv and on-premise vault. And haproxy as ingress since nginx ingress retired these days, and also using haproxy to enable basic authentication and ip whitelist. And use loki and prometheus to pull metrics and logs from service and view the data on Grafana. During this process. I also dsign one helm debugging agent skill. to help troubleshooting and lint scan for helm chart
 
-Besides these, I passed AWS solutions architect test and azure solution expert test az305 and Certified Istio service mesh and gitlab CICD test, 
+Besides these, I passed AWS solutions architect test and azure solution expert test az305/az400 and Certified Istio service mesh and gitlab CICD test, 
 
 I also create multiple tutorial books for my colleague this year mainly about Azure ,AWS, Elasticsearch, Reddis, Chef & Ansible, Istio So that’s all about me these couple years.
 
@@ -97,10 +97,10 @@ I also create multiple tutorial books for my colleague this year mainly about Az
 
 #### Pursue New career path 
 
-1 I already work as devops eng over 8 years. I always want improve my career into a new level. I’m pursuing SRE or system support enginner, because I’m quite interesting about reliability engineering. I deeply value my DevOps experience. It especially focus on automation, CI/CD, cloud migration, and new service collaboration. But I also help I can  balances speed with reliability targets (SLIs/SLOs). I’d like to working on designing resilient systems to reducing error budgets, improve service performance, site reability and treating operations as a software problem.
+1 I already work as devops eng over 8 years. I always want improve my career into a new level. I’m pursuing SRE or system support enginner, because I’m quite interesting about reliability engineering and setup. I deeply value my DevOps experience. It especially focus on automation, CI/CD, cloud migration, and new service collaboration. But I also help I can  balances speed with reliability targets (SLIs/SLOs). I’d like to working on designing resilient systems to reducing error budgets, improve service performance, site reability and treating operations as a software problem.
 
 
-1 I want to pursue a new career path I working in a global team, this team actually based in LDN.. And since I'm only one here in Shanghai. all my teammats are based in Pune India and LDN. Although I enjoy my work alone with the my current team, while I'd like to work in more collaborative environments. from what I have more chance to learn from each other here
+2 I want to pursue a new career path I working in a global team, this team actually based in LDN.. And since I'm only one here in Shanghai. all my teammats are based in Pune India and LDN. Although I enjoy my work alone with the my current team, while I'd like to work in more collaborative environments. from what I have more chance to learn from each other here
 
 3 I saw the JD, this role is quite attractive to me. I can get in touch with multiple projects and provide my cloud expetise. Actucally I do have lots of experience on Azure, convert infra as code, like terraform, DSC, azure devops pipelien, AWS cloudfomration  I think I'm perfect for this role 
 
@@ -125,10 +125,6 @@ Fourth I saw the JD, this role is quite attractive to me. I can get in touch wit
 
 1. After spend 3 years in this financial industry, I have dicovered my passion in financial tech a lot. And I truly belive that there is much more to explore in this industray rather in daily BAU operational job and want to double down on this descision to pursue it further. So I want have more opprtunity to get touch with new projects 
 2. I always want improve my career into a new level. I think this opportunity at your firm would be more leveled up. and better match what I can bring to the table. I'm looking for new solution architect job
-
-
-
-First I already work as devops eng over 8 years. I always want improve my career into a new level. I’m pursuing SRE because I’m quite interesting about reliability engineering. I deeply value my DevOps experience. It especially focus on automation, CI/CD, cloud migration, and new service collaboration. But SRE balances speed with reliability targets (SLIs/SLOs). I’d like to working on designing resilient systems to reducing error budgets, improve service performance, site reability and treating operations as a software problem. 
 
 
 
