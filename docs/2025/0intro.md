@@ -86,7 +86,7 @@ And aprart from this project. And now I'm work in gobal team to manage and opera
 
 And right now I'm working with Micsoft azure team to build out Azure congnitive AI translate service in HCI AKS cluster now it’s called Azure local Cluster for Chinese-Eng translate service for China analyst.
 
-It’s is hybrid setup， one end is on public cloud to receive token usage,I build out service on public cloud via terraform and gitlabCICD to deploy the service. Anthor end is running on on-premise datacenter AKS cluster. I’building out HELM chart via gitlab CICD pipeline, included AKV to store the service secret, enable SA to connect with OICD, using secretstore and external secret from fetch secret from both akv and on-premise vault. And haproxy as ingress since nginx ingress retired these days, and also using haproxy to enable basic authentication and ip whitelist. And use loki and prometheus to pull metrics and logs from service and view the data on Grafana. During this process. I also dsign one helm debugging agent skill. to help troubleshooting and lint scan for helm chart
+It’s is hybrid setup， one end is on public cloud to receive token usage,I build out service on public cloud via terraform and gitlabCICD to deploy the service. Anthor end is running on on-premise datacenter AKS cluster. I’building out HELM chart via gitlab CICD pipeline, part from deployment, pvc, hap, pdb, all kinds of K8S resouce, also included AKV to store the service secret, enable SA service account to connect with OICD, using secretstore and external secret to fetch secret from both akv and on-premise vault. And use haproxy as ingress since nginx ingress retired these days, and also using haproxy to enable basic authentication and ip whitelist. And use loki and prometheus to pull metrics and logs from service and view the data on Grafana. Aslo creeating cutsom granfana dasbhoard, and alerts including replica mismatch, pod crashbackloopoff, and error log alert.   During this process. I also dsign one helm debugging agent skill. to help troubleshooting and lint scan for helm chart
 
 Besides these, I passed AWS solutions architect test and azure solution expert test az305/az400 and Certified Istio service mesh and gitlab CICD test, 
 
@@ -111,6 +111,7 @@ I also create multiple tutorial books for my colleague this year mainly about Az
 
 Second Still is I can say our application is quite heavy service and old setup and the core service is using vendor service. Thus the service is still setting on on-premise data centers. So most of tech stacks are using traditional setup not container. Exp, in next couple years, our most critical project is migrating services from redhat 7 to redhat 8 for all regions. So I hope I can find any opportunity to work on some projects with trendy tech stacks like containerlization, cloud, service mesh etc
 
+Over the past few years, UBS’s acquisition of Credit Suisse has limited my opportunities for promotion and pay rise
 
 Thrid I working in a global team, this team actually based in LDN.. And since I'm only one here in Shanghai. all my teammats are based in Pune India and LDN. Although I enjoy my work alone with the my current team, while I'd like to work in more collaborative environments. from what I have more chance to learn from each other here
 
