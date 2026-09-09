@@ -1164,7 +1164,7 @@ Great summary! Here's a slightly polished version with a few corrections and cla
 
 ### 53 CRI (Container Runtime Interface)
 
-####  Simple Definition
+**Simple Definition**
 
 CRI stands for **Container Runtime Interface**.  
 
@@ -1173,7 +1173,7 @@ It is a standard plugin interface that allows Kubernetes to communicate with con
 > **CRI = The communication bridge between Kubernetes and the container runtime.**
 
 
-#### Simple Analogy
+**Simple Analogy**
 
 Think of a translator:
 
@@ -1182,7 +1182,7 @@ Think of a translator:
 - **containerd** → Actually runs the containers
 
 
-#### Why Does Kubernetes Need CRI?
+**Why Does Kubernetes Need CRI?**
 
 Kubernetes should not be tightly coupled to any specific container runtime.  
 
@@ -1195,7 +1195,7 @@ Instead, it uses CRI APIs to request operations like:
 - Check container status
 
 
-#### CRI vs containerd
+**CRI vs containerd**
 
 | CRI | containerd |
 |-----|------------|
@@ -1204,7 +1204,7 @@ Instead, it uses CRI APIs to request operations like:
 | Used by Kubernetes | Executes container lifecycle operations |
 | Not a container runtime itself | Is a container runtime |
 
-#### How It Works (Flow)
+**How It Works (Flow)**
 
 ```
 Kubectl → Kubernetes API Server → Kubelet → CRI (gRPC) → containerd/CRI-O → runc → Linux Kernel → Container
@@ -1213,14 +1213,14 @@ Kubectl → Kubernetes API Server → Kubelet → CRI (gRPC) → containerd/CRI-
 - Kubelet sends requests to the container runtime via CRI using **gRPC**.
 - containerd then calls **runc** (low-level) to actually start the container.
 
-#### Memory Trick
+**Memory Trick**
 
 - **CRI** = How Kubernetes talks
 - **containerd** = Manages the containers (high-level runtime)
 - **runc** = Low-level tool that actually starts containers (OCI-compliant)
 
 
-#### One Sentence
+**One Sentence**
 
 > CRI is a Kubernetes interface that enables kubelet to communicate with container runtimes like containerd and CRI-O.
 
@@ -1252,3 +1252,134 @@ Kubectl → Kubernetes API Server → Kubelet → CRI (gRPC) → containerd/CRI-
 **`kubectl debug -it <pod-name> - -image=busybox - -copy-to=debug-pod`**
 
 This creates a copy of the failing pod with a debug container attached for investigation.
+
+
+### 55 Kubernetes Networking Overview
+
+![Alt Image Text](../images/k8s2026_1_3.gif "Body image")
+
+
+**External Traffic (North-South)**
+
+- LoadBalancer (cloud LB or MetalLB)
+- Ingress Controller (NGINX, Traefik, etc.)
+- Gateway API (newer, more flexible than Ingress)
+- **TLS termination / L7 routing**
+
+**Internal Traffic (East-West)**
+
+- Pod ↔ Pod communication
+- Service Discovery (via CoreDNS)
+- Service Mesh (Istio, Linkerd — optional)
+- Network Policies (security/firewall rules)
+
+**Kubernetes Networking Layer (CNI)**
+
+- CNI plugins: **Calico** / **Cilium** / Flannel
+  - Node NIC: `eth0`, `ens3`, etc.
+  - Node IP & routing tables
+  - BGP (Calico) or VXLAN tunnels (Flannel/Cilium)
+- Linux kernel networking:
+  - `iptables` / `netfilter` (kube-proxy)
+  - eBPF (Cilium, modern alternative)
+- Underlying Physical / VPC infrastructure
+
+**Foundational Concepts**
+
+- **Service abstraction** — stable IP/DNS for pods
+- **Overlay networking** — VXLAN, IPIP, or BGP routing
+- All pods get routable IPs (within cluster)
+- **East-West**: Pod-to-Pod direct communication
+- **North-South**: External access via Ingress / Gateway / LoadBalancer
+- **DNS-based service discovery** — `my-svc.namespace.svc.cluster.local`
+
+
+**Traffic Summary**
+
+- **North-South** = External ↔ Cluster
+- **East-West** = Pod ↔ Pod within the cluster
+
+
+
+**Minor typos to fix:**
+
+- `VXLAWBGP` → `VXLAN / BGP`
+- `Physics` → `Physical`
+- `L5 Routing` → `L7 Routing` (Layer 7, unless you meant Layer 4/5)
+
+#### Ingress vs Gateway API
+
+
+![Alt Image Text](../images/k8s2026_1_4.gif "Body image")
+
+
+**Ingress (Traditional)**
+
+```
+Client Request
+    ↓
+External Load Balancer (provisioned by Ingress Controller)
+    ↓
+Ingress Controller Pod (NGINX, GKE Ingress, AWS ALB Ingress)
+    ↓
+Ingress Resource (Routing Rules - defined by devs)
+    ↓
+Service A (ClusterIP) → Pods
+```
+
+**Characteristics**
+
+
+- Single resource controls all routing
+
+- Controller-specific logic — behavior depends on which controller you use (NGINX vs GKE vs AWS)
+
+- Annotations are often used for advanced config (non-standard)
+
+- Devs define both routing AND sometimes TLS/annotations
+
+
+**Gateway API (Newer)**
+
+```
+Client Request
+    ↓
+External Load Balancer (provisioned by Gateway Resource)
+    ↓
+Gateway Controller Pod (Istio/Envoy/Cilium/NGINX)
+    ↓
+GatewayClass (defined by Infra Provider — e.g., AWS, GCP)
+    ↓
+Gateway (defined by Cluster Admin) → Listeners, TLS, Ports, IPs
+    ↓
+HTTPRoutes / TLSRoutes (defined by Developers) → Per-namespace routing
+    ↓
+Service A (ClusterIP) → Pods
+```
+
+**Characteristics**
+
+
+* Layered, role-based model:
+* Infra Provider → Defines GatewayClass
+* Cluster Admin → Defines Gateway (TLS certs, listeners)
+* Developers → Define HTTPRoutes (routing rules per namespace)
+* Portable & consistent — same spec works across providers
+* More granular access control (namespaced resources)
+
+* Supports advanced routing: header matching, weight-based splitting, etc.
+
+
+| Aspect | Ingress | Gateway API |
+|--------|---------|-------------|
+| **Resource model** | Single resource | Multiple resources (GatewayClass, Gateway, Routes) |
+| **Role separation** | Devs own everything | Infra Admin / Cluster Admin / Devs split |
+| **Portability** | Controller-specific annotations | Standardized spec across providers |
+| **Namespace isolation** | Limited | Routes are namespaced |
+| **Advanced routing** | Limited / vendor-specific | Built-in (header, path, weight, etc.) |
+| **Status** | GA (stable) | GA (v1.0 released in 2023) |
+
+
+
+> **Ingress** is a simple, controller-specific routing resource; **Gateway API** is a more flexible, role-based, and portable standard for advanced traffic management.
+
