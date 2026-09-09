@@ -104,6 +104,8 @@ I also create multiple tutorial books for my colleague this year mainly about Az
 
 3 I saw the JD, this role is quite attractive to me. I can get in touch with multiple projects and provide my cloud expetise. Actucally I do have lots of experience on Azure, convert infra as code, like terraform, DSC, azure devops pipelien, AWS cloudfomration  I think I'm perfect for this role 
 
+Over the past few years, UBS’s acquisition of Credit Suisse has limited my opportunities for promotion and pay rise
+
 
 
 *  In the financial company, I dont see my future here. Cause, comparing to new techs, codes or new solutions, they are more concern about procedures and policy. Every day, I spend more times on writing documents, go-through steps, meeting with compliance team than working on my codes and my operations jobs. And I dont' even have any chance to learn new techs here. Thus I feel like I gonna be wasted in this team for longer time. 
@@ -111,7 +113,6 @@ I also create multiple tutorial books for my colleague this year mainly about Az
 
 Second Still is I can say our application is quite heavy service and old setup and the core service is using vendor service. Thus the service is still setting on on-premise data centers. So most of tech stacks are using traditional setup not container. Exp, in next couple years, our most critical project is migrating services from redhat 7 to redhat 8 for all regions. So I hope I can find any opportunity to work on some projects with trendy tech stacks like containerlization, cloud, service mesh etc
 
-Over the past few years, UBS’s acquisition of Credit Suisse has limited my opportunities for promotion and pay rise
 
 Thrid I working in a global team, this team actually based in LDN.. And since I'm only one here in Shanghai. all my teammats are based in Pune India and LDN. Although I enjoy my work alone with the my current team, while I'd like to work in more collaborative environments. from what I have more chance to learn from each other here
 

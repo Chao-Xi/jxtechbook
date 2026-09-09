@@ -789,3 +789,443 @@ kubectl drain node1 --ignore-daemonsets
 
 - **Draining a node before maintenance (e.g., upgrading hardware or OS).**
 - **Temporarily isolating a node from the cluster.**
+
+
+### 51 ONE KUBERNETES CLUSTER OR MANY?
+
+**Kubernetes：One Cluster or Multiple Clusters?**
+
+**核心思想**
+
+> **不要先问“需要几个 Cluster”，而要问“需要隔离什么？”**
+
+主要考虑 7 个维度：
+
+* **Security boundaries** — 安全边界
+* **Failure domains** — 故障域
+* **Compliance requirements** — 合规要求
+* **Regions & data locality** — 区域和数据所在地
+* **Teams / tenants** — 团队 / 租户
+* **Operational boundaries** — 运维边界
+* **Workload criticality** — 工作负载重要性
+
+#### **1. One Shared Cluster**
+
+多个团队共享一个 Kubernetes Cluster，通过 Namespace 隔离：
+
+```text
+Single Cluster
+├── Team A Namespace
+├── Team B Namespace
+├── Team C Namespace
+└── Team D Namespace
+```
+
+**适合场景**
+
+* Higher resource utilization
+* Simpler administration
+* Lower control-plane overhead
+* Easier sharing between teams
+* Centralized platform services
+
+**需要管理**
+
+* RBAC / Access Control
+* Network Policies
+* Resource Quotas / Limits
+* Namespace boundaries
+* Noisy neighbors
+* Cluster-wide resources
+
+关键理解
+
+**Namespace 可以提供逻辑隔离，但不是完整的基础设施隔离。**
+
+#### 2. Multiple Clusters
+
+例如：
+
+```text
+Prod Cluster       → Region 1
+Staging Cluster    → Region 2
+Compliance Cluster → On-Prem
+```
+
+多个 Cluster 上面可以共享一个统一的 Platform Layer：
+
+```text
+GitOps
+Security & Policy
+Observability
+Cluster Lifecycle
+```
+
+**适合场景**
+
+* Production vs Non-production
+* Different regions / data locality
+* Compliance / regulatory requirements
+* Different security domains
+* Critical workloads
+* Independent upgrade cycles
+* Blast-radius reduction
+
+
+#### 3. Multiple Clusters 的代价
+
+Cluster 越多，运维工作越多：
+
+* Multiple upgrade processes
+* Multiple monitoring configurations
+* Multiple policy configurations
+* Multiple credentials
+* Configuration drift risk
+* More clusters to manage
+
+所以：
+
+> **Multiple clusters aren't automatically more complex.**
+>
+> **Complexity depends on what you have to manage around them.**
+
+
+#### 4. 面试最重要的结论 ⭐
+
+
+> **The goal isn't to minimize the number of clusters.**
+> **The goal is to minimize the number of different ways you operate Kubernetes.**
+
+也就是说：
+
+```text
+          Isolation Requirements
+                   ↓
+       ┌───────────┴───────────┐
+       ↓                       ↓
+ Shared Cluster          Multiple Clusters
+       ↓                       ↓
+ Namespace               Strong isolation
+ RBAC                    Compliance
+ NetworkPolicy            Regions
+ Quota                   Failure domains
+       └───────────┬───────────┘
+                   ↓
+             IaC + GitOps
+                   ↓
+        Standardized Operations
+```
+
+⭐ 面试可以直接这样回答
+
+> **I choose the cluster model based on isolation requirements. 
+> 
+> A shared cluster is suitable when teams can share the same security and failure boundaries, using namespaces, RBAC, NetworkPolicies and quotas for isolation. 
+> 
+> Multiple clusters are better when we need stronger isolation for production, compliance, different regions, critical workloads or independent upgrade cycles. 
+> 
+> The goal is not simply to minimize the number of clusters, but to standardize and automate how we operate them.**
+
+
+### 52 Helm Chart Structure
+
+
+![Alt Image Text](../images/k8s2026_1_1.gif "Body image")
+
+```
+my-chart/
+├── Chart.yaml
+├── values.yaml
+├── charts/
+├── templates/
+│   ├── *.yaml
+│   ├── tests/
+│   └── _helpers.tpl
+├── .helmignore
+└── NOTES.txt
+```
+
+**1. Chart.yaml**
+
+Chart 的元数据：
+
+* API version
+* Chart name
+* chartVersion
+* appVersion
+
+```
+apiVersion: v2
+name: my-app
+version: 1.0.0
+appVersion: "2.0"
+```
+
+> version = Helm Chart 版本
+> 
+> appVersion = 应用版本
+
+**2. values.yaml**
+
+存放可配置的默认参数。
+
+例如：
+
+```
+replicaCount: 2
+
+image:
+  repository: nginx
+  tag: "1.25"
+```
+ 
+ 
+ Template 中使用：
+ 
+ ```
+ replicas: {{ .Values.replicaCount }}
+ ```
+ 
+**3. charts/**
+
+存放 dependency charts。
+
+例如：
+
+```
+charts/
+└── mysql/
+```
+
+也可以在 Chart.yaml 定义 dependency。
+
+
+**4. templates/**
+
+存放 Kubernetes Manifest Templates。
+
+例如：
+
+```
+templates/
+├── deployment.yaml
+├── service.yaml
+├── ingress.yaml
+└── configmap.yaml
+```
+
+Helm 会把 Template + Values 渲染成最终的 Kubernetes YAML。
+
+```
+values.yaml
+      +
+templates/*.yaml
+      ↓
+helm template / helm install
+      ↓
+Kubernetes Manifests
+```
+
+**5. templates/tests/**
+
+存放 Helm 测试文件，用于验证部署后的资源是否正常。
+
+常见：
+
+```
+templates/tests/test-connection.yaml
+```
+
+**`helm test my-release`**
+
+
+**6. `_helpers.tpl`**
+
+**存放可复用的 Template Logic / Helper Functions。**
+
+例如定义：
+
+```
+{{- define "mychart.fullname" -}}
+...
+{{- end }}
+```
+
+
+然后其他 template 可以调用。
+
+> _helpers.tpl 通常不直接生成 Kubernetes Resource，主要用于复用模板逻辑
+
+**7. `.helmignore`**
+
+指定 Helm 打包时忽略的文件。
+
+类似：
+
+```
+.git/
+*.log
+README.md
+```
+
+执行：
+
+**`helm package my-chart`**
+
+这些文件不会进入 Chart package。
+
+
+| 文件             | 作用                                |
+| -------------- | --------------------------------- |
+| `Chart.yaml`   | Chart metadata                    |
+| `values.yaml`  | Configurable/default values       |
+| `templates/`   | Kubernetes manifest templates     |
+| `charts/`      | Dependencies                      |
+| `tests/`       | Helm tests                        |
+| `_helpers.tpl` | Reusable template logic           |
+| `.helmignore`  | Files ignored during packaging    |
+| `NOTES.txt`    | Post-install/upgrade instructions |
+
+Chart.yaml defines the chart metadata, values.yaml provides configurable values, templates contains Kubernetes manifests, charts contains dependencies, tests validates the deployment, `_helpers.tpl `provides reusable template logic, .helmignore controls packaging exclusions, and NOTES.txt displays post-install instructions.
+
+
+### You have 10 Kubernetes pods running for your production application, but traffic is reaching only 3 pods. How would you troubleshoot this?
+
+
+**Troubleshooting: Traffic Reaching Only 3 of 10 Pods**
+
+**1. Check Service Selector**
+
+- Verify the service selector matches labels on all 10 pods.
+
+```bash
+kubectl get svc <service-name> -o yaml
+kubectl get pods --show-labels
+```
+
+**2. Check Endpoints / EndpointSlices**
+
+- See how many pod IPs are registered behind the Service.
+- If only 3 IPs, investigate why the other 7 are excluded.
+
+```bash
+kubectl get endpoints <service-name>
+kubectl get endpointSlices
+```
+
+**3. Verify Readiness Probe**
+
+- A pod can be `Running` but not `Ready`.
+- If readiness probe fails, the pod is removed from endpoints.
+
+
+```bash
+kubectl get pods
+kubectl describe pod <pod-name>
+```
+
+**4. Check Application Health**
+
+- Verify the app is healthy and listening on the correct port (matches Service `targetPort`).
+
+
+```bash
+kubectl logs <pod-name>
+# then exec in and check: netstat -tlnp or curl localhost:<port>
+```
+
+**5. Check Session Affinity**
+
+- If `sessionAffinity: ClientIP` is enabled, traffic may be pinned to a subset of pods.
+
+
+```bash
+kubectl describe svc <service-name>
+# look for sessionAffinity field
+```
+
+**6. Check Ingress / Load Balancer**
+
+- Verify ingress controller or cloud LB health check settings.
+- Some LBs have their own health checks that may differ from k8s readiness probes.
+
+
+```bash
+kubectl describe ingress <ingress-name>
+# also check LB health check config in cloud console
+```
+
+**Key Takeaway:**
+
+Identify exactly at which layer the other 7 pods are being dropped — Service selector, Endpoints, Readiness Probe, or Load Balancer health checks.
+
+Great summary! Here's a slightly polished version with a few corrections and clarifications:
+
+
+### 53 CRI (Container Runtime Interface)
+
+####  Simple Definition
+
+CRI stands for **Container Runtime Interface**.  
+
+It is a standard plugin interface that allows Kubernetes to communicate with container runtimes such as containerd or CRI-O.
+
+> **CRI = The communication bridge between Kubernetes and the container runtime.**
+
+
+#### Simple Analogy
+
+Think of a translator:
+
+- **Kubernetes** → Speaks Kubernetes instructions
+- **CRI** → Translator / standard interface
+- **containerd** → Actually runs the containers
+
+
+#### Why Does Kubernetes Need CRI?
+
+Kubernetes should not be tightly coupled to any specific container runtime.  
+
+Instead, it uses CRI APIs to request operations like:
+
+- Create a container
+- Start / Stop a container
+- Remove a container
+- Pull an image
+- Check container status
+
+
+#### CRI vs containerd
+
+| CRI | containerd |
+|-----|------------|
+| Interface / standard | Container runtime |
+| Defines how Kubernetes communicates | Actually manages containers |
+| Used by Kubernetes | Executes container lifecycle operations |
+| Not a container runtime itself | Is a container runtime |
+
+#### How It Works (Flow)
+
+```
+Kubectl → Kubernetes API Server → Kubelet → CRI (gRPC) → containerd/CRI-O → runc → Linux Kernel → Container
+```
+
+- Kubelet sends requests to the container runtime via CRI using **gRPC**.
+- containerd then calls **runc** (low-level) to actually start the container.
+
+#### Memory Trick
+
+- **CRI** = How Kubernetes talks
+- **containerd** = Manages the containers (high-level runtime)
+- **runc** = Low-level tool that actually starts containers (OCI-compliant)
+
+
+#### One Sentence
+
+> CRI is a Kubernetes interface that enables kubelet to communicate with container runtimes like containerd and CRI-O.
+
+
+**Small correction:** In your flow chart, "kubernetes" appears twice — it should be `Kubectl → API Server → Kubelet → CRI → containerd → runc`. Also, `containerd` is misspelled as "contained" a couple of times — easy fix. Otherwise, very clear and concise!
+
+
+![Alt Image Text](../images/k8s2026_1_2.png "Body image")
