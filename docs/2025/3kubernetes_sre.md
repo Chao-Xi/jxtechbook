@@ -1229,3 +1229,26 @@ Kubectl → Kubernetes API Server → Kubelet → CRI (gRPC) → containerd/CRI-
 
 
 ![Alt Image Text](../images/k8s2026_1_2.png "Body image")
+
+
+### 54 KUBECTL TRICKS THAT WILL SAVE YOU HOURS
+
+**`kubect get events -A -w | grep -v "Normal"`**
+
+> Streams only warnings and failures from all namespaces in real time.
+
+**kubect diff -f deployment.yaml**
+
+> Shows the exact changes Kubernetes will apply before deployment.
+
+**`kubectl get pods -A --sort-by='.status.containerStatuses[0].restartCount'`**
+
+> Sorts pods by restart count to quickly find unstable workloads.
+
+**`kubect top pods - A --sort-by=memory --containers`**
+
+> Shows the exact changes Kubernetes will apply before deployment.
+
+**`kubectl debug -it <pod-name> - -image=busybox - -copy-to=debug-pod`**
+
+This creates a copy of the failing pod with a debug container attached for investigation.
