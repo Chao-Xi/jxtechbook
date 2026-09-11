@@ -111,7 +111,8 @@ Agent
 
 你原来的安装步骤基本正确，但建议用现代 Jenkins repository keyring 方式。
 
-```bash id="w8x2q1"
+```
+
 sudo apt update
 
 sudo apt install -y fontconfig openjdk-17-jre wget
@@ -129,31 +130,31 @@ sudo apt install -y jenkins
 
 启动：
 
-```bash id="f0p8q5"
+```
 sudo systemctl enable --now jenkins
 ```
 
 检查：
 
-```bash id="y8x2wv"
+```
 sudo systemctl status jenkins
 ```
 
 查看日志：
 
-```bash id="3s8p0z"
+```
 sudo journalctl -u jenkins -f
 ```
 
 初始密码：
 
-```bash id="k5h3mn"
+```
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 
 默认端口：
 
-```text id="n9s4xa"
+```
 8080
 ```
 
@@ -203,7 +204,7 @@ Permissions
 
 例如：
 
-```bash id="t8d5rx"
+```
 java -version
 df -h
 free -h
@@ -235,13 +236,13 @@ echo "Workspace: ${env.WORKSPACE}"
 echo "Commit: ${env.GIT_COMMIT}"
 ```
 
----
+
 
 ### 6. Declarative Pipeline
 
 这是 Jenkins 面试必须掌握的。
 
-```groovy id="v4p1zn"
+```
 pipeline {
     agent any
 
@@ -296,7 +297,7 @@ pipeline
 
 ### 7. Scripted Pipeline
 
-```groovy id="1x5j7a"
+```
 node {
     stage('Checkout') {
         git 'https://github.com/your-repo.git'
@@ -460,7 +461,7 @@ Production
 
 你原来的例子可以改进为：
 
-```groovy id="8x7z3p"
+```
 pipeline {
     agent any
 
