@@ -117,6 +117,69 @@ ansible all -m user -a "name=devops state=absent"     # Delete user
 **PLAYBOOK STRUCTURE: play -> tasks -> modules -> hosts**
 
 
+#### INVENTORY EXAMPLE
+
+```
+[web]
+webi ansible_host =10.0.0.10    # Group: web
+web2 ansible_host =10.0.0.11
+
+[db]
+db1 ansible_host=10.0.0.20       # Group: db
+
+[all:vars]
+ansible_useraec2-user
+ansible_ssh_private_key_file=~/.ssh/id_rsa     # Variables for all
+```
+
+#### INVENTORY PATTERNS
+
+```
+all            # All hosts
+
+web            # Specific group
+
+!web           # Exclude group
+
+web:&db        # Intersection
+
+web:db         # Union
+
+web[0]         # First host in group
+
+web[0:1]       # Range (from 0 to 1)
+
+web:*          # All hosts in group
+```
+
+```
+# Variable precedence (high to low)
+
+Extra Vars (-e)
+      ↓
+Task Vars (set_fact)
+      ↓
+Play Vars
+      ↓
+Inventory Vars / Group Vars
+      ↓
+Role Vars
+      ↓
+Defaults
+```
+
+```
+Example:
+---
+- hosts: all
+  vars:
+    app: nginx
+
+  tasks:
+    - debug:
+        msg: "Application is {{ app }}"
+```
+
 #### 2-3 ROLES STRUCTURE
 
 ```
