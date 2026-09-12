@@ -414,6 +414,8 @@ Kubernetes 的资源调度是一个复杂的过程，涉及对节点资源的细
 
 ## 4 CNI 并且描述下它们之间的区别
 
+![Alt Image Text](../images/2026k8s_3_1.jpeg "Body image")
+
 在 Kubernetes 环境中，CNI (Container Network Interface) 插件用于提供和管理容器之间的网络连接。不同的 CNI 插件具有不同的网络架构、性能、功能和适用场景。以下是一些常见的 CNI 插件及其区别：
 
 ### Flannel 

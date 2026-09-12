@@ -69,6 +69,14 @@ Benefits:
 - Version tracking of rollouts.
 - Fast recovery from bad deployments.
 
+
+#### Deployment vs DaemonSet vs StatefulSet in Kubernetes
+
+
+
+![Alt Image Text](../images/k8s2026_1_4.jpeg "Body image")
+
+
 #### 3. What are Kubernetes DaemonSets and give a real-world use case?
 
 A DaemonSet ensures that a copy of a pod runs on every node (or a subset of nodes) in the cluster
@@ -213,6 +221,10 @@ ports:
 	port: 80
 ```
 
+![Alt Image Text](../images/2026k8s_1_2.gif "Body image")
+
+
+
 #### 8. Explain the Kubernetes control plane components and their responsibilities
 
 The Kubernetes control plane is the brain of the cluster and consists of several components:
@@ -232,6 +244,26 @@ Workflow Example:
 - kube-scheduler assigns pods to nodes.
 
 This architecture allows scalability, self-healing, and declarative infrastructure.
+
+![Alt Image Text](../images/2026k8s_1_1.jpeg "Body image")
+
+1.  **kubectl (User):** The user sends the YAML manifest to the Kubernetes API Server.
+2.  **API Server:** This is the central communication point. It validates the request (syntax, authentication, authorization, schema).
+3.  **etcd:** The API Server stores the desired state of the cluster in etcd, a reliable key-value store.
+4.  **Deployment Controller:** This controller watches for new Deployments and creates a **ReplicaSet** to match the desired state.
+5.  **ReplicaSet:** Ensures the specified number of **Pods** are created (though they are not yet assigned to a node).
+6.  **Scheduler:** Watches for newly created Pods and selects the most suitable **Worker Node** for them based on resources, taints/tolerations, and affinity rules.
+7.  **Kubelet:** On the selected worker node, the Kubelet receives instructions to start the containers.
+8.  **Container Runtime:** The Kubelet instructs the container runtime (like containerd, Docker, or CRI-O) to pull the required image and start the container.
+9.  **CNI Plugin:** Configures networking for the Pod, including assigning an IP address and setting up routes.
+10. **Pod Running:** The Pod is now up and running, ready to serve traffic (visible via `kubectl get pods`).
+
+**Key Takeaway (Bottom Left):**
+Kubernetes is fundamentally a system of controllers working together to move the system from its **desired state** to the **actual state**.
+
+**Legend (Bottom Right):**
+*   **Solid arrows:** Flow of the request.
+*   **Dashed arrows:** Explanations of the components.
 
 
 #### 9. What is the role of Kubernetes Ingress and how does it differ from a Service?
@@ -632,6 +664,62 @@ affinity:
         values:
         - node1
 ```
+
+![Alt Image Text](../images/2026k8s_1_3.png "Body image")
+
+
+The Core Scheduling Workflow (Top Section)
+
+
+*   **Step 1: You create a Pod.** The process begins with a user applying a YAML configuration (`oc apply -f pod.yaml`). 
+	*   The YAML shows a pod named `web-pod` running an `nginx:latest` image, with a `nodeSelector` requiring `disktype: ssd` and defined `affinity` and `tolerations`.
+
+
+*   **Step 2: Filter Nodes (The "Predicates" phase).** The scheduler eliminates nodes that don't meet the Pod's requirements.
+    *   *Checks include:* Node selector, Node affinity, Pod affinity/anti-affinity, Taints & tolerations, Resource availability, Node conditions, and other predicates.
+    *   *Result:* It goes from **N nodes** down to **M eligible nodes**.
+
+*   **Step 3: Score Nodes (The "Priorities" phase).** The scheduler ranks the remaining eligible nodes based on preferences.
+    *   *Scoring factors include:* Preferred node affinity, Inter-pod affinity/anti-affinity, Topology spread, Least requested resources, Image locality, and Custom scheduler plugins.
+    *   *Result:* Each node is assigned a score from **0 to 100**.
+
+*   **Step 4: Pick the Best Node.** The scheduler selects the node with the highest score. If there is a tie, one is chosen at random.
+
+*   **Step 5: Bind Pod.** The Scheduler tells the **API Server** to bind the Pod to the chosen node. The Pod is then scheduled and created on that node.
+
+
+**2. Key Scheduling Concepts (Middle Section)**
+
+This section defines the five main mechanisms used to control where pods land:
+
+*   **Pod Selector:** Simple key-value match. The Pod will only run on nodes with matching labels. (e.g., `nodeSelector: disktype: ssd`)
+*   
+*   **Node Affinity:** More expressive than nodeSelector.
+    *   *Required:* Must match.
+    *   *Preferred:* Influences score (not mandatory).
+    *   (e.g., `nodeAffinity: requiredDuringScheduling... preferredDuringScheduling...`)
+    
+*   **Pod Affinity:** Schedule this pod **near** other pods. Useful for microservices (e.g., frontend near backend).
+
+
+*   **Pod Anti-Affinity:** Keep this pod **away** from other pods. Useful for high availability (e.g., replicas on different nodes).
+
+
+*   **Taints & Tolerations:** Repel pods from certain nodes.
+    *   *Taints on nodes:* NoSchedule / PreferNoSchedule / NoExecute.
+    *   *Pods must have matching tolerations* to run on tainted nodes. (e.g., `tolerations: key: "dedicated", operator: "Equal", value: "gpu", effect: "NoSchedule"`)
+
+
+
+**3. Practical Example: The "web-pod" (Bottom Section)**
+
+The diagram shows a practical scenario with a `web-pod` (Pending status) and four candidate nodes (node1 to node4). The green dashed line indicates that candidate nodes are being scored.
+
+*   **Node 1 (Filtered out):** Labels: `disktype= hdd`. Because the pod requires `ssd`, this node is **Filtered (label mismatch)**.
+*   **Node 2 (Filtered out):** Labels: `disktype= ssd`. However, it has a Taint: `dedicated=gpu:NoSchedule`. Because the pod does not have a matching toleration, it is **Filtered (taint not tolerated)**.
+*   **Node 3 (Eligible):** Labels: `disktype= ssd`. No taints. It passes the filter and receives a score of **72**.
+*   **Node 4 (Selected):** Labels: `disktype= ssd`. No taints. It receives the highest score of **95**, making it the **Selected (highest score)** node.
+
 
 #### 35. What is the Kubernetes API Server and its role?
 
@@ -1383,3 +1471,129 @@ Service A (ClusterIP) → Pods
 
 > **Ingress** is a simple, controller-specific routing resource; **Gateway API** is a more flexible, role-based, and portable standard for advanced traffic management.
 
+#### Pods Are Pending, But Karpenter Isn't Scaling
+
+Your deployment scales from 10 → 40 replicas.
+
+Nodes have available capacity. Karpenter is healthy.
+
+Yet new Pods are stuck in Pending.
+
+Let's break down what to check.
+
+
+**`Pod (Pending) → Scheduler → Karpenter → NodePool → NodeClaim → EC2`**
+
+**Step 1: Check why the Pod is Pending**
+
+**Action:** Look at the scheduler events to understand why it can't be placed.
+
+**Command:** `kubectl describe pod <pod>`
+
+**Common events to look for:**
+
+*   Insufficient memory
+*   didn't match node affinity
+*   untolerated taint
+
+**Step 2: Check Pod requirements**
+
+**Action:** Make sure the requests and constraints are intentional.
+
+**Configuration to check (example YAML provided for `resources`):**
+
+*   `requests: cpu: "4", memory: "8Gi"`
+
+**Other constraints to verify:**
+
+*   CPU / memory requests
+*   `nodeSelector`
+*   Node affinity
+*   Taints & tolerations
+*   Topology constraints
+*   Architecture (ARM64 / AMD64)
+
+
+**Step 3: Investigate Karpenter**
+
+**Action:** Determine if Karpenter can provision a node that matches the Pod's requirements.
+
+**Commands provided:**
+
+*   `kubectl get nodepool`
+*   `kubectl describe nodepool <name>`
+*   `kubectl get nodeclaims`
+*   `kubectl describe nodeclaim <name>`
+
+**Step 4: Look for mismatches**
+
+**Action:** If Pod requirements and NodePool constraints don't align, Karpenter cannot launch a 
+node.
+
+**Example of a mismatch:**
+
+*   **Pod requires:** ARM64, 8 vCPU, 32 GiB
+*   **NodePool allows:** x86_64 only (No matching instance)
+*   *Result:* The pod will remain pending because the NodePool is restricted from provisioning the type of instance the pod needs.
+
+#### Pods Are Running, But Users Get 503
+
+> Everything looks healthy in Kuberentes, yet your application is returning 503 Service Unavailable. Let's break it down.
+
+**1. Follow the Traffic Path**
+
+The first step is to trace the request from the user down to the application to find where the chain breaks. The path is:
+
+**Client** → **AWS ALB (Target Group)** → **Ingress (ALB Ingress)** → **Service** → **Endpoints** → **Pod (Container Port)** → **Application**
+
+**2. Check Each Layer**
+
+The guide provides specific checks for each component along the traffic path to isolate the issue:
+
+1.  **AWS ALB & Target Group:**
+    *   Are targets healthy?
+    *   Is the health check path/port correct?
+    *   Any recent changes?
+2.  **Ingress:**
+    *   Is the host/path routing to the right service?
+    *   Check annotations and ALB configuration.
+3.  **Service & Endpoints:**
+    *   Does the service have endpoints?
+    *   Verify selectors and pod labels.
+4.  **Pod & Readiness:**
+    *   Is the pod actually ready to serve traffic?
+    *   Check readiness probe, container port, and application logs.
+5.  **Network & Security:**
+    *   Are security groups and NACLs allowing traffic?
+    *   Is the target port open?
+6.  **Test from Inside the Cluster:**
+    *   Verify connectivity directly using a command like: `kubectl exec -it <pod> -- curl http://<service>:<port>`
+
+**3. Useful Commands & Pro Tip**
+
+The infographic provides a helpful cheat sheet of `kubectl` commands to gather information at different layers:
+
+*   **Check Ingress:** `kubectl get ingress` / `kubectl describe ingress <ingress-name>`
+*   **Check Service and Endpoints:** `kubectl get svc` / `kubectl describe svc <service-name>` / `kubectl get endpoints <service-name>`
+*   **Check Pods:** `kubectl get pods -o wide` / `kubectl describe pod <pod-name>`
+
+**Pro Tip:** "Don't jump straight to restarting pods. Follow the path, isolate the layer, find the root cause."
+
+**Common Causes**
+
+Even when pods are running, a 503 error can occur due to:
+
+*   ALB target unhealthy
+*   Incorrect target port or container port
+*   Ingress misconfiguration
+*   Wrong service selector
+*   Readiness probe failing
+*   Security group restrictions
+
+Key Takeaway
+
+The central message at the bottom reinforces the troubleshooting philosophy:
+
+> "A running pod only means the container is alive. Readiness, networking, and configuration determine whether it can actually receive traffic."
+
+The accompanying diagram emphasizes the workflow: **Observe → Trace → Isolate → Fix → Verify**.
