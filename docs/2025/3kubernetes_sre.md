@@ -1398,7 +1398,7 @@ This creates a copy of the failing pod with a debug container attached for inves
 - `Physics` → `Physical`
 - `L5 Routing` → `L7 Routing` (Layer 7, unless you meant Layer 4/5)
 
-#### Ingress vs Gateway API
+### 56 Ingress vs Gateway API
 
 
 ![Alt Image Text](../images/k8s2026_1_4.gif "Body image")
@@ -1474,7 +1474,9 @@ Service A (ClusterIP) → Pods
 
 > **Ingress** is a simple, controller-specific routing resource; **Gateway API** is a more flexible, role-based, and portable standard for advanced traffic management.
 
-#### Pods Are Pending, But Karpenter Isn't Scaling
+
+
+### 57 Pods Are Pending, But Karpenter Isn't Scaling
 
 Your deployment scales from 10 → 40 replicas.
 
@@ -1539,7 +1541,7 @@ node.
 *   **NodePool allows:** x86_64 only (No matching instance)
 *   *Result:* The pod will remain pending because the NodePool is restricted from provisioning the type of instance the pod needs.
 
-#### Pods Are Running, But Users Get 503
+### 58 Pods Are Running, But Users Get 503
 
 > Everything looks healthy in Kuberentes, yet your application is returning 503 Service Unavailable. Let's break it down.
 
@@ -1600,3 +1602,65 @@ The central message at the bottom reinforces the troubleshooting philosophy:
 > "A running pod only means the container is alive. Readiness, networking, and configuration determine whether it can actually receive traffic."
 
 The accompanying diagram emphasizes the workflow: **Observe → Trace → Isolate → Fix → Verify**.
+
+### 59 HPA (Horizontal Pod Autoscaler) and KEDA (Kubernetes Event-driven Autoscaling).
+
+**HPA (Horizontal Pod Autoscaler):**
+
+Core Question: "Based on this metric, how many Pods should I run?"
+
+Capabilities: It scales based on CPU & memory metrics, custom metrics, external metrics, and is native to Kubernetes autoscaling.
+
+
+* CPU & memory metrics
+* Custom metrics
+* External metrics
+* Native Kubernetes autoscaling
+
+
+**KEDA (Kubernetes Event-driven Autoscaling):**
+
+Core Question: "What is happening outside the Pod that should trigger scaling?"
+
+Capabilities: It scales based on queue depth (Kafka, RabbitMQ, etc.), event sources (Cloud, DB, HTTP, etc.), scheduled scaling, and many event-source integrations. Crucially, the infographic notes that KEDA feeds external metrics to HPA.
+
+
+* Queue depth (Kafka, RabbitMQ, etc.)
+* Event sources (Cloud, DB, HTTP, etc.)
+* Scheduled scaling
+* Many event-source integrations
+* Feeds external metrics to HPA
+
+
+**3. The Right Architecture**
+
+- Demand Signal (from your system): These can be queue depth, HTTP requests, database changes, scheduled events, or custom/external metrics.
+
+- Autoscaling Control Loop:
+
+	- **HPA: Makes the final scaling decision.**
+
+	- **KEDA: Provides event-driven metrics to the HPA.**
+
+Workload: The result is scaling from 0 to N Pods. It highlights the ability to "Scale to zero when there's no work."
+
+
+**4. When to Use Which**
+
+
+* When to use HPA:
+* Resource utilization is a good proxy for demand.
+* CPU/memory/custom metrics are sufficient.
+* You want native Kubernetes autoscaling.
+* Works with scale-to-zero in Kubernetes 1.37 (for supported metrics).
+
+
+**When to consider KEDA:**
+
+* Demand originates from an event source. 
+* Queue depth or consumer lag is the real signal.
+* You need many event-source integrations.
+* Event-driven workloads are central to your architecture.
+* Works with HPA to drive scaling decisions.
+
+![Alt Image Text](../images/k8s2026_1_6.png "Body image")
