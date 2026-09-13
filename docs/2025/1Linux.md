@@ -597,6 +597,8 @@ ln -s source.txt softlink.txt     # 创建软链接
 ln source.txt hardlink.txt        # 创建硬链接
 ```
 
+![Alt Image Text](../images/2026devops_1_1.jpeg "Body image")
+
 ### 6 Linux 系统负载高怎么办？
 
 **确认负载：**

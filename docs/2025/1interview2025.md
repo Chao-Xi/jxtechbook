@@ -1,3 +1,5 @@
+## 2026 Devops + AWS (Eng) 
+
 ### 1. What are all the types of applications you have deployed?
 
 * Web applications (e.g., Java Spring Boot, Node.js),
@@ -11,7 +13,8 @@
 ### 2 How have you injected the secrets in ConfigMaps
 
 * Secrets should not be injected in ConfigMaps as ConfigMaps are not designed for  sensitive data. 
-* Instead, Kubernetes Secrets should be used. **Secrets can be injected into pods via environment variables or mounted as files**.
+* Instead, Kubernetes Secrets should be used. 
+	* **Secrets can be injected into pods via environment variables or mounted as files**.
 
 ### 3 How do you find which pod is taking more system resources across nodes using kubectl?
 
@@ -63,6 +66,9 @@ Apache Kafka is a distributed event streaming platform used for building real-ti
 
 * **Soft Link (Symbolic Link)**: A pointer to the original file’s path.
 	* **If the original file is deleted, the soft link becomes broken**.
+
+	
+![Alt Image Text](../images/2026devops_1_1.jpeg "Body image")
 
 ### 10. What is the use of the break command in shell scripting? In what scenarios have you used it?
 
@@ -131,10 +137,46 @@ resource "aws_instance" "example" {
  }
 ```
 
-In this example, 
 
-**var.instances is a map, and each.key refers to the current key in the map,** 
-while each.value refers to the associated value.
+1. `count` 
+
+**count Best for lists**
+
+
+```hcl
+    variable 'vm_names' [
+      "vm1",
+      "vm2"
+    ]
+
+    count = length(var_vm_names)
+    name = var.names[count.index]
+```
+
+
+
+### 2. `for_each` Best for maps or sets
+
+```hcl
+    variable 'vm_names =
+      {vm1' 'vm2'
+    } vm2' 'west US'
+    }
+
+    vesource 'azurerm
+      virtual_machine' '~'
+    'example' {
+      for_each = var_map
+      name = each.key
+      location =ach.value
+    }
+```
+
+
+
+
+
+
 
 ### 16. What are the advantages and disadvantages of multi-stage builds in  Docker?
 
@@ -198,7 +240,7 @@ services:
 
 * **Bridge Networking**: **The default Docker network driver**. 
 	* Containers connected to the same bridge network can communicate with each other. 
-	* Each container gets its own IP address 
+	* **Each container gets its own IP address** 
 and is isolated from the host network. You can expose ports to the host using the `-p` option.
 * **Host Networking**: The container shares the host's network stack, 
 	* **meaning it doesn’t get its own IP address, and the container's network is the same as the host's network**. 
@@ -248,20 +290,18 @@ accessible throughout the session**.
 
 ### 23. What is pod affinity and its use case?
 
-Pod affinity is a feature in Kubernetes that allows you to specify rules for scheduling pods to run on 
-nodes that have other specified pods running on them. 
+Pod affinity is a feature in Kubernetes that **allows you to specify rules for scheduling pods to run on  nodes that have other specified pods running on them**. 
 
-This can be useful when you want certain 
-pods to be located together due to factors like data locality, network latency, or shared resources.
+This can be useful when you want certain pods to be **located together due to factors like data locality, network latency, or shared resources**.
 
 Use Case: An application where the frontend and backend services communicate frequently might 
+
 use pod affinity to ensure that both are scheduled on the same node to reduce network latency
 
 ### 24. What is the difference between pod affinity and pod anti-affinity?
 
 * **Pod Affinity:** Ensures that pods are scheduled on the same node or in proximity to each other.
-* **Pod Anti-Affinity**: Ensures that pods are not scheduled on the same node or are placed far 
-* apart from each other.
+* **Pod Anti-Affinity**: Ensures that pods are not scheduled on the same node or are placed far apart from each other.
 
 Example Use Case:
 
@@ -270,8 +310,10 @@ Example Use Case:
 
 ### 25. What are readiness and liveness probes?
 
-* **Readiness Probe**: Used to determine when a pod is ready to start accepting traffic. If the  readiness probe fails, the pod will be removed from the service endpoints, ensuring it does not receive traffic until it's ready.
-* **Liveness Probe:** Used to determine if a pod is still running. If the liveness probe fails, Kubernetes will restart the pod, assuming it's in a failed state.
+* **Readiness Probe**: Used to determine when a pod is ready to start accepting traffic. 
+	* If the  **readiness probe fails, the pod will be removed from the service endpoints, ensuring it does not receive traffic until it's ready**.
+* **Liveness Probe:** Used to determine if a pod is still running. 
+	* **If the liveness probe fails, Kubernetes will restart the pod, assuming it's in a failed state.**
 
 #### 26. Write a simple Groovy pipeline for a Java Spring Boot application that waits for user input for approval to move to the next stage, with stages for checkout,  build, push, and deploy
 
@@ -408,7 +450,7 @@ Load balancers improve fault tolerance, scalability, and ensure high availabilit
 
 Yes, **I have worked with ASGs to automatically scale the number of instances in response to demand**. 
 
-ASGs are configured with policies that adjust the desired capacity based on metrics such as CPU utilization, helping to maintain application performance and optimize costs.
+ASGs are configured with policies that adjust the desired capacity based on metrics **such as CPU utilization, helping to maintain application performance and optimize costs.**
 
 #### 36. Can you write a simple Dockerfile?
 
@@ -434,7 +476,7 @@ For internal access within the cluster, you can use a **ClusterIP** service. Add
 
 ### 38. Why do we need a ConfigMap in Kubernetes?
 
-A ConfigMap is used to store non-confidential configuration data in key-value pairs. 
+A ConfigMap is used to store **non-confidential configuration data in key-value pairs**. 
 
 It allows you to decouple configuration artifacts from image content, enabling you to modify application settings without rebuilding your container images
 
@@ -469,7 +511,7 @@ I'd also verify that the load balancers are evenly distributing traffic and cons
 * To upgrade for high availability, I would:
 	* **Deploy multiple** instances across different Availability Zones (AZs) using an Auto Scaling Group.
 	* **Set up a Load Balancer (ALB or NLB)** to distribute traffic across these instances.
-	* **Configure health checks** to ensure traffic is only routed to healthy instances.
+	* <mark>**Configure health checks** to ensure traffic is only routed to healthy instances.</mark>
 	* **Use Multi-AZ deployments** for databases like RDS to ensure data availability
 
 #### 42. When auto-scaling instances, how do you manage the backend RDS database?
@@ -520,10 +562,14 @@ Yes, one challenge was a sudden traffic spike causing performance degradation.
 
 #### 48. What is the difference between CMD and ENTRYPOINT in Docker?
 
-* **CMD**: Provides default arguments for the entrypoint or the command to run if no other 
-command is provided.
-* **ENTRYPOINT**: Defines the executable that will always run, with CMD as its default  arguments. ENTRYPOINT is useful when you want your container to behave like a specific  executable.
-* Example: **`ENTRYPOINT ["python", "app.py"]` **ensures app.py is always executed, while CMD allows passing different arguments.
+* **CMD**: Provides default arguments for the entrypoint or the command to run if no other command is provided.
+* **ENTRYPOINT**: Defines the executable that will always run, with CMD as its default  arguments. 
+	* ENTRYPOINT is useful when you want your container to behave like a specific  executable.
+	* Example: **`ENTRYPOINT ["python", "app.py"]` **ensures app.py is always executed, while CMD allows passing different arguments.
+
+	
+![Alt Image Text](../images/2026sre_1_119.png "Body image")
+
 
 #### 49. Have you ever managed an application single-handedly?
 
@@ -677,12 +723,11 @@ needed.
 **Cloud NAT: Network Address Translation (NAT)** service in cloud environments like Google 
 Cloud. 
 
-**It allows instances in private subnets to connect to the internet without exposing 
-them to inbound internet traffic, maintaining security while enabling outbound connectivity**
+**It allows instances in private subnets to connect to the internet without exposing them to inbound internet traffic, maintaining security while enabling outbound connectivity**
 
 #### 64. What is the difference between a load balancer and a Cloud NAT gateway?
 
-**Load Balancer: **
+**Load Balancer:**
 
 * Distributes incoming traffic across multiple servers or services.
 * Primarily used for load distribution, redundancy, and high availability.
@@ -1019,8 +1064,7 @@ VPC.
 
 #### 93. Managing Unmanaged Resources in Terraform
 
-**Approach**: Use Terraform import command to bring existing unmanaged resources under 
-Terraform's control. This allows you to manage them alongside your IaC code
+**Approach**: Use Terraform import command to bring existing unmanaged resources under Terraform's control. This allows you to manage them alongside your IaC code
 
 #### 94. Passing Arguments to VPC During Import
 
