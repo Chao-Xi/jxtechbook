@@ -673,6 +673,264 @@ Helps reduce MTTR and improve uptime.
 * **Observability checks**: Dashboards, alerts verified
 * **On-call rotation**: Adjusted for event
 
+
+### 51 Monitoring & Observability in DevOps
+
+Visibility into infrastructure, applications and business is the Key to reliable and scalable systems.
+
+
+![Alt Image Text](../images/2026sre_1_1.png "Body image")
+
+**What each tool does?**
+
+**Prometheus:** Collects real-time metrics from targets.
+
+**Grafana**: Visualizes metrics and helps in trend analysis.
+
+**CloudWatch**: Monitors AWS resources, collects logs & sends alarms.
+
+**ELK Stack:** Centralizes logs from applications & infrastructure for search and analysis.
+
+**Real Production Scenario**
+
+- **Check Grafana → CPu / Memory/ Response time high?**
+- **Check Prometheus** → Which pod / service is having high error or latency?
+- **Check ELK** → Any application errors or exceptions in logs?
+- **Check CloudWatch** → Any issue inAWS infrastructure?
+- Identify root cause and fix the issue.
+
+
+**Benefits**
+
+* Real-time visibility
+* Faster incident detection
+* Better performance tracking
+* Proactive alerting
+* Improved system reliability
+
+
+### 52 Linux Shell Scripting — DevOps Interview Notes
+
+![Alt Image Text](../images/2026sre_1_2.gif "Body image")
+
+1. Shebang
+
+```bash
+#!/bin/bash
+```
+
+Defines Bash as the script interpreter.
+
+2. Variables & User Input
+
+```bash
+name="John"
+age=25
+
+read -p "Enter your favorite color: " color
+echo "Name: $name, Color: $color"
+```
+
+**Interview:** Bash variables do not use spaces around `=`.
+
+
+**3. Conditional Statements**
+
+```bash
+if [ "$age" -lt 18 ]; then
+    echo "Minor"
+else
+    echo "Adult"
+fi
+```
+
+Common operators:
+
+```text
+-eq  equal
+-ne  not equal
+-lt  less than
+-le  less/equal
+-gt  greater than
+-ge  greater/equal
+-e   file exists
+-f   regular file
+-d   directory exists
+```
+
+
+**4. Loops**
+
+```bash
+for i in {1..5}; do
+    echo "$i"
+done
+```
+
+Useful for automation, such as processing servers, files, or pods.
+
+
+**5. Functions**
+
+```bash
+greet() {
+    echo "Hello, $1"
+}
+
+greet "Alice"
+```
+
+`$1` = first argument passed to the function.
+
+
+**6. File Operations**
+
+```bash
+filename="sample.txt"
+
+touch "$filename"
+
+if [ -e "$filename" ]; then
+    echo "File exists"
+fi
+```
+
+Common commands:
+
+```bash
+ls
+cp
+mv
+rm
+touch
+cat
+```
+
+
+**7. Command-Line Arguments**
+
+```bash
+echo "First argument: $1"
+echo "Second argument: $2"
+```
+
+Example:
+
+```bash
+./script.sh server1 production
+```
+
+Then:
+
+```text
+$1 = server1
+$2 = production
+$# = number of arguments
+$@ = all arguments
+```
+
+**8. Exit Status**
+
+```bash
+ls /nonexistent-folder
+echo "Exit status: $?"
+```
+
+Important:
+
+```text
+0       = success
+non-zero = failure
+$?      = exit status of previous command
+```
+
+Very important for CI/CD scripts.
+
+
+**9. Arrays**
+
+```bash
+fruits=("Apple" "Orange" "Banana")
+
+echo "${fruits[0]}"
+```
+
+Output:
+
+```text
+Apple
+```
+
+**10. Error Handling**
+
+```bash
+trap 'echo "Error occurred"; exit 1' ERR
+```
+
+Can be used to catch command failures and perform cleanup/error handling.
+
+A common DevOps pattern is:
+
+```bash
+set -e
+set -u
+set -o pipefail
+```
+
+This makes scripts fail more safely.
+
+**11. Comments**
+
+```bash
+# This is a comment
+echo "Hello"
+```
+**🔥 DevOps Interview Must-Know Bash**
+
+| Topic           | Key Point                    |   |                             |
+| --------------- | ---------------------------- | - | --------------------------- |
+| `#!/bin/bash`   | Shebang/interpreter          |   |                             |
+| `$var`          | Variable                     |   |                             |
+| `$1`, `$2`      | Script arguments             |   |                             |
+| `$?`            | Previous command exit status |   |                             |
+| `$#`            | Number of arguments          |   |                             |
+| `$@`            | All arguments                |   |                             |
+| `if`            | Conditional logic            |   |                             |
+| `for` / `while` | Loops                        |   |                             |
+| `function`      | Reusable code                |   |                             |
+| `-e`            | File exists                  |   |                             |
+| `-f`            | Regular file                 |   |                             |
+| `-d`            | Directory                    |   |                             |
+| `&&`            | Run next command if success  |   |                             |
+| `               |                              | ` | Run next command if failure |
+| `>`             | Redirect/overwrite           |   |                             |
+| `>>`            | Redirect/append              |   |                             |
+| `\|`            | Pipe output                  |   |                             |
+| `grep`          | Search text                  |   |                             |
+| `awk`           | Text/data processing         |   |                             |
+| `sed`           | Text replacement             |   |                             |
+| `chmod +x`      | Make script executable       |   |                             |
+
+
+**Typical DevOps example**
+
+```bash
+#!/bin/bash
+
+if systemctl is-active --quiet nginx; then
+    echo "Nginx is running"
+else
+    echo "Nginx is down"
+    systemctl start nginx
+fi
+```
+
+**Interview answer:**
+
+> Bash scripting is commonly used in DevOps to automate deployment, server administration, health checks, log processing, backups, and CI/CD tasks.
+
+
+
 ## SRE Incident Response & Troubleshooting
 
 #### 1 You discover that a recent config change was deployed without proper testing. The system is unstable. How do you respond?

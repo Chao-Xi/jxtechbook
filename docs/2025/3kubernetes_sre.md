@@ -573,6 +573,9 @@ Dependencies:
 - • Metrics Server must be installed.
 - • Works with custom metrics (Prometheus Adapter) in v2.
 
+![Alt Image Text](../images/k8s2026_1_5.jpeg "Body image")
+
+
 #### 24. What are Kubernetes Admission Controllers?
 
 
