@@ -1,4 +1,4 @@
-# 5 AWS 面试
+# 5 AWS + Azure 面试
 
 ### 1. 什么是 EC2 实例类型？
 
@@ -424,7 +424,104 @@ GitOps 部署示例：
 * **安全和权限**： 为每个环境配置不同的 AWS IAM 角色和策略，以确保访问控制。
 * **监控和日志： 使用 AWS CloudWatch、Prometheus 和 Grafana 等工具监控不同环境的健康状况和性能。**
 
-### 31. 如何在 AWS 中创建 VPC 呢？
+
+### 31 Load Balancer Configuration in Azure
+
+> Distribute traffic. Improve availability. Keep your apps running.
+
+
+![Alt Image Text](../images/2026az_1_1.jpeg "Body image")
+
+
+**1. Architecture Overview (Top Section)**
+
+
+*   **Users (Internet):** Initiate requests via HTTP/HTTPS using a Public IP.
+*   **Azure Load Balancer (Public IP):** Acts as the central entry point, receiving incoming traffic.
+*   **Backend Pool (Virtual Machines):** The Load Balancer distributes the traffic to a pool of VMs. In the diagram, these are represented as **VM 1 (10.0.0.4)**, **VM 2 (10.0.0.5)**, and **VM 3 (10.0.0.6)**.
+*   **Load Balancer Configuration (Sidebar):** Lists the essential components needed to make this work:
+    *   Frontend IP (Public)
+    *   Frontend Port (80 / 443)
+    *   Backend Pool (VMs)
+    *   Health Probe (HTTP/HTTPS)
+    *   Load Balancing Rule (e.g., Round Robin)
+
+
+
+**2. Step-by-Step Configuration (Middle Section)**
+
+
+
+*   **Step 1: Create Load Balancer.** Deploy a Standard Load Balancer. 
+	*   Key settings to define include the Resource group, Region, SKU (Standard), and optionally a Public IP.
+*   **Step 2: Configure Frontend IP and Port.** 
+	*   Assign a public IP and configure the port (e.g., 80 for HTTP, 443 for HTTPS). 
+	*   This is the address users will connect to.
+*   **Step 3: Add Backend Pool.** Add the virtual machines (or scale set instances) that will receive the traffic.
+*   **Step 4: Create Health Probe.** Azure uses this to check the health of each VM.
+    *   **Protocol:** HTTP/HTTPS
+    *   **Port:** 80 / 443
+    *   **Path:** /health (optional)
+    *   **Interval:** 5 sec
+    *   **Unhealthy threshold:** 2
+*   **Step 5: Configure Load Balancing Rule.** 
+	*   This rule ties everything together: it maps the Frontend IP + Port to the Backend Pool and applies the Health Probe. 
+	*   It dictates how traffic is distributed (e.g., Round Robin, Least Connection).
+
+
+**3. How It Works (Traffic Flow) (Bottom Left)**
+
+This diagram shows the lifecycle of a single request:
+
+1.  **User requests (HTTP/HTTPS):** A user sends a request from the internet.
+2.  **Load Balancer receives the request (via Public IP):** The Azure Load Balancer intercepts it.
+3.  **Traffic is distributed based on the rule (e.g., Round Robin):** The Load Balancer decides which backend VM should handle it.
+4.  **Request goes to a healthy backend VM:** It forwards the request only to a VM that has passed the health probe.
+5.  **Response is returned to the user:** The chosen VM processes the request and sends the data back through the Load Balancer to the user.
+
+
+**4. Key Benefits**
+
+The infographic concludes by listing the advantages of using Azure Load Balancer:
+
+*   High availability & fault tolerance
+*   Automatic traffic distribution
+*   Health monitoring
+*   Scalable (supports VM scale sets)
+*   Supports HTTP/HTTPS
+*   Secure with NSG and WAF (optional)
+
+### 32 Azure Application Gateway VS Azure Load Balancer
+
+![Alt Image Text](../images/2026az_1_2.png "Body image")
+
+**When to Use?**
+
+**Use Application Gateway when:**
+
+* You need HTTP/HTTPS traffic management
+* You need advanced routing (path/host-based)
+* **You want WAF for security**
+* **You need SSL termination**
+
+**Use Load Balancer when:**
+
+* You need high-performance TCP/UDP load balancing
+* You have non-HTTP workloads (e.g., Databases, VPN)
+* You need low latency and cost-effective solution
+* **You have large scale, simple traffic distribution needs**
+
+
+**Key Takeaway**
+
+
+**Application Gateway** works at Layer 7 and is perfect for intelligent traffic routing for web applications.
+
+**Load Balancer** works at Layer 4 and is ideal for high-performance and non-HTTP workloads.
+
+Understand your application needs and choose the right Azure load balancing solution!
+
+### 3x. 如何在 AWS 中创建 VPC 呢？
 
 在 AWS 中创建 VPC（虚拟私有云）是为了提供一个逻辑上隔离的网络环境，您可以在其中运行 EC2 实例、容器、数据库等。以下是如何在 AWS 中创建 VPC 的步骤。
 

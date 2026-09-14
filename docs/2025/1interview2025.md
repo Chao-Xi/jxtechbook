@@ -175,9 +175,6 @@ resource "aws_instance" "example" {
 
 
 
-
-
-
 ### 16. What are the advantages and disadvantages of multi-stage builds in  Docker?
 
 #### **Advantages**
@@ -1273,3 +1270,388 @@ the S3 bucket and your IaC configuration. This will highlight the manually added
 consistency.
 * **Ignore**: If the policy is acceptable, use the ignore_changes option in Terraform to exclude it from 
 future plans.
+
+
+## Argo CD interview
+
+
+### **1. Core Concepts & Principles**
+
+*   **GitOps Principle:** Highlights that Git is the "Single Source of Truth." 
+*   	The desired state is stored in Git, and Argo CD ensures the Kubernetes cluster matches this desired state.
+
+
+
+![Alt Image Text](../images/2026devops_1_2.png "Body image")
+
+
+
+**Architecture:** A diagram shows the flow from a **Git Repository** to a **Repo Server**, which interacts with an **Application Controller** and **API Server**. 
+
+These components connect to **Redis (Cache)**, a **Kubernetes Cluster**, and **Other Components** (Dex Server for SSO, Notifications Controller, ApplicationSet Controller).
+
+
+### **2 Components**
+
+*   **API Server:** Handles UI, CLI, Auth, and RBAC.
+*   **Repo Server:** Clones Git repos and generates manifests.
+*   **Application Controller:** Compares desired vs. actual state and syncs apps.
+*   **Redis:** Stores cache and session data.
+*   **Dex Server:** Handles Authentication (SSO).
+*   **Notifications Controller:** Sends notifications.
+*   **ApplicationSet Controller:** Creates multiple apps automatically.
+
+### **3. How Argo CD Works (Flow)**
+
+A numbered sequence details the process:
+
+1.  Developer pushes code to Git.
+2.  Argo CD detects the change (Polling / Webhook).
+3.  Repo Server reads the repository.
+4.  **Manifests are generated (Helm / Kustomize / YAML)**.
+5.  Application Controller compares desired vs. actual state.
+6.  If a difference is found, it triggers a **Sync**.
+7.  Changes are applied to Kubernetes.
+8.  Cluster state matches Git state.
+
+### **4. Sync Types**
+
+*   **Manual Sync:** User clicks or uses CLI to sync.
+*   **Auto Sync:** Automatically syncs when changes are detected.
+*   An example `syncPolicy` YAML snippet shows how to enable `automated`, `prune` (delete extra resources), and `selfHeal` (auto fix drift).
+
+```
+SyncPolicy :
+ automated:
+   prune: true
+   selfHeal: true
+```
+
+> Auto Sync enable
+> 
+> Delete extra resources
+> 
+> Auto fix drift
+
+### **5. Self Heal**
+
+Explains that if someone manually changes something in the cluster, Argo CD detects it and reverts it to match Git. 
+
+
+An example shows Git says `replicas: 3`, but someone changes it to `10`. Argo CD will change it back to `3`.
+
+### **6. Application States**
+
+Lists the possible states:
+
+*   **Synced** (Git state = Cluster state)
+*   **OutOfSync** (Git state ≠ Cluster state)
+*   **Healthy** (App is running fine)
+*   **Progressing** (Changes being applied)
+*   **Degraded** (Something is wrong)
+*   **Missing** (Resource not found)
+*   **Unknown** (State is unknown)
+*   **Suspended** (Sync is suspended)
+
+### **7. Helm in Argo CD**
+
+Notes that Argo CD does *not* run `helm install`. Instead, it runs `helm template` to generate manifests and then applies them to Kubernetes.
+
+*   **Helm Workflow Diagram:** Helm Chart (`values.yaml`) → Repo Server (`helm template`) → Kubernetes Manifests → Kubernetes Controller → Kubernetes Cluster.
+*   **Example Application (Helm):** A YAML snippet showing an Argo CD Application resource pointing to a Helm chart in a GitHub repo.
+
+
+![Alt Image Text](../images/2026devops_1_3.png "Body image")
+
+**Example Application (Helm)**
+
+```
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/example/helm-charts
+    targetRevision: HEAD
+    path: nginx
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nginx
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+```
+
+
+### **8. Useful Commands**
+
+Lists common CLI commands:
+
+*   `argocd app get <app-name>`
+*   `argocd app sync <app-name>`
+*   `argocd app delete <app-name>`
+*   `argocd app history <app-name>`
+*   `argocd app rollback <app-name> <id>`
+*   `argocd repo list`
+*   `argocd repo add <repo-url>`
+
+
+
+
+### **9 Installing Argo CD**
+
+
+1.  Create Namespace: 
+	* `kubectl create namespace argocd`
+2.  Install Argo CD: 
+	* `kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
+3.  Verify Pods: 
+	* `kubectl get pods -n argocd`
+4.  Access UI (Port Forward): 
+	* `kubectl port-forward svc/argocd-server -n argocd 8080:443`
+5.  Get Initial Password: 
+	* `kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d`
+6.  Login: 
+	* `argocd login localhost:8080` (Default User: admin)
+
+**Public vs Private Git Repository**
+
+*   **Public Repo:** No authentication required.
+*   **Private Repo:** Requires authentication (SSH Key or PAT).
+    *   **Method 1 (Username + PAT):** 
+    	*   `argocd repo add <repo-url> --username <username> --password <PAT>`
+    *   **Method 2 (SSH Key - Recommended):** Generate key with `ssh-keygen -t rsa -b 4096`, 
+    *   add public key to Git provider, then run
+		* `argocd repo add git@github.com:user/repo.git --ssh-private-key-path ~/.ssh/id_rsa`.
+
+
+ApplicationSet (Multi App Management)**
+
+Shows how one template can generate multiple applications automatically (e.g., for `dev-app`, `qa-app`, `prod-app`). Used for multi-cluster / multi-env deployments.
+
+### **Rollback**
+
+Explains rolling back to a previous commit 
+
+> (Commit A → Commit B → Commit C, Rollback = Sync back to Commit A/B).
+
+- `argocd app history myapp` 
+- `argocd app rollback myapp <ID>`
+
+
+### **End-to-End Workflow**
+
+A flowchart summarizing the process: 
+
+**Developer → `git push` → Git Repository → Repo Server → Application Controller → Kubernetes API Server → Cluster Updated.**
+
+
+ It notes that if Auto Sync is enabled, the controller detects changes and syncs automatically.
+
+### **Most Asked Interview Questions**
+
+#### 1. What is Argo CD?
+
+> Argo CD is a **Kubernetes-native GitOps continuous delivery tool**. It continuously compares the Kubernetes cluster's actual state with the desired state stored in Git.---
+
+#### 2. What is GitOps?
+
+> GitOps uses **Git as the single source of truth** for infrastructure and application configuration. Changes are made through Git, and automation synchronizes them to Kubernetes.
+
+**Flow:**
+
+```text
+Developer → Git → Argo CD → Kubernetes
+                  ↓
+             Sync / Reconcile
+```
+
+
+#### 3. What are the main components of Argo CD?
+
+| Component                  | Purpose                                          |
+| -------------------------- | ------------------------------------------------ |
+| **API Server**             | API, CLI and UI                                  |
+| **Application Controller** | Compares desired vs live state and performs sync |
+| **Repo Server**            | Fetches Git and generates Kubernetes manifests   |
+| **Redis**                  | Caching                                          |
+| **Dex**                    | Authentication/SSO integration                   |
+
+**Interview focus:** The **Application Controller** is the key component responsible for reconciliation.
+
+
+#### 4. How does Argo CD detect changes?
+
+> Argo CD detects changes by **comparing the desired state in Git with the live state in Kubernetes**.
+
+It can detect changes through:
+
+* **Polling/reconciliation**
+* **Git webhooks**
+* Manual refresh/sync
+
+
+#### 5. What is `OutOfSync`?
+
+> `OutOfSync` means the **live Kubernetes state does not match the desired state defined in Git**.
+
+Example:
+
+```text
+Git:
+replicas: 3
+
+Kubernetes:
+replicas: 2
+
+→ OutOfSync
+```
+
+
+#### 6. What is Self-Heal?
+
+> **Self-Heal** automatically corrects manual changes made directly to the Kubernetes cluster.
+
+Example:
+
+```text
+Git → replicas = 3
+K8s → replicas = 1
+
+Argo CD detects drift
+        ↓
+Self-Heal
+        ↓
+K8s replicas = 3
+```
+
+Typically enabled with automated sync:
+
+```yaml
+syncPolicy:
+  automated:
+    selfHeal: true
+```
+
+
+#### 7. What is Prune?
+
+> **Prune removes Kubernetes resources that were deleted from Git but still exist in the cluster.**
+
+Example:
+
+```text
+Git:
+Deployment
+Service
+
+Someone deletes Service from Git
+
+Argo CD + Prune
+        ↓
+Service removed from Kubernetes
+```
+
+```yaml
+syncPolicy:
+  automated:
+    prune: true
+```
+
+**Remember:**
+
+> **Self-Heal = fix changed resources**
+>
+> **Prune = remove deleted resources**
+
+
+### 8. Does Argo CD support Helm?
+
+> **Yes.** Argo CD supports Helm charts as an application source.
+
+For example:
+
+```text
+Git/Helm Repository
+        ↓
+     Argo CD
+        ↓
+   Kubernetes
+```
+
+It can use Helm values such as:
+
+```yaml
+helm:
+  valueFiles:
+    - values-prod.yaml
+```
+
+
+#### 9. Does Argo CD run `helm install`?
+
+> **No, not in the traditional Helm release-management sense.**
+
+Argo CD uses Helm primarily to **render/generate Kubernetes manifests**, then Argo CD manages those resulting Kubernetes resources.
+
+**Important interview distinction:**
+
+```text
+Helm:
+helm install → manages release
+
+Argo CD:
+Helm chart → render manifests → Argo CD applies/manages K8s resources
+```
+
+This is a very common interview question.
+
+
+
+#### 10. How does rollback work in Argo CD?
+
+> Argo CD can roll back an application to a previous Git/application revision.
+
+Typical approach:
+
+```bash
+argocd app history my-app
+argocd app rollback my-app <revision>
+```
+
+**GitOps best practice:** Prefer **reverting the Git commit** because Git should remain the source of truth.
+
+```text
+Bad:
+K8s manual change
+
+Better:
+Git revert
+   ↓
+Argo CD
+   ↓
+Kubernetes
+```
+
+---
+
+#### 11. Polling vs Webhook?
+
+|             | Polling                           | Webhook              |
+| ----------- | --------------------------------- | -------------------- |
+| How         | Argo CD periodically checks Git   | Git notifies Argo CD |
+| Detection   | Delayed by polling interval       | Almost immediate     |
+| Network     | Argo CD → Git                     | Git → Argo CD        |
+| Reliability | Simple fallback                   | Faster               |
+| Best use    | Default/background reconciliation | Fast CI/CD response  |
+
+**Interview answer:**
+
+> Polling periodically checks the Git repository, while a webhook allows GitHub/GitLab to notify Argo CD immediately after a change. Webhooks provide faster detection, but Argo CD still performs reconciliation independently.
+
