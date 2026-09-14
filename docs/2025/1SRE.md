@@ -931,6 +931,9 @@ fi
 
 
 
+
+
+
 ## SRE Incident Response & Troubleshooting
 
 #### 1 You discover that a recent config change was deployed without proper testing. The system is unstable. How do you respond?

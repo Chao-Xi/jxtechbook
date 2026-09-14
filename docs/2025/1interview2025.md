@@ -1272,6 +1272,51 @@ consistency.
 future plans.
 
 
+### 118 ADVANCED LINUX COMMANDS
+
+These commands help in troubleshooting, performance analysis and system management.
+
+1， **find** - Search files in a directory hierarchy.
+
+> find /var/log -name "*. log"
+
+**2 grep - Search for patterns in files (recursively).**
+
+> grep -r "ERROR" /var/log
+
+**3 Pattern scanning and processing.**
+
+> af -hawk "{print $5}"
+
+**4 sed - Stream editor for filtering and transforming text.**
+
+> sed -i's/old/new/g' file. txt
+
+**5 xargs - Build and execute command lines from standard input.**
+
+> find. -name "*log" | xargs rm -f
+
+
+**6 netstat / ss - Check network connections and ports.**
+
+> ss -tulnp
+
+**7 lsof - List open files and process using them.**
+
+> lsof -i :80
+
+**htop - Interactive process viewer (better than top).**
+
+htop
+
+**df-hT - Disk space usage with filesystem type.**
+
+> df -hT
+
+**du-sh - Check directory size (summary).**
+
+> Example:
+
 ## Argo CD interview
 
 
