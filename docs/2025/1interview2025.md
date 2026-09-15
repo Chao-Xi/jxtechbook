@@ -1315,8 +1315,6 @@ htop
 
 **du-sh - Check directory size (summary).**
 
-> Example:
-
 ## Argo CD interview
 
 

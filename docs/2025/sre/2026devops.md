@@ -1,5 +1,14 @@
 # 2026 DevOps Interview
 
+
+## Linux Beyond Basic Commands
+
+### 1. Processes, Signals, Threads, and Process Trees
+
+
+
+
+
 ## 1 System Software Engineer / Platform Operations 面试题库（Python + Linux Shell + 运维平台）
 
 
