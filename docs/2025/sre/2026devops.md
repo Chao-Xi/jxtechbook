@@ -5,8 +5,394 @@
 
 ### 1. Processes, Signals, Threads, and Process Trees
 
+* A process is a running program.
+* A process can have multiple threads.
+* Processes form a tree (parent and child).
+* Signals are used to control processes (e.g. SIGTERM, SIGKILL).
+* Understand how to find, manage, and troubleshoot processes.
 
 
+```
+ps aux
+pstree
+top
+kill pkill
+```
+
+### 2. CPU, Memory, Load Average, and Pressure
+
+* Monitor CPU usage, memory usage, and system load.
+* Load average shows the number of processes waiting for CPU.
+* Identify resource pressure before the system becomes unstable.
+* Use real-time tools to find what is consuming resources.
+
+```
+top
+htop
+vmstat
+free
+uptime
+sar
+```
+
+###  3. File Descriptors and Open Files
+
+* Every process uses file descriptors for files, network connections, and other resources.
+* Too many open files can cause application failures.
+* Check limits and open files for a process.
+
+
+```
+lsof
+lsof -p <PID>
+ulimit -n
+cat /proc/<PID>/limits
+```
+
+### 4. Filesystems, Mounts, Inodes, and Disk Pressure
+
+* Understand filesystem types (ext4, xfs, etc).
+* Check disk usage, inode usage, and mounts.
+* Disk full or inode full can break applications.
+* Know how to identify what is using space.
+
+```
+df -h
+du-sh
+findmnt
+Isblk
+df -i
+mount
+```
+
+
+### 5 system and Service Management
+
+* system manages services, processes, and system startup.
+* Start, stop, restart, enable, and check service status.
+* View service logs with journalctl.
+
+Useful commands:
+
+
+```
+systemcti status <service>
+systemct start <service>
+systemctl enable <service> 
+journalctl -u <service> -f
+```
+
+### 6. Kernel and System Logs
+
+* Kernel logs show low-level system events (drivers, hardware, kernel messages).
+* System logs help you troubleshoot service and application issues.
+* Learn where to find and read logs.
+
+
+```
+dmesg 
+journalct 
+journalcti -k 
+tail -f /var/log/syslog
+```
+
+### 7. Permissions, Ownership, Capabilities, and sudo
+
+* Files and directories have owners, groups, and permissions.
+* Understand special permissions and Linux capabilities.
+* Use sudo safely and avoid giving unnecessary root access.
+
+```
+Is -l
+chmod
+chown chgrp
+getcap
+sudo -l
+```
+
+### 9. Diagnose a Sick Linux Host Systematically
+
+* Identify the symptom (slow, high CPU, no disk space, service down, etc).
+* Check system resources (CPU, memory, disk, load).
+* Look at running processes and services.
+* Check logs (system, application, kernel).
+* Identify recent changes (deployments, config, packages).
+* Find the root cause.
+* Apply the fix.
+* Verify the system is healthy.
+
+
+## 2 Observability and Production Signals
+
+
+### **1. Metrics:** 
+
+- Numerical data collected over time 
+- Showing system health, performance, and resource usage (e.g., **CPU, memory, request count, latency, errors**.). 
+- Use time series data (e.g. Prometheus).
+
+###  **2. Logs:** 
+
+- Time-stamped text records of events. 
+- Help you understand what happened.
+- Recommends structured logging (like JSON) with context (request ID, user ID). 
+
+
+### **3. Traces:** 
+
+- Tracking a request as it travels across multiple services. 
+- Shows full path, latency, and where errors occur. 
+- Help identify where time is spent and where failures occur.
+- Mentions tools like OpenTelemetry, Jaeger, or Tempo. Includes a diagram 
+
+> showing a request moving through Service A -> B -> C, labeled "Traces = End-to-End View."
+
+### **4. Events:** 
+
+- Discrete signals that something happened (informational, warning, error).
+- Examples include pod restarts or deployments. Often found in Kubernetes events. 
+- **Examples: pod restarted, deployment failed, instance terminated.**
+- Help with incident investigation and audit trails. 
+- **Often found in Kubernetes events, cloud provider events, and system logs.**
+
+
+> Events = State Changes
+
+### 5 Correlation: 
+
+- Linking metrics, logs, traces, and events together 
+- Using a common identifier (like a trace ID) to see the full story. 
+- Helps you see the full story across services.
+
+> Includes a chain link icon: "Correlation = Complete Picture.
+
+
+### **6. RED Method:** 
+
+Focuses on the user perspective for services.
+
+*   **R** = Request rate
+*   **E** = Error rate
+*   **D** = Duration (Latency)
+*   Used for SLOs and alerting. Labeled "RED = Service Health."
+
+
+> RED = Service Health
+
+
+### **7. USE Method:** 
+
+Focuses on resource utilization for infrastructure.
+    
+*   **U** = Utilization
+*   **S** = Saturation
+*   **E** = Errors
+ 
+> Used for CPU, memory, disk, network, etc. Labeled "USE = Resource Health."
+
+### Golden Signals:
+
+- A Google-recommended set for monitoring services: 
+- Latency(how fast), Traffic(how much), Errors(failure rate), and Saturation (resource limits).
+
+
+> Includes a gold star icon: "Golden Signals = Reliable Services."
+
+
+### **9. Structured Logging:** 
+
+- Using a consistent format (like JSON) 
+- Including timestamps, log levels, and context to make logs searchable. 
+
+```
+{
+	"timestamp": "2026-01-01T12:00:002",
+	"level": "INFO",
+	"service: "api",
+	"message": "User login successful"
+
+}
+```
+
+
+Includes a code snippet example. "Structured = Searchable."
+
+
+### **10. Distributed Tracing:** 
+
+- Tracking requests across multiple services to 
+- Visualize full flow 
+- Identify latency/failures. 
+- Mentions OpenTelemetry, Jaeger. 
+
+> Service A -> B -> C. 
+> 
+> "Tracing = Follow the Request."
+
+
+### **11. OpenTelemetry:** 
+
+- An open standard for collecting metrics, logs, and traces. 
+- It is vendor-neutral 
+- Works with many tools (Prometheus, Grafana, Jaeger, Datadog). 
+
+> "Standard = Flexibility."
+
+### **12. Dashboards:** 
+
+- Visualizing key metrics, logs, traces, and system health. 
+- Recommends tools like Grafana or Kibana, 
+- keeping dashboards simple and focused on real-time/historical data. 
+
+
+> Includes a dashboard icon: "Dashboards = Visibility."
+
+### **13. Alerting:** 
+
+- Notifying the right people when something is wrong using meaningful thresholds to reduce noise. 
+- Alert on symptoms and user impact, integrating with Slack or PagerDuty. 
+
+> Includes an alert bell icon: "Alerting = Faster Response."
+
+
+### **14. Cardinality:** 
+
+- The number of unique label values. 
+- High cardinality increases costs and degrades performance. 
+- Recommends avoiding high-cardinality labels (like user IDs) and using meaningful labels. 
+
+> "Control Cardinality = Lower Cost."
+
+### **15. Observability Cost:** 
+
+- Metrics, logs, and traces can be expensive at scale. 
+- Control data volume, retention, and cardinality. 
+- Use sampling and choose the right storage tier. 
+
+> Includes a database icon with a dollar sign: "Monitor Costs = Sustainable."
+
+
+### **16. Moving from Symptom to Root Cause:** 
+
+- A workflow starting with the symptom, 
+- using observability data to investigate, 
+- correlating data, forming a hypothesis, and finding the root cause.
+- Document and fix to prevent recurrence. 
+
+> Includes a target icon: "From Symptom to Root Cause = Real Impact."
+
+
+## **"Production Troubleshooting,"** 
+
+**1. The Senior Troubleshooting Loop:** This is the central framework, presented as an 8-step flow chart:
+    
+1.  **Symptom:** What is happening?
+2.  **Scope:** How big is the impact?
+3.  **Evidence:** Collect data (logs, metrics, traces, etc.)
+4.  **Hypothesis:** What could be the cause?
+5.  **Test:** Verify your hypothesis.
+6.  **Cause:** Identify the root cause.
+7.  **Fix:** Implement the solution.
+8.  **Verify:** Confirm the issue is resolved and monitor.
+    
+> *Note:* If not resolved, repeat the loop.
+
+
+**2. What Changed?:** 
+
+Recommends checking recent deployments, configuration changes, code commits, and dependencies. "Recent Changes Often Explain the Problem."
+
+**3. Determine Blast Radius:** 
+
+Ask if it affects one user, one service, or the entire system. Identify affected regions, AZs, or clusters. "Understand the Impact Before You Act."
+
+
+**4. Application vs Infrastructure Failures:** 
+
+- Distinguishes between application issues (bugs, memory leaks, unhandled exceptions) and infrastructure issues (compute, network, storage, load balancers). 
+- Notes that it can be one or a combination. Includes a "vs" graphic: Application (Code, Logic, Data) vs Infrastructure (Servers, Network, Cloud).
+
+
+**5. Logs, Metrics, Traces, and Events:** 
+
+- Explains what to look for in each data type. 
+- Logs (errors/patterns), Metrics (CPU, memory, latency), 
+- Traces (following requests), 
+- Events (system changes like AWS Health or Kubernetes events).
+
+ Emphasizes correlating all signals using timestamps. Includes icons for each data type.
+
+**6. Dependency Failures:** 
+
+- Check external services (databases, APIs, queues). 
+- Verify endpoints, DNS, and connectivity. 
+- Look for rate limits or timeouts. 
+
+Includes icons of a database and a broken link: "A Downstream Service Can Break Your System."
+
+
+**7. Network Failures:** 
+
+
+- Check DNS resolution, connectivity, and routing (VPCs, subnets). 
+- Look for firewall or policy blocking. 
+- Check load balancers and health checks. "No Network No Service."
+
+
+
+**8. Resource Exhaustion:** 
+
+
+- Check CPU, memory, disk, and network utilization. 
+- Look for memory leaks or full disks. Verify pod/instance limits. "When Resources Run Out Systems Fail."
+
+
+**9. Configuration Changes:** 
+
+- Review application and infrastructure configuration. 
+- Check environment variables, feature flags, and secrets. V
+- alidate configuration management tools (Terraform, Ansible). 
+
+> "A Small Misconfiguration Can Cause a Big Outage."
+
+**10. Deployment-Related Failures:** 
+
+- Check deployment status and rollout history. 
+- Verify if a new version introduced a bug. 
+- Look for failed or partial deployments. 
+
+
+> "Deployments Can Introduce Risk Always Monitor After a Release."
+
+
+**11. Avoid Changing Five Things Simultaneously:** 
+
+- Recommends changing only one thing at a time so you know what fixed it. 
+- Keep a record of every change and use a rollback plan. 
+
+"One Change at a Time Find the Real Fix."
+
+
+**12. Preserve Evidence Before Restarting Everything:** 
+
+- Collect logs, metrics, and traces first. 
+- Take screenshots and save error messages. 
+- Store evidence in a central location.
+
+>  "Evidence Helps You Find the Real Cause."
+
+
+ **13. Key Takeaways:** 
+   
+*   Use a structured approach.
+*   Understand what changed.
+*   Determine the blast radius.
+*   Check application and infrastructure.
+*   Use logs, metrics, traces, and events.
+*   Investigate dependencies, network, resources, and configurations.
+*   Avoid changing multiple things.
+*   Preserve evidence.
+*   Learn and prevent recurrence.
 
 
 ## 1 System Software Engineer / Platform Operations 面试题库（Python + Linux Shell + 运维平台）
