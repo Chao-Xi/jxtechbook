@@ -395,6 +395,367 @@ Includes icons of a database and a broken link: "A Downstream Service Can Break 
 *   Learn and prevent recurrence.
 
 
+## 3 Databases, Caches & Stateful Systems
+
+> **Senior DevOps engineers need to understand data because state affects reliability, scaling, and recovery.**
+
+### 1. Relational vs NoSQL
+
+**Relational DB**
+
+* **PostgreSQL / MySQL**
+* Structured schema
+* ACID transactions
+* Strong consistency
+
+**NoSQL**
+
+* MongoDB / DynamoDB
+* Flexible schema
+* Easier horizontal scaling
+* Different consistency models
+
+👉 根据 **use case** 选择，不是单纯追求新技术。
+
+### 2. Connections & Connection Pools
+
+数据库连接数量有限。
+
+使用 **Connection Pool**：
+
+```text
+Application → Connection Pool → Database
+```
+
+例如 HikariCP、PgBouncer。
+
+优点：
+
+* Reuse connections
+* 减少 connection overhead
+* 提高性能
+
+同时需要监控和调整 pool size。
+
+* Databases have a limited number of connections.
+* Use connection pools (e.g. HikariCP, PgBouncer).
+* Avoid creating a new connection per request.
+* Monitor and tune pool size.
+
+### 3. Transactions
+
+Transaction 保证相关操作的数据一致性。
+
+**ACID：**
+
+* **Atomicity** — 原子性
+* **Consistency** — 一致性
+* **Isolation** — 隔离性
+* **Durability** — 持久性
+
+注意 transaction isolation level 和 locks，避免 transaction 持续太久。
+
+> Transactions Keep Data Reliable
+
+### 4. Indexes
+
+Index 可以加快查询：
+
+```sql
+CREATE INDEX idx_user_email ON users(email);
+```
+
+但：
+
+> **Too many indexes can slow down writes.**
+
+因为 INSERT / UPDATE 时也需要维护 index。
+
+* Indexes speed up data retrieval.
+
+* Use the right index for your query patterns.
+
+* Too many indexes can slow down write operations.
+
+* Monitor and remove unused indexes.
+
+### 5. Replication
+
+Replication = 保存多个数据副本。
+
+用途：
+
+* High Availability
+* Read scaling
+* Cross-region replication
+
+可以是：
+
+* Synchronous
+* Asynchronous
+
+
+### 6. Read Replicas
+
+将读请求分发到 replica：
+
+```text
+             ┌→ Read Replica
+Primary ─────┤
+             └→ Read Replica
+```
+
+优点：
+
+* Scale read traffic
+* 减轻 Primary 压力
+
+注意 **replication lag**，因此可能出现 **eventual consistency**。
+
+- Offload read traffic to replicas.
+- **Improve application performance**.
+- **Be aware of replication lag (eventual consistency)**.
+
+### 7. Failover
+
+Primary 出故障时自动切换到 healthy node。
+
+例如：
+
+```text
+Primary ❌
+   ↓
+Replica → New Primary
+```
+
+可以使用 managed service 或工具，例如 Patroni。
+
+**必须定期测试 failover。**
+
+* Automatically switch to a healthy node when the primary fails.
+* Use managed solutions or tools (e.g. Patroni, RDS Multi-AZ).
+* Test failover regularly.
+
+
+> Be Ready for Failures
+
+### 8. Backups & Restore
+
+不能只做 backup，还要测试 **restore**。
+
+重点：
+
+* Automated backups
+* Different region/account
+* Restore testing
+* RPO
+* RTO
+
+**RPO = 能接受丢失多少数据**
+
+**RTO = 能接受多长恢复时间**
+
+Take regular automated
+backups.
+
+
+- Test your restore process.
+- Store backups in a different
+- region or account.
+- Know your Recovery Point
+- Objective (RPO) and Recovery
+- Time Objective (RTO).
+
+### 9. Database Migration
+
+Migration 要保证服务尽可能不中断。
+
+常见方法：
+
+* Blue-Green
+* Rolling migration
+* Zero-downtime migration
+
+流程：
+
+```text
+Plan → Test → Migrate → Monitor → Rollback if needed
+```
+
+先在 **Staging** 测试。
+
+* Plan migrations carefully.
+* Use zero-downtime techniques (e.g. blue-green, rolling).
+* Test in a staging environment first.
+* Be ready to rollback if needed.
+
+
+### 10. Redis & Caching
+
+* Redis is an in-memory data store used for caching, sessions, queues, etc.
+* Reduces load on your database.
+* Use the right data structures (strings, hashes, lists, etc.).
+* Monitor memory usage and evictions.
+
+Redis 是 **in-memory data store**。
+
+常见用途：
+
+* Cache
+* Session
+* Queue
+* Temporary data
+
+架构：
+
+```text
+Application
+     ↓
+   Redis
+     ↓
+  Database
+```
+
+可以减少 Database load。
+
+需要关注：
+
+* TTL
+* Memory usage
+* Eviction policy
+
+
+### 11. Cache Invalidation
+
+* Keep cache and database in sync.
+* Use strategies like TTL (time-to-live), event-driven invalidation, or write-through.
+* Avoid stale data.
+
+这是缓存系统最容易出问题的地方。
+
+目标：
+
+> **Cache 和 Database 保持尽可能一致。**
+
+常见策略：
+
+* TTL
+* Event-driven invalidation
+* Write-through
+* Cache-aside
+
+例如：
+
+```text
+DB updated
+   ↓
+Invalidate cache
+   ↓
+Next request gets fresh data
+```
+
+### 12. Data Persistence
+
+* Understand how data is stored and persisted (disks, volumes, snapshots).
+* Choose the right storage type (e.g. EBS, EFS, SSD, NVMe).
+* Consider durability, availability, and performance.
+
+理解数据到底存在哪里：
+
+* Disk
+* Volume
+* Database storage
+* Snapshot
+
+选择 storage 时考虑：
+
+* Durability
+* Availability
+* Performance
+* Cost
+
+
+### 13. Storage Latency
+
+* Storage latency affects database and application performance.
+* Use the right storage class (e.g. SSD vs HDD).
+* Monitor I/O Latency and IOPS
+* Consider placement, network. latency, and disk throughput.
+
+Storage latency 会直接影响 Database performance。
+
+需要关注：
+
+* SSD / disk type
+* IOPS
+* Network latency
+* Disk throughput
+* Storage class
+
+
+### 14. Database Bottlenecks
+
+
+* Common bottlenecks: slow queries, missing indexes,
+* connection limits, locks, high I/0.
+* Use monitoring tools (e.g.
+* Performance Insights, pg_stat, - slow query logs).
+* Identify and fix the real cause, not just the symptom.
+
+常见 bottleneck：
+
+* Slow queries
+* Missing indexes
+* Connection limits
+* Locks
+* High I/O
+* Slow storage
+
+排查工具/指标：
+
+```text
+pg_stat
+slow query logs
+CPU
+Memory
+IOPS
+Connection count
+Latency
+```
+
+重点：
+
+> **Find the root cause, not just the symptom.**
+
+### 15. Why State Changes Infrastructure Decisions
+
+
+* Stateful systems need persistent storage, backup, and replication.
+* They affect scaling, deployment strategies, and disaster recovery.
+* State increases complexity and operational risk.
+* Always consider data requirements when designing infrastructure.
+
+**Stateful workloads** 通常需要：
+
+* Persistent storage
+* Backup
+* Replication
+* Disaster Recovery
+
+相比 Stateless workload：
+
+```text
+Stateless
+→ Easy to scale horizontally
+
+Stateful
+→ Storage + Backup + Replication + Recovery
+```
+
+
+
+
+
 ## 1 System Software Engineer / Platform Operations 面试题库（Python + Linux Shell + 运维平台）
 
 
