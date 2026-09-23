@@ -930,7 +930,149 @@ fi
 > Bash scripting is commonly used in DevOps to automate deployment, server administration, health checks, log processing, backups, and CI/CD tasks.
 
 
+## Production Troubleshooting
 
+
+**1. The Senior Troubleshooting Loop**
+
+
+*   **The Process (8 Steps):**
+
+    1.  **Symptom:** What is happening?
+    2.  **Scope:** How big is the impact?
+    3.  **Evidence:** Collect data (logs, metrics, traces, etc.).
+    4.  **Hypothesis:** What could be the cause?
+    5.  **Test:** Verify your hypothesis.
+    6.  **Cause:** Identify the root cause.
+    7.  **Fix:** Implement the solution.
+    8.  **Verify:** Confirm the issue is resolved and monitor.
+
+    
+*   *Note:* If not resolved, repeat the loop.
+*   **Quote (right side):** "Good engineers find the cause. Great engineers prevent it from happening again." — VERIOTA
+
+**2. What Changed?**
+
+*   Focuses on identifying recent changes that might have caused the issue.
+*   Check recent deployments, configuration changes, infrastructure changes (scaling, instance replacement), and recent code commits.
+*   Identify changes in dependencies (database, third-party services).
+*   Use change logs, deployment tools, and monitoring timelines.
+
+> *Graphic:* Magnifying glass over a document. Text: "Recent Changes Often Explain the Problem."
+
+**3. Determine Blast Radius**
+
+*   Assess the extent of the impact before acting.
+*   Is it affecting one user, one service, or the entire system?
+*   Which regions, AZs, or clusters are impacted?
+*   Is it limited to a specific feature or global?
+*   Identify affected users, services, and dependencies.
+
+> *Graphic:* Red concentric circles (bullseye). Text: "Understand the Impact Before You Act."
+
+**4. Application vs Infrastructure Failures**
+
+*   Differentiates between types of failures to narrow down the search.
+*   **Application failures:** Bugs, memory leaks, unhandled exceptions, bad requests.
+*   **Infrastructure failures:** Compute, network, storage, load balancers, DNS, cloud provider issues.
+*   Check both layers, as it can be a combination.
+
+>  *Graphic:* `</>` (Application Code, Logic, Data) VS Server icon (Infrastructure Servers, Network, Cloud).
+
+**5. Logs, Metrics, Traces and Events**
+
+*   **Logs:** Look for errors and patterns.
+*   **Metrics:** Check CPU, memory, latency, error rates, etc.
+*   **Traces:** Follow the request across services.
+*   **Events:** Check system and cloud events (AWS Health, Kubernetes events).
+*   Correlate all signals using timestamps.
+
+> *Graphic:* Flowchart showing Logs -> Metrics -> Traces -> Events.
+
+**6. Dependency Failures**
+
+*   Highlights that issues often stem from downstream services.
+*   Check external services (databases, APIs, message queues, caches).
+*   Verify service endpoints, DNS, and connectivity.
+*   Look for authentication, rate limits, or timeouts.
+*   Check if a dependency is slow or returning errors.
+
+>  *Graphic:* Database, Cloud, and Chain Link icons. Text: "A Downstream Service Can Break Your System."
+
+**7. Network Failures**
+
+*   Focuses on network-related issues.
+*   Check DNS resolution.
+*   Verify connectivity and routing (VPC, subnets, security groups).
+*   Look for firewall or network policy blocking traffic.
+*   Check load balancers and health checks.
+*   Use tools like ping, traceroute, curl, and VPC flow logs.
+
+> *Graphic:* Globe with a disconnection symbol. Text: "No Network No Service."
+
+**8. Resource Exhaustion**
+
+*   Identifies issues caused by running out of resources.
+*   Check CPU, memory, disk, and network utilization.
+*   Look for memory leaks, high GC, or disk full.
+*   Verify pod/instance limits and quotas.
+*   Check for resource contention (e.g., noisy neighbor).
+
+>  *Graphic:* CPU chip, RAM, and Disk icons. Text: "When Resources Run Out Systems Fail."
+
+**9. Configuration Changes**
+
+*   Highlights that small config errors can cause big problems.
+*   Review application and infrastructure configuration.
+*   Check environment variables, feature flags, and secrets.
+*   Look for misconfigurations in IDs, endpoints, or permissions.
+*   Validate configuration management tools (e.g., Terraform, Ansible).
+>  *Graphic:* Document with a gear. Text: "A Small Misconfiguration Can Cause a Big Outage."
+
+**10. Deployment-Related Failures**
+
+*   Focuses on issues arising from new releases.
+*   Check deployment status and rollout history.
+*   Verify if new version introduced a bug.
+*   Look for failed or partial deployments.
+*   Confirm database schema changes.
+*   Check if rollback is possible and safe.
+
+>  *Graphic:* Circular refresh arrows. Text: "Deployments Can Introduce Risk Always Monitor After a Release."
+
+**11. Avoid Changing Five Things Simultaneously**
+
+*   Advises a methodical approach to fixing issues.
+*   Change one thing at a time.
+*   Otherwise, you won't know what fixed it.
+*   Keep a record of every change.
+*   Use a rollback plan.
+*   Be methodical and patient.
+
+> *Graphic:* Tools crossed out. Text: "One Change at a Time Find the Real Fix."
+
+**12. Preserve Evidence Before Restarting Everything**
+
+*   Emphasizes the importance of data collection before taking action.
+*   Collect logs, metrics, and traces first.
+*   Take screenshots and save error messages.
+*   Capture system state (e.g., describe commands).
+*   Store evidence in a central location.
+*   Do not immediately restart services unless necessary.
+
+> *Graphic:* Database cylinder with a checkmark. Text: "Evidence Helps You Find the Real Cause."
+
+**13. Key Takeaways**
+
+*   Use a structured approach.
+*   Understand what changed.
+*   Determine the blast radius.
+*   Check application and infrastructure.
+*   Use logs, metrics, traces, and events.
+*   Investigate dependencies, network, resources, and configurations.
+*   Avoid changing multiple things.
+*   Preserve evidence.
+*   Learn and prevent recurrence.
 
 
 
