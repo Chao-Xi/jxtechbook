@@ -282,7 +282,7 @@ Includes a code snippet example. "Structured = Searchable."
 > Includes a target icon: "From Symptom to Root Cause = Real Impact."
 
 
-## **"Production Troubleshooting,"** 
+## Production Troubleshooting
 
 **1. The Senior Troubleshooting Loop:** This is the central framework, presented as an 8-step flow chart:
     
@@ -752,6 +752,1064 @@ Stateful
 → Storage + Backup + Replication + Recovery
 ```
 
+## Cloud Architecture and Failure Domains
+
+
+### 1. Region & Availability Zone
+
+* **Region**：独立的地理区域，例如 `us-east-1`
+* **AZ**：Region 内相互隔离的数据中心
+* AZ 有独立的电力、网络和冷却系统
+* 使用 **Multi-AZ** 提高 Availability
+
+**Interview:**
+
+> Deploy critical workloads across multiple AZs so an AZ failure doesn't take down the application.
+
+### 2. High Availability vs Fault Tolerance
+
+| HA                    | Fault Tolerance            |
+| --------------------- | -------------------------- |
+| 减少 Downtime           | 即使组件失败仍继续运行                |
+| 通常允许短暂恢复              | 更强调不中断                     |
+| Redundancy + Failover | 消除 Single Point of Failure |
+
+**关键词：**
+
+* HA → minimize downtime
+* FT → continue operating during failure
+
+
+### 3. Horizontal vs Vertical Scaling
+
+**Vertical Scaling**
+
+* 增加 CPU / Memory / Storage
+* Scale **up/down**
+* 单服务器能力增强
+
+**Horizontal Scaling**
+
+* 增加服务器数量
+* Scale **out/in**
+* 通过 Load Balancer 分发流量
+* Cloud 中更常见，也更具 resilience
+
+
+### 4. Load Balancing
+
+**Load Balancer：**
+
+* 将流量分配到多个服务器
+* 提高 Availability 和 Performance
+* 执行 Health Checks
+* 自动移除 unhealthy targets
+
+Examples:
+
+* AWS ALB
+* AWS NLB
+* Azure Load Balancer
+* GCP Load Balancer
+
+### 5. Autoscaling
+
+根据需求自动增加/减少实例。
+
+常见 Metrics：
+
+* CPU
+* Memory
+* Request count
+* Custom metrics
+
+优点：
+
+* 应对 Traffic Spike
+* Low traffic 时降低成本
+* 提高 Availability
+
+### 6. Stateless Architecture
+
+**Stateless service 不在本地保存 session/state。**
+
+特点：
+
+* 任意 instance 都可以处理 request
+* 更容易 Horizontal Scaling
+* Instance failure 后容易恢复
+
+State 通常放在：
+
+* Database
+* Object Storage
+* Cache
+* External Session Store
+
+
+### 7. Managed Services
+
+Cloud Provider 负责底层 infrastructure。
+
+Examples:
+
+* AWS RDS
+* AWS EKS
+* S3
+* DynamoDB
+
+好处：
+
+* 减少 Operational Work
+* 提高 Reliability
+
+但仍需要自己负责：
+
+* Configuration
+* Security
+* Monitoring
+
+### 8. Multi-AZ Design
+
+典型设计：
+
+```text
+             Load Balancer
+                  |
+        +---------+---------+
+        |         |         |
+       AZ-1      AZ-2      AZ-3
+        |         |         |
+      App       App       App
+        \         |         /
+         \        |        /
+           Multi-AZ DB
+```
+
+如果 **AZ-1 failure**：
+
+```text
+Traffic
+   |
+Load Balancer
+   |
+AZ-2 + AZ-3
+```
+
+应用仍然可以运行。
+
+* Deploy resources across multiple AZs in the same region.
+
+* If one AZ fails, traffic continues to healthy AZs.
+
+* Common for web apps, databases, and critical services.
+
+### 9. Multi-Region Trade-offs
+
+**优点**
+
+* Disaster Recovery
+* Global Availability
+* Geographic resilience
+
+**代价**
+
+* 更高 Cost
+* 更高 Complexity
+* Data Replication
+* Latency
+* Compliance / Data Residency
+
+适用于需要 **high resilience / global reach** 的系统。
+
+
+### 10. Single Point of Failure — SPOF
+
+SPOF = 一个组件失败可能导致整个系统失败。
+
+Examples：
+
+```text
+Single Server
+Single Database
+Single AZ
+Single Load Balancer
+```
+
+设计时要：
+
+> Identify → Remove → Add Redundancy → Add Failover
+
+
+
+### 11. Cost vs Complexity vs Reliability vs Security
+
+架构不是单纯追求最高 Reliability。
+
+例如：
+
+```text
+More Redundancy
+      ↓
+Higher Reliability
+      ↓
+Higher Cost + Complexity
+```
+
+Managed Services 可以降低 Operational Complexity，但可能增加 Cost。
+
+**Senior Engineer 面试重点：**
+
+> Choose the right balance based on business requirements, not just technology.
+
+
+### 12. Design for Component Failure
+
+核心原则：
+
+> **Assume every component can fail.**
+
+应该考虑：
+
+* Redundancy
+* Health Checks
+* Retry
+* Timeout
+* Failover
+* Graceful Degradation
+* Automatic Recovery
+* Rollback
+* Disaster Recovery
+
+并且要主动测试：
+
+* AZ outage
+* Database failure
+* Instance failure
+* Network failure
+
+### ⭐ 面试最重要的 6 句话
+
+建议直接背：
+
+1. **Design for failure — assume every component can fail.**
+2. **Avoid single points of failure by using redundancy and failover.**
+3. **Use Multi-AZ deployments to improve availability and resilience.**
+4. **Use horizontal scaling and autoscaling to handle changing traffic.**
+5. **Keep application services stateless so they can scale and recover easily.**
+6. **Balance reliability, security, cost, and complexity based on business requirements.**
+
+如果面试官问：
+
+> **How would you design a highly available cloud application?**
+
+可以回答：
+
+> I would deploy the application across multiple Availability Zones behind a load balancer. 
+> 
+> The application would be stateless and horizontally scalable, with autoscaling enabled. 
+> 
+> The database would use a Multi-AZ configuration. 
+> 
+> I would configure health checks and automatic failover, remove single points of failure, and test failure scenarios such as instance and AZ failures. 
+> 
+> Finally, I would balance availability, security, cost, and operational complexity based on the business requirements.
+
+
+
+## Terraform / IaC — DevOps Interview Notes
+
+### 1. Terraform Architecture
+
+Terraform 使用 **HCL** 定义 Infrastructure：
+
+```text
+Terraform HCL
+     ↓
+Terraform
+     ↓
+Provider
+     ↓
+AWS / Azure / GCP
+```
+
+核心：
+
+* `.tf` 文件定义 desired state
+* Provider 与 Cloud API 通信
+* `terraform plan` 预览变化
+* `terraform apply` 执行变化
+
+**面试：**
+
+> Terraform is an Infrastructure as Code tool that allows us to define and manage infrastructure declaratively using configuration files.
+
+
+### 2. State & Remote Backend
+
+Terraform **state** 用来记录实际管理的 infrastructure。
+
+生产环境不要使用 local state，通常使用 Remote Backend：
+
+* AWS → S3
+* Azure → Azure Storage
+* GCP → GCS
+
+例如：
+
+```hcl
+terraform {
+  backend "s3" {
+    bucket = "terraform-state"
+    key    = "prod/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+```
+
+**为什么 Remote State？**
+
+> It allows teams to share and manage Terraform state centrally.
+
+### 3. State Locking
+
+State Lock 防止多个 Engineer 同时修改 state。
+
+```text
+Engineer A ──┐
+             ├── Terraform State
+Engineer B ──┘
+       ↓
+    State Lock
+```
+
+作用：
+
+* Prevent concurrent changes
+* Avoid state corruption
+
+---
+
+* State Locking Prevents multiple people from making changes at the same time.
+* Avoids state corruption. 
+* Use DynamoDB (AWS), Blob Storage (Azure), or GCS for locking.
+
+
+### 4. Modules
+
+Module = **Reusable Terraform code**。
+
+例如：
+
+```hcl
+module "vpc" {
+  source  = "./modules/vpc"
+  version = "5.0.0"
+  cidr    = "10.0.0.0/16"
+}
+```
+
+好处：
+
+* Reuse
+* Consistency
+* Easier maintenance
+* Reduce duplicated code
+
+**面试：**
+
+> Terraform modules allow us to create reusable and standardized infrastructure components.
+
+
+### 5. Environment Separation
+
+典型环境：
+
+```text
+dev
+staging
+prod
+```
+
+可以使用：
+
+* Separate state
+* Workspaces
+* Separate folders
+* Separate configuration
+
+生产环境最好避免和 Dev 共用同一个 state。
+
+
+### 6. Dependency Management
+
+Terraform 会自动建立资源依赖关系。
+
+* Resources depend on each other.
+* Use explicit and implicit dependencies.
+* Understand when to use "depends_on".
+
+例如：
+
+```hcl
+resource "aws_instance" "app" {
+  depends_on = [aws_vpc.main]
+}
+```
+
+两种依赖：
+
+**Implicit dependency**
+
+```hcl
+subnet_id = aws_subnet.app.id
+```
+
+Terraform 自动知道 dependency。
+
+**Explicit dependency**
+
+```hcl
+depends_on = [aws_vpc.main]
+```
+
+---
+
+### 7. Provider / Version Management
+
+固定 Terraform / Provider 版本，避免版本升级导致 unexpected changes。
+
+- Use specific provider versions to avoid unexpected changes.
+- Keep Terraform and provider versions consistent across teams.
+
+例如：
+
+```hcl
+terraform {
+  required_version = ">= 1.6.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+```
+
+面试关键词：
+
+> Version pinning provides consistency and prevents unexpected behavior across environments.
+
+
+
+### 8. Terraform Drift
+
+**Drift = Terraform state/configuration 与实际 infrastructure 不一致。**
+
+例如：
+
+```text
+Terraform
+   ↓
+EC2 = t3.micro
+
+AWS Console
+   ↓
+EC2 = t3.large
+```
+
+可以使用：
+
+```bash
+terraform plan
+```
+
+检测变化。
+
+
+### 9. Terraform Import
+
+已经存在的 infrastructure 可以导入 Terraform：
+
+```bash
+terraform import aws_instance.web i-0abc123def456
+```
+
+用途：
+
+> Bring existing infrastructure under Terraform management without recreating it.
+
+### 10. Terraform Plan
+
+`terraform plan` 是非常重要的面试命令：
+
+```bash
+terraform plan
+```
+
+查看 Terraform 将做什么：
+
+```text
++ create
+~ update
+- destroy
+```
+
+**面试：**
+
+> I always review the Terraform plan before applying infrastructure changes.
+
+---
+
+### 11. CI/CD for Terraform
+
+典型 Pipeline：
+
+```text
+Developer
+   ↓
+Git Pull Request
+   ↓
+terraform fmt
+   ↓
+terraform validate
+   ↓
+terraform plan
+   ↓
+Code Review
+   ↓
+terraform apply
+```
+
+Production 通常增加：
+
+* Approval
+* Separate pipeline
+* Security scanning
+* Policy checks
+
+### 12. Policy as Code
+
+Policy as Code 用来自动检查 Infrastructure 是否符合规则。
+
+Examples：
+
+* Sentinel
+* Open Policy Agent (OPA)
+* Terraform policies
+
+可以检查：
+
+```text
+Security
+Cost
+Compliance
+Allowed regions
+Resource configuration
+```
+
+例如：
+
+> Prevent deployment of resources in unauthorized regions.
+
+
+### 13. Safe Infrastructure Changes
+
+不要一次修改大量 production infrastructure。
+
+推荐：
+
+```text
+Plan
+ ↓
+Review
+ ↓
+Apply
+ ↓
+Verify
+```
+
+并且：
+
+* Small incremental changes
+* Test in non-prod
+* Code review
+* Approval
+* Rollback plan
+
+
+### 14. Recovering from Bad State / Partial Deployment
+
+常见命令：
+
+```bash
+terraform state list
+
+terraform state show <resource>
+
+terraform state rm <resource>
+
+terraform import <resource> <id>
+```
+
+如果 deployment 部分失败：
+
+1. 检查 state
+2. 检查实际 cloud resources
+3. 确认哪些资源已经创建
+4. 修复 configuration
+5. 再执行 `terraform plan`
+6. 谨慎执行 `apply`
+
+`-target` 可以用于特定资源，但**不应该作为正常 Terraform workflow 的主要方式**。
+
+
+### Q1. What is Terraform?
+
+> Terraform is an Infrastructure as Code tool used to define, provision, and manage infrastructure using declarative configuration.
+
+### Q2. What is Terraform State?
+
+> Terraform state tracks the infrastructure Terraform manages and maps configuration to real-world resources.
+
+### Q3. Why use Remote State?
+
+> Remote state provides centralized state storage and enables team collaboration.
+
+### Q4. What is State Locking?
+
+> State locking prevents multiple Terraform operations from modifying the same state simultaneously.
+
+### Q5. What is Terraform Drift?
+
+> Drift occurs when the actual infrastructure differs from the Terraform configuration or state. `terraform plan` can help detect it.
+
+### Q6. What is a Terraform Module?
+
+> A module is a reusable collection of Terraform resources used to standardize infrastructure.
+
+### Q7. `terraform plan` vs `terraform apply`?
+
+> `plan` previews the changes; `apply` executes them.
+
+### Q8. How do you safely deploy Terraform changes?
+
+> Use version control, plan and review changes, test in non-production, require approval for production, then apply and verify.
+
+
+#### 🔥 30-second Senior DevOps Answer
+
+如果面试官问：
+
+**“How do you manage Terraform in a production environment?”**
+
+可以直接回答：
+
+> **I use remote state with state locking, reusable modules, version-pinned providers, and separate environments.
+> 
+>  Changes go through Git and CI/CD, including format, validation, security and policy checks, followed by `terraform plan` and code review. Production changes require approval. I also monitor for infrastructure drift and maintain a recovery and rollback strategy.**
+
+这段基本覆盖这张图里 **State、Locking、Modules、Versioning、Drift、CI/CD、Policy、Safe Changes、Recovery** 这几个核心考点。
+
+
+## Kubernetes Beyond kubectl
+
+
+**1. Kubernetes Control Plane**
+
+*   Manages the cluster.
+*   Key components: API server, etcd, scheduler, controller manager.
+*   Maintains the desired state and matches it to the actual state.
+*   **Warning:** If the control plane fails, the cluster cannot make changes.
+
+**2. Scheduler and Controllers**
+
+*   Scheduler decides which node a Pod runs on.
+*   Controllers (e.g., Deployment controller) ensure the desired state is maintained.
+*   Automatically create, replace, or reschedule Pods when needed.
+
+**3. API Server and etcd**
+
+*   API server is the front end for all requests (kubectl, UI, CI/CD, etc.).
+*   etcd is the distributed database that stores the cluster state.
+*   **Warning:** If etcd is unhealthy, the cluster can behave unpredictably.
+
+**4. Core Workloads**
+
+*   **Pods:** Smallest deployable unit.
+*   **Deployments:** Manage stateless applications.
+*   **StatefulSets:** Manage stateful applications.
+*   **DaemonSets:** Run a Pod on every node.
+*   **Jobs:** Run tasks to completion.
+*   **CronJobs:** Run scheduled jobs.
+
+**5. Services and Ingress**
+
+*   Services provide stable network access to Pods. Types: ClusterIP, NodePort, LoadBalancer, Headless.
+*   Ingress manages HTTP/HTTPS routing to services.
+*   **Used with ingress controllers (e.g., Nginx, AWS ALB, Traefik)**.
+
+**6. Requests and Limits**
+
+*   **Requests** tell Kubernetes how much resource a Pod needs.
+*   **Limits** set the maximum resource a Pod can use.
+*   Helps with scheduling, performance, and stability.
+*   **Example:**
+    
+```yaml
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "512Mi"
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+```
+
+**7. Scheduling**
+
+*   Scheduler uses resource requests, node labels, taints/tolerations, and affinity rules.
+*   **Control where Pods run using: `nodeSelector`, `nodeAffinity`, `taints and tolerations`, `topology spread constraints`**.
+
+**8. Probes**
+
+*   Probes check if a container is healthy.
+*   **Types:**
+    *   **livenessProbe:** Restart if unhealthy.
+    *   **readinessProbe:** Remove from service if not ready.
+    *   **startupProbe:** Give time to start before checking.
+
+**9. Persistent Storage**
+
+*   Use PersistentVolumes (PV) and PersistentVolumeClaims (PVC).
+*   Supports different storage classes (e.g., EBS, EFS, Ceph).
+*   Essential for stateful applications (databases, etc.).
+
+**10. RBAC (Role-Based Access Control)**
+
+*   Controls who can do what in the cluster.
+*   Uses Roles, ClusterRoles, RoleBindings, and ClusterRoleBindings.
+*   Follow the principle of least privilege.
+
+**11. Network Policies**
+
+*   **Control traffic between Pods, namespaces, and external sources**.
+*   Help with security and isolation.
+*   **Commonly used with CNI plugins (e.g., Calico, Cilium)**.
+
+**12. Cluster Upgrades**
+
+*   Plan upgrades carefully.
+*   Check version compatibility for Kubernetes, container runtimes, and add-ons.
+*   Use a rolling upgrade approach.
+*   Test in a non-production environment first.
+*   Always have a rollback plan.
+
+**13. Node Failures**
+
+*   Kubernetes detects unhealthy nodes using node conditions.
+*   Pods are automatically rescheduled to healthy nodes.
+*   Understand how to handle node drains, cordon, and uncordon.
+*   Monitor node health and resource usage.
+
+**14. Common Failures and How to Debug**
+
+*   **CrashLoopBackOff:** Container keeps failing. Check logs, config, dependency, resources. Use: `kubectl logs <pod>`
+*   **Pending:** Pod cannot be scheduled. Check resources, node selectors, taints, PVCs. Use: `kubectl describe pod`
+*   **OOMKilled:** Container ran out of memory. Check limits and logs. Use: `kubectl logs <pod> --previous`
+*   **Networking failure:** Cannot reach service or external resource. Check services, DNS, network policies, and CNI. Use: `kubectl get svc`, `kubectl get netpol`
+
+**Useful kubectl Commands**
+
+*   `kubectl get pods`
+*   `kubectl describe pod <pod>`
+*   `kubectl logs <pod>`
+*   `kubectl get nodes`
+*   `kubectl get svc`
+*   `kubectl get ingress`
+*   `kubectl get pvc`
+*   `kubectl get events`
+*   `kubectl top nodes`
+*   `kubectl top pods`
+
+**KEY TAKEAWAY**
+
+Kubernetes is more than kubectl. Understand how it works, plan for failure, and design resilient, secure, and scalable systems.
+
+The infographic also features the text "STRONGER ENGINEERS, SAFER SYSTEMS, BETTER TOMORROW" in the top right corner and "VERIOTA" watermarks throughout.
+
+## Containers in Production
+
+**1. Images vs Containers**
+
+*   An image is a read-only template.
+*   A container is a running instance of an image.
+*   Many containers can be created from the same image.
+*   **Analogy:** Images are built (like a document template), containers run (like a running instance).
+*   *Diagram shows an Image (template) pointing to a Container (running instance).*
+
+**2. OCI Images**
+
+*   OCI (Open Container Initiative) is the standard for container images.
+*   Defines image format and runtime spec.
+*   Ensures portability across different runtimes (Docker, containerd, CRI-O, etc.).
+*   **OCI components:** Image specification, Runtime specification, Distribution specification.
+
+**3. Image Layers**
+
+*   **Images are made of multiple layers**.
+*   Each layer represents a set of changes.
+*   Layers are cached to make builds faster.
+*   Only changed layers are rebuilt.
+
+
+> *Diagram shows: Application Layer -> Dependencies Layer -> Runtime Layer -> Base OS Layer.*
+
+**4. Container Runtime**
+
+*   A runtime creates and runs containers from OCI images.
+*   **Examples:** containerd (used by Kubernetes), Docker (uses containerd), CRI-O.
+*   Manages container processes, namespaces, cgroups, and filesystems.
+*   **Commands to check runtime:** `docker info`, `containerd --version`
+
+**5. Namespaces and cgroups**
+
+*   **Namespaces** isolate container processes, network, filesystem, users, etc.
+*   **cgroups (control groups)** limit and manage resource usage (CPU, memory, etc.).
+*   They make containers lightweight and isolated.
+*   **Command to view cgroup info:** `cat /sys/fs/cgroup/`
+
+**6. Container Networking**
+
+*   **Each container gets its own network namespace.**
+*   Containers can communicate with other containers, the host, or external networks.
+*   Uses virtual interfaces and bridges (e.g., docker0).
+*   Supports different network drivers (bridge, host, overlay, macvlan).
+*   **Commands:** `docker network ls`, `docker inspect <container>`
+
+**7. Volumes and Persistent Data**
+
+*   Containers are ephemeral (they can be deleted).
+*   Volumes are used to persist data outside the container.
+*   **Types:** bind mounts, named volumes, and volume drivers.
+*   Essential for databases and stateful applications.
+*   **Example (named volume):**
+   
+```bash
+    docker volume create data
+    docker run -v data:/app/data nginx
+```
+
+**8. Registries**
+
+*   Container images are stored in registries.
+*   **Examples:** Docker Hub, AWS ECR, Azure ACR, Google Artifact Registry, JFrog Artifactory.
+*   Use private registries for production.
+*   Control access and scan images for vulnerabilities.
+*   **Example (pull image):** `docker pull nginx:latest`
+
+**9. Image Security**
+
+*   Scan images for vulnerabilities.
+*   Use minimal base images (e.g., distroless, alpine).
+*   Keep images updated.
+*   Avoid hardcoded secrets.
+*   Use signed images and trust policies.
+*   Implement image scanning in CI/CD pipelines.
+*   **Scan example:** `trivy image nginx:latest`
+
+**10. Rootless Containers**
+
+*   Run containers without root privileges.
+*   Reduces security risk if the container is compromised.
+*   Supported by Docker, containerd, and Kubernetes.
+*   Useful for multi-tenant environments.
+*   **Run rootless container:** `docker run --user 1000:1000 nginx`
+
+**11. Resource Limits**
+
+*   Set CPU and memory limits to prevent resource exhaustion.
+*   Use requests and limits (in Kubernetes).
+*   Helps with stability and fair resource allocation.
+*   **Example (Docker):**
+
+```bash
+    docker run -d \
+    --cpus=1 \
+    --memory=512m \
+    nginx
+```
+
+**12. Container Lifecycle**
+
+*   **States:** Created -> Started -> Running -> Stopped -> Removed.
+*   **Important commands:** run, start, stop, restart, rm, logs, exec, inspect.
+*   Understand container states and exit codes.
+*   **Common commands:**
+
+```bash
+    docker ps -a
+    docker logs <container>
+    docker exec -it <container> sh
+ ```
+
+**13. Why Containers Unexpectedly Exit**
+
+*   Application crashes (check logs).
+*   Out of memory (OOMKilled).
+*   Health check failures.
+*   Incorrect configuration or environment variables.
+*   Dependency failures (database, network, etc.).
+*   Process exits after completing its task.
+
+**14. Debugging Containers (The Right Way)**
+
+*   Check container status and logs.
+*   Use `docker logs`, `docker inspect`, and `docker exec`.
+*   Check resource usage (CPU, memory).
+*   Inspect the application and environment.
+*   Verify networking and dependencies.
+*   Avoid treating containers like full VMs.
+*   Use minimal, focused debugging steps.
+
+**Senior Engineer Mindset**
+
+*   Understand the underlying technology.
+*   Keep images small, secure, and updated.
+*   Design for observability and easy debugging.
+*   Use least privilege (rootless where possible).
+*   Containers are ephemeral, so externalize state.
+*   Think about security, performance, and cost.
+
+**KEY TAKEAWAY**
+
+Containers are powerful because they are lightweight, portable, and scalable. Understanding how they work helps you run them securely and reliably in production.
+
+## Production Deployment Strategies
+
+
+
+**1. Rolling Deployments**
+
+*   Gradually replace old instances with new ones.
+*   No downtime.
+*   Commonly used for stateless applications.
+*   **Works well with load balancers and orchestration tools (e.g., Kubernetes).**
+*   Monitor health during rollout.
+
+>  *Diagram shows Old Version (v1) gradually turning into New Version (v2).*
+
+**2. Recreate Deployments**
+
+*   Terminate all existing instances and start new ones.
+*   Simple but causes downtime.
+*   Usually used for non-critical environments or when state cannot be shared.
+*   **Ensure proper backup and drain connections before recreating.**
+
+> *Diagram shows Stop Old Version, then Start New Version.*
+
+**3. Blue-Green Deployments**
+
+*   Maintain two identical environments (Blue and Green).
+*   Deploy new version to the inactive environment.
+*   Switch traffic after verification.
+*   Quick rollback by switching back.
+*   Requires more infrastructure but reduces risk.
+
+> *Diagram shows Blue (v1) Live, Switch Traffic, Green (v2) Standby.*
+
+**4. Canary Deployments**
+
+*   Release new version to a small percentage of users.
+*   Monitor metrics, logs, and errors.
+*   Gradually increase traffic if healthy.
+*   Reduce or stop if issues are detected.
+*   Ideal for high-risk changes.
+
+> *Diagram shows 5% (Canary) and 95% (Stable) user traffic.*
+
+**5. Feature Flags**
+
+*   Enable or disable features without redeploying code.
+*   Roll out features to specific users or environments.
+*   Helps with testing and gradual release.
+*   Quickly disable a feature if issues occur.
+
+> *Diagram shows a toggle switch from Feature OFF to Feature ON.*
+
+**6. Progressive Delivery**
+
+*   Use a combination of strategies (canary, feature flags, A/B testing).
+*   Gradually roll out changes based on real user feedback.
+*   Monitor business and technical metrics.
+*   Minimizes risk and improves confidence.
+
+> *Diagram shows a bar chart indicating "Small Changes, Big Impact".*
+
+**7. Database Compatibility During Deployment**
+
+*   Design database changes to be backward compatible.
+*   Use expand and contract pattern (add new, then remove old).
+*   Avoid breaking changes.
+*   Coordinate application and database deployments.
+*   Test migrations in staging first.
+
+> *Diagram shows a Migration Plan leading to Safe Deployment.*
+
+**8. Backward Compatibility**
+
+*   Ensure new version works with older clients and data.
+*   Use versioning (API, schemas).
+*   Avoid breaking changes to contracts.
+*   Maintain support for previous versions during transition.
+*   Essential for microservices and distributed systems.
+
+> *Diagram shows New + Old puzzles pieces working together.*
+
+**9. Health Verification**
+
+*   Check application health after deployment.
+*   Monitor metrics, logs, and traces.
+*   Verify key user flows (synthetic and real).
+*   Use automated and manual checks.
+*   Do not rely only on "deployment success".
+
+> *Diagram shows a heart with a checkmark: "Verify Before Full Traffic".*
+
+**10. Automated Rollback**
+
+*   Set clear failure conditions (e.g., error rate, latency, health checks).
+*   Automatically roll back to previous version.
+*   Use monitoring and alerting to trigger rollback.
+*   Test rollback process regularly.
+*   Keep previous version available and immutable.
+
+> *Diagram shows a circular arrow: "Detect Issues, Roll Back Fast".*
+
+**11. Deployment Blast Radius**
+
+*   Understand what will be affected by the deployment.
+*   Limit the blast radius using strategies like canary or regional rollout.
+*   Consider dependencies (databases, queues, APIs).
+*   Have a rollback plan.
+*   Start with smaller scope when possible.
+
+> *Diagram shows concentric circles: "Smaller Changes, Lower Risk".*
+
+**12. Choosing Strategies Based on Risk, Not Fashion**
+
+*   There is no one-size-fits-all strategy.
+*   Consider the business impact, user base, and system complexity.
+*   Choose the simplest strategy that meets the risk level.
+*   Do not use blue-green or canary just because it is popular.
+*   Focus on reliability, safety, and business needs.
+
+> *Diagram shows: LOW RISK (SIMPLE) <-> HIGH RISK (ADVANCED). "Choose What Fits Your Risk Level".*
+
+**KEY TAKEAWAY**
+
+A successful deployment is not just about pushing code. It is about delivering value safely. The text cuts off at the bottom, but the visible portion emphasizes safe delivery.
 
 
 
