@@ -1648,10 +1648,10 @@ The infographic also features the text "STRONGER ENGINEERS, SAFER SYSTEMS, BETTE
 *   Understand container states and exit codes.
 *   **Common commands:**
 
-```bash
-    docker ps -a
-    docker logs <container>
-    docker exec -it <container> sh
+```
+docker ps -a
+docker logs <container>
+docker exec -it <container> sh
  ```
 
 **13. Why Containers Unexpectedly Exit**
