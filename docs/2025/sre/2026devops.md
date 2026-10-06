@@ -1652,7 +1652,7 @@ The infographic also features the text "STRONGER ENGINEERS, SAFER SYSTEMS, BETTE
 docker ps -a
 docker logs <container>
 docker exec -it <container> sh
- ```
+```
 
 **13. Why Containers Unexpectedly Exit**
 
