@@ -999,14 +999,14 @@ fi
 
 >  *Graphic:* Database, Cloud, and Chain Link icons. Text: "A Downstream Service Can Break Your System."
 
-**7. Network Failures**
+**<mark>7. Network Failures</mark>**
 
 *   Focuses on network-related issues.
 *   Check DNS resolution.
-*   Verify connectivity and routing (VPC, subnets, security groups).
+*   **Verify connectivity and routing (VPC, subnets, security groups)**.**
 *   Look for firewall or network policy blocking traffic.
 *   Check load balancers and health checks.
-*   Use tools like ping, traceroute, curl, and VPC flow logs.
+*   **Use tools like ping, traceroute, curl, and VPC flow logs**.
 
 > *Graphic:* Globe with a disconnection symbol. Text: "No Network No Service."
 
@@ -1073,6 +1073,75 @@ fi
 *   Avoid changing multiple things.
 *   Preserve evidence.
 *   Learn and prevent recurrence.
+
+## Cost Optimization and FinOps
+
+1. **Cloud Cost Fundamentals** — know the pricing model and main cost drivers (compute, storage, network, databases, managed services); use cost tools (Cost Explorer, Azure Cost Management); set budgets and alerts.
+2. **Compute Utilization** — monitor CPU/memory, right-size, use autoscaling.
+3. **Storage Cost** — match storage class/tier to the use case (e.g., S3 Standard vs Glacier), lifecycle policies, delete unused/old data.
+4. **Network/Data Transfer** — inter-region and internet egress is expensive; co-locate resources, use CDNs, watch ingress/egress.
+5. **Kubernetes Cost** — right-size pods/requests, cluster autoscaling, remove idle namespaces, monitor with Kubecost.
+6. **Idle Resources** — biggest quick win: delete unused instances, volumes, load balancers, IPs; schedule non-prod environments off.
+7. **Rightsizing** — continuous, data-driven instance sizing.
+8. **Reserved Capacity** — RIs, Savings Plans, CUDs for predictable workloads; review commitments regularly.
+9. **Autoscaling** — scale on metrics (CPU, memory, requests), avoid over-provisioning.
+10. **Observability Cost** — logs/traces get expensive at scale; retention periods, sampling, right-tier storage.
+11. **Cost Attribution** — tagging (team, env, project, cost center) + cost allocation reports for accountability.
+12. **Reliability vs Cost** — higher reliability costs more; right-size the SLA to the business need; avoid over-engineering.
+13. **Performance vs Cost** — faster usually costs more; cache, CDN, right-sized infra; measure improvement vs spend.
+14. **Build vs Buy** — managed services reduce ops burden, may cost more; in-house can be cheaper but needs expertise; think TCO.
+15. **Financial Consequence** — every architecture decision has a cost impact; think long-term operational cost, not just initial build.
+
+### Resilience and Disaster Recovery 
+
+
+1. **Failure Domains** — know what can fail (instance, AZ, region); isolate critical components so one failure doesn't cascade; limit blast radius.
+2. **Redundancy** — eliminate single points of failure; multiple instances/AZs/regions; redundancy buys availability and fault tolerance.
+3. **Backups** — data, config, and critical resources; **3-2-1 rule** (3 copies, 2 media, 1 offsite); automate and monitor backups.
+4. **Restore Testing** — a backup you haven't restored is untested; verify regularly in a non-prod environment; document the process.
+5. **RTO** — max acceptable time to restore service; lower RTO = more investment; "How fast must we recover?"
+6. **RPO** — max acceptable data loss; lower RPO = more frequent backups/replication; "How much data can we lose?"
+7. **Multi-AZ Architecture** — deploy across AZs in one region; survives single-AZ failure automatically; use managed services (RDS Multi-AZ, EKS, ALB); watch for cascading failures.
+8. **Multi-Region Architecture** — for regional disasters; replication + global DNS (e.g., Route 53); more complexity, higher availability.
+9. **Failover** — automatic or manual switch to healthy system; health checks + monitoring; **test it regularly**; ensure data consistency after.
+10. **Dependency Failures** — map critical dependencies (databases, APIs, third parties); monitor them; plan timeouts, retries, fallbacks; avoid cascading failures.
+11. **Circuit Breakers** — stop calling a failing service; let it recover; combine with retries/fallbacks; prevent failure spread.
+12. **Retries & Exponential Backoff** — retry with increasing delays; add jitter; cap retry counts; avoid overwhelming a struggling service.
+13. **Graceful Degradation** — keep core functionality alive during partial failures; serve cached/read-only data; prioritize critical user journeys; communicate status clearly.
+14. **DR Exercises** — run regular drills; test failover *and* full restore; validate RTO/RPO targets; involve the whole team; update runbooks from lessons learned.
+15. **A Backup You Have Never Restored Is an Assumption** — unverified backups can be corrupt or incomplete; restore testing is the only proof; document results and fix issues. *Verify, don't assume.*
+
+
+## Performance and Capacity Engineering
+
+**Foundations (1–4)**
+
+1. **Latency** — time for a request to get a response; measure end-to-end (app, network, DB); high latency hurts UX; find where it's introduced.
+2. **Throughput** — requests/tasks processed per unit time; measure RPS/TPS; increase by removing bottlenecks and scaling.
+3. **Saturation** — resource at/near its limit → higher latency, errors, timeouts; monitor CPU, memory, disk, network; **add capacity or optimize *before* saturation impacts users**; high utilization = higher risk.
+4. **CPU** — handles processing and system tasks; high CPU → slow responses, timeouts; monitor usage, load average, throttling; watch for CPU spikes and sustained high usage.
+
+**Resources (5–8)**
+
+5. **Memory** — fast data access; leaks cause slowdowns/crashes; monitor usage, swap, OOM events; right-size and fix leaks.
+6. **Disk I/O** — affects read/write performance; high disk latency slows DBs and apps; monitor IOPS, latency, throughput; match storage type (SSD/gp3/io2) to workload.
+7. **Network Throughput** — data transferred per second; monitor bandwidth, packet loss, network latency; bottlenecks hurt app performance; proper network design, load balancers, routing.
+8. **Connection Limits** — every system caps concurrent connections (e.g., database server); exceeding limits → timeouts/errors; tune connection pools, adjust limits, monitor active/idle connections.
+
+**Bottlenecks & Testing (9–12)**
+
+9. **Queue Depth** — queues hold requests when systems are busy; monitor queue length and processing time; growing queues signal downstream bottleneck; alerts for abnormal queue growth.
+10. **Bottlenecks** — limit overall system performance; can be CPU, memory, disk, network, database, or external services; use metrics, tracing, profiling to find them; **fix the real bottleneck, not just symptoms**.
+11. **Load Testing** — simulate real traffic to test capacity; identify bottlenecks and breakpoints; test normal load, peak load, failure scenarios; tools: k6, JMeter, Locust.
+12. **Capacity Planning** — estimate future resource needs based on growth; use historical data and trends; consider seasonal spikes and business events; plan for headroom to avoid last-minute scaling.
+
+**Proactive Operations (13–16)**
+
+13. **Autoscaling Signals** — use real metrics (CPU, memory, custom metrics, queue depth) to trigger scaling; set thresholds and cooldown periods; test autoscaling policies.
+14. **Resource Requests and Limits** — set resource requests to reserve capacity; set limits to prevent resource abuse; helps with stability, fairness, cost control (e.g., Kubernetes); monitor and adjust based on real usage.
+15. **Performance Baselines** — establish baseline metrics when the system is healthy; track normal performance patterns (latency, CPU, RPS); use baselines to detect anomalies and regressions; update baselines as the system evolves.
+16. **Know What Normal Looks Like** — you cannot troubleshoot effectively without knowing normal behavior; monitor key metrics, logs, and patterns; compare current behavior to baseline to quickly spot issues; always ask: *"Is this normal for our system?"*
+
 
 
 
