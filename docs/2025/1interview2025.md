@@ -1274,6 +1274,17 @@ future plans.
 
 ### 118 ADVANCED LINUX COMMANDS
 
+
+#### **Linux find the first 10 size files**
+
+```
+find / -type f -exec du -h {} +  | sort -rh | head -n 10
+```
+
+
+**`find / -type f -exec du -h {} + 2>/dev/null | sort -rh | head -n 10`**
+
+
 These commands help in troubleshooting, performance analysis and system management.
 
 1， **find** - Search files in a directory hierarchy.
@@ -1315,7 +1326,146 @@ htop
 
 **du-sh - Check directory size (summary).**
 
+
+
+## Jenkins + ArgoCD GitOps CI/CD pipeline on Amazon EKS 
+
+![Alt Image Text](../images/2026devops_1_4.jpeg "Body image")
+
+### Layer 1: Full DevOps Lifecycle Mapping
+
+| Lifecycle stage | Component in diagram           | Key actions                                          |
+| --------------- | ------------------------------ | ---------------------------------------------------- |
+| **Plan / Code** | Developers + GitHub            | PR reviews, branching strategy, webhook triggers     |
+| **Build**       | Jenkins + Maven/Gradle/Docker  | Compile, package as container images                 |
+| **Test**        | Inside Jenkins pipelines       | Unit tests, integration tests, **security scanning** |
+| **Release**     | ECR                            | Immutable artifacts + versioning                     |
+| **Deploy**      | ArgoCD                         | Declarative GitOps sync                              |
+| **Operate**     | EKS (autoscaler, self-healing) | Runtime management                                   |
+| **Monitor**     | CloudWatch + Datadog + SLOs    | Metrics/logs/traces → feedback into Plan             |
+
+
+### Layer 2: Component Deep-Dive
+
+
+#### **Layer 2: Component Deep-Dive**
+
+1. GitHub Layer: The Collaboration Flow Is an Underrated Topic
+The diagram only says "Repositories / Pull Requests / Branching / Webhooks," but you can expand in an interview:
+
+* Branching strategy: not specified in the diagram, but with GitOps the standard answer is trunk-based development with short-lived feature branches — because GitOps requires the Git state to be the source of truth, and long-lived divergent branches make it impossible for ArgoCD to determine "the truth."
+
+
+* Webhooks are the CI ignition system: push/merge events → trigger Jenkins pipelines. Common follow-up: what if the webhook fails? (Answer: Jenkins SCM polling as a fallback, or decouple with a lightweight trigger like GitHub Actions.)
+
+
+**2. Jenkins: The Controller Architecture Is the Most Valuable Detail**
+
+
+The two labels "Configuration as Code" and "Build Agents (Autoscaling)" expand into the core pattern of modern Jenkins:
+
+* **Controller statelessness direction**: the Controller only orchestrates (jobs/pipelines/plugins); state is externalized — the diagram uses RDS PostgreSQL for the Jenkins DB (build history, job config), EFS for shared storage (build cache, toolchains), and S3 for artifacts and reports. This is exactly the principle from your resilience cheat sheet: stateful components externalized, compute components replaceable.
+* **Kubernetes plugin ephemeral agents:** the pipeline declares agent { kubernetes { ... } } and each build gets a temporary Pod, destroyed when done. Compared to static agent VMs:
+	* **Cost**: released when idle (FinOps idle-resources principle)
+	* **Isolation**: clean environment per build — eliminates "the previous build contaminated the environment"
+	* **Elasticity**: longer build queue → more Pods → Cluster Autoscaler adds nodes
+* **Remaining weakness:** the Controller itself is still a single point of failure. The diagram mitigates with CasC + RDS (rebuildable). Bonus points for proactively saying "a more thorough approach is managing Jenkins via a K8s Operator, or moving to Jenkins Evergreen / a multi-replica setup."
+
+
+
+**3. Artifact Registry (ECR): Immutable Artifacts Are the Foundation of a Trustworthy Pipeline**
+
+
+* Immutable artifacts: one build, one digest, never overwritten — guarantees "what was tested is what gets deployed." Common follow-up: why not deploy with the latest tag? (Not traceable, can't roll back to a known version, cache inconsistency.)
+* Image scanning at this position is a "build-time quality gate": critical CVEs can block the pipeline.
+* Lifecycle policies map to FinOps: automatically clean untagged old images to control storage cost.
+
+
+**4. ArgoCD: The GitOps Engine — the Layer Interviews Dig Into Most**
+
+
+The diagram says Deploy/Helm/Kustomize/GitOps/Auto Rollback. Going deeper:
+
+Architecture & how it works (the essence of the pull model):
+
+* ArgoCD has three core components: Repo Server (pulls and renders manifests from Git), Application Controller (continuously compares live state vs. desired state), API Server/UI
+* Sync loop: every few minutes (default ~3) it compares Git against the cluster; on divergence → auto or manual sync → drift detection self-corrects manual cluster changes (a kubectl edit gets reverted — that's the discipline of GitOps)
+* Health assessment: ArgoCD has built-in health logic for many resource types (e.g., whether a Deployment has enough available replicas); the diagram's "Auto Rollback" works via sync configurations that roll back when a new revision stays Unhealthy
+
+**Helm vs. Kustomize (both listed in the diagram):**
+
+* Helm: chart packaging, parameterization (values.yaml), versioned releases — good for applications with release semantics
+* Kustomize: overlay pattern, base + per-environment deltas (dev/staging/prod) — pure YAML, no templating logic
+* Common real-world combo: Helm for rendering + Kustomize for environment patches, or ArgoCD's ApplicationSet to generate one Application per environment
+
+
+High-frequency interview question: "What happens if ArgoCD goes down?" — running applications are unaffected (state is already pulled and applied, not proxied); what you lose is new deployments, drift correction, and rollback. This demonstrates the isolation between the GitOps control plane and the data plane.
+
+**5. EKS Runtime: Elasticity Trio + Release Strategy**
+
+* Cluster Autoscaler (explicitly labeled): Pods pending → add nodes; nodes idle → reclaim. HPA (horizontal Pod autoscaling) is implied under "Auto Scaling." Follow-up: how do HPA and Cluster Autoscaler relate? — HPA changes Pod count, CA changes node count; the two layers cooperate.
+* Self-healing: a Deployment guarantees the desired replica count; if a node dies, its Pods are rescheduled — built into the declarative API.
+* Rolling Updates: the diagram's default release method. Follow-up upgrade path: how do you set maxSurge/maxUnavailable? Combined with PDB (PodDisruptionBudget) to protect availability during rollouts; the next step is Argo Rollouts canary — using Datadog SLO metrics as an AnalysisTemplate for automatic promotion or rollback. This is where the diagram's "SLOs" naturally connect to release strategy.
+
+
+### Layer 3: Cross-Cutting Concerns
+
+Security: This Diagram Is a Textbook Example of "Defense in Depth"
+
+Read from the outside in along the attack path:
+
+```
+User traffic → WAF (L7 protection) → ALB (entry) → Security Groups (east-west isolation) → Pod (IRSA, least privilege)
+                                    ↓
+              Supply chain: code scanning → image scanning (ECR) → KMS encryption → GuardDuty runtime threat detection
+                                    ↓
+              Data plane: Secrets Manager (secrets) / SSM (config), both KMS-encrypted
+```
+
+**Observability: With Two Tools, Explain Both the "Why" and the "Cost"**
+
+* **CloudWatch**: AWS-native, collects control plane/node/infrastructure metrics, cheap and zero-integration
+* **Datadog**: APM/traces/SLO dashboards, strong application-layer observability
+* **Critical-thinking answer:** "The dual tooling likely reflects historical evolution, but it creates cost overlap and fragmented alerting. The evolution path is OpenTelemetry for unified collection with pluggable backends — reduces cost and avoids observability-data vendor lock-in" — one sentence hitting both your FinOps and multi-cloud cheat sheets.
+
+
+### Layer 4: Data Layer Selection Logic (An Overlooked Strong Topic)
+
+
+| Storage            | Purpose                             | Selection logic                                                                        |
+| ------------------ | ----------------------------------- | -------------------------------------------------------------------------------------- |
+| **RDS PostgreSQL** | Jenkins DB                          | Relational, strongly consistent, Jenkins-native; supports Jenkins HA rebuilds          |
+| **DynamoDB**       | Metadata / job history / state data | Serverless, per-request billing, auto-scaling — key-value access patterns fit metadata |
+| **S3**             | Build artifacts / logs / reports    | Object storage for large files + lifecycle tiering to cold (FinOps)                    |
+| **EFS**            | Shared storage / build cache        | Multi-Pod shared read/write (elastic agents share caches to speed up builds)           |
+
+
+Interview phrasing: "**storage selection follows access patterns** — transactional structured data goes to RDS, elastic metadata goes to DynamoDB, large files go to S3, shared files go to EFS." A generalizable methodology for storage decisions.
+
+### Layer 5: Failure Scenario Analysis (Interviewers Love "What If")
+
+
+| Failed component   | Impact                                                      | Mitigation                                                                                               |
+| ------------------ | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| GitHub unavailable | No new builds/deployments                                   | Existing artifacts and running services unaffected (immutable artifacts + deployed state is independent) |
+| Jenkins Controller | New builds stop; in-flight builds interrupted               | CasC + RDS enables fast rebuild; agents are ephemeral — no loss                                          |
+| ECR                | Can't pull new images                                       | Running Pods unaffected (images already pulled); lifecycle policies prevent deleting in-use images       |
+| ArgoCD             | Running services unaffected; lose drift correction/rollback | Deploy ArgoCD control plane in multiple replicas                                                         |
+| Single EKS node    | Pods on it get rescheduled                                  | Self-healing; PDB ensures replicas remain schedulable                                                    |
+| Entire AZ          | No impact if deployed multi-AZ                              | Worth volunteering: production should span 3 AZs + Pod anti-affinity                                     |
+
+
+### Layer 6: Evolution Roadmap (If Asked "How Would You Improve This?")
+
+1. Release strategy upgrade: Rolling → Argo Rollouts canary (auto-judged by Datadog SLOs)
+2. Supply-chain hardening: SBOM + cosign image signing + Kyverno admission control (deploy only signed images) → SLSA level
+3. Policy as code: environment admission policies (no latest tags, resource limits required) enforced by OPA/Kyverno on both CI and cluster sides
+4. Observability consolidation: OTel-standardized collection, converge the dual tooling cost
+5. Control-plane HA: Jenkins HA, ArgoCD multi-replica, RDS Multi-AZ (casually citing the Multi-AZ cheat sheet)
+
+
 ## Argo CD interview
+
 
 
 ### **1. Core Concepts & Principles**
