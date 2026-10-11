@@ -1398,6 +1398,9 @@ This creates a copy of the failing pod with a debug container attached for inves
 - `Physics` → `Physical`
 - `L5 Routing` → `L7 Routing` (Layer 7, unless you meant Layer 4/5)
 
+
+
+
 ### 56 Ingress vs Gateway API
 
 
@@ -1664,3 +1667,232 @@ Workload: The result is scaling from 0 to N Pods. It highlights the ability to "
 * Works with HPA to drive scaling decisions.
 
 ![Alt Image Text](../images/k8s2026_1_6.png "Body image")
+
+
+## Kubernetes Ingress
+
+
+![Alt Image Text](../images/k8s2026_1_7.jpeg "Body image")
+
+### 1. What is Kubernetes Ingress?
+
+
+* Ingress is a Kubernetes API object used to manage external HTTP/HTTPS traffic entering the cluster and route it to Services.
+* Provides a single entry point for multiple applications.
+* Supports host-based and path-based routing.
+
+
+(Diagram: Internet → Ingress (HTTP/HTTPS) → Service A (/app1) → Pods, Service B (/app2) → Pods)
+
+
+### 2. Why do we use Ingress?
+
+* Expose multiple services using a single IP/hostname.
+* Manage routing rules (host/path).
+* Works with a load balancer or NodePort service.
+* Centralized HTTP/HTTPS routing.
+
+
+**Without Ingress**
+
+* Each service needs separate public IP/LoadBalancer.
+* Difficult to manage.
+* Not scalable.
+
+
+(Diagram: IP1 → Service A, IP2 → Service B, IP3 → Service C)
+
+
+**With Ingress**
+
+* Single entry point.
+* Rules to route traffic.
+* Easier to manage.
+* Scalable and clean.
+
+
+(Diagram: Internet → Ingress → Service A, Service B, Service C)
+
+
+### 3. What is an Ingress Controller?
+
+* An Ingress Controller is a component that watches Ingress resources and implements the routing rules.
+* It configures a reverse proxy to route traffic to the correct services.
+
+**Common Ingress Controllers:**
+
+* NGINX Ingress Controller
+* Traefik
+* HAProxy
+* Cloud provider specific controllers
+
+(Diagram: Ingress (resource with rules) → Ingress Controller (implements rules) → Kubernetes Services → Pods)
+
+
+### 4. Difference between Ingress and Service?
+
+| Service                                                     | Ingress                                             |
+| ----------------------------------------------------------- | --------------------------------------------------- |
+| Provides stable access to Pods                              | Provides HTTP/HTTPS routing                         |
+| Connects clients to Pods                                    | Routes requests to Services                         |
+| Supports multiple types (ClusterIP, NodePort, LoadBalancer) | Supports host-based and path-based routing          |
+| Can support TCP/UDP                                         | Primarily for HTTP/HTTPS                            |
+| Usually used inside cluster                                 | Usually used to expose multiple services externally |
+
+
+### 5. What is path-based routing in Ingress?
+
+
+* Routes requests to different services based on URL path.
+* Defined using **path** and **pathType**.
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /app1
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+      - path: /app2
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 80
+```
+
+### 6. What is host-based routing in Ingress?
+
+* Routes traffic based on the hostname (domain).
+* Useful for multiple applications with different domains.
+
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: host-ingress
+spec:
+  rules:
+  - host: app1.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+  - host: app2.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 80
+```
+
+
+### 7. What is TLS in Kubernetes Ingress?
+
+* Ingress can be configured to handle HTTPS/TLS termination.
+* **Uses a TLS secret to store the certificate and private key**.
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tls-ingress
+spec:
+  tls:
+  - hosts:
+    - example.com
+    secretName: example-tls
+  rules:
+  - host: example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+```
+
+
+### 8. What is pathType in Ingress?
+
+**pathType defines how the path is matched with the incoming request.**
+
+
+| pathType               | Meaning                                      |
+| ---------------------- | -------------------------------------------- |
+| Prefix                 | Matches the path prefix. Most commonly used. |
+| Exact                  | Matches the exact path.                      |
+| ImplementationSpecific | Behavior depends on the Ingress Controller.  |
+
+
+Example:
+
+* path: /api
+* pathType: Prefix → Matches /api, /api/users
+
+
+### 9. Does Ingress replace a Service?
+
+* No. Ingress works together with Services.
+* Ingress handles external HTTP/HTTPS routing to Services, and Services route traffic to Pods.
+
+(Diagram: Internet → Ingress → Service → Pods)
+
+
+### 10. How do you troubleshoot an Ingress that is not working?
+
+
+* Check Ingress resource
+	* kubectl get ingress
+	* kubectl describe ingress <name>
+* Check Ingress Controller
+	* kubectl get pods -n <ingress-namespace>
+	* kubectl logs <controller-pod>
+* Verify Services and Endpoints
+	* kubectl get svc
+	* kubectl get endpoints
+* Check rules, host, path, and annotations
+* Check DNS and TLS certificates
+* Check application logs
+
+
+**Common Issues:**
+
+
+* Ingress Controller not running
+* Incorrect host/path
+* Service not reachable
+* Wrong service name/port
+* DNS not pointing to Ingress IP
+* TLS certificate/secret issues
+* Firewall or security group blocking traffic
+
+
+**Kubernetes Ingress Architecture (High Level)**
+
+(Flow diagram:)
+
+Client (HTTP/HTTPS) → Internet → Ingress Controller (Load Balancer / NodePort) → Ingress (Routing Rules) → Services → Pods
